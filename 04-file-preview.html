@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>导入课件.pptx · 飞象 AI [build ak · 顶栏合并 1 行]</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="v28.css?v=20260512ag" />
+<!-- 兜底·内联样式（不走 v28.css 缓存） -->
+<!-- 默认 collapsed=56px icon-only；点 sb-collapse-btn → 切到展开态 240px -->
+<style>
+  /* ① 折叠态：56px icon-only */
+  body[data-page="file-preview"] .app[data-left="collapsed"]{
+    grid-template-columns: 56px 1fr 0 !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"][data-right="expanded"],
+  body[data-page="file-preview"] .app[data-left="collapsed"][data-chat="open"]{
+    grid-template-columns: 56px 1fr 1fr !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sidebar-left{
+    overflow:hidden;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-brand-name,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search > .sb-search-label,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search > .kbd,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-new-chat > .sb-new-chat-label,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-section-head,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-group-label,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb .kb-name,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb .kb-count,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-item .sb-item-label,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-user .sb-user-name,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-user > [data-lucide]:not(.sb-avatar [data-lucide]){
+    display:none !important;
+  }
+  /* collapsed 态保留所有 KB icon，方便跨库切换（不再 hide 非 active） */
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb .kb-name,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb .kb-count{
+    display:none !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-brand{
+    flex-direction:column !important;
+    gap:6px !important;
+    padding:0 0 10px !important;
+    align-items:center !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-collapse-btn{
+    margin:0 !important;
+    width:26px !important;height:26px !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-new-chat,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-item,
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-user{
+    width:32px !important;height:32px !important;padding:0 !important;
+    margin-left:auto !important;margin-right:auto !important;
+    justify-content:center !important;
+  }
+  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-item-badge{
+    position:absolute !important;top:2px !important;right:1px !important;
+  }
+
+  /* ② 展开态：240px 宽态（去掉 data-left 属性即触发） */
+  body[data-page="file-preview"] .app:not([data-left="collapsed"]){
+    grid-template-columns: 240px 1fr 0 !important;
+  }
+  body[data-page="file-preview"] .app:not([data-left="collapsed"])[data-right="expanded"],
+  body[data-page="file-preview"] .app:not([data-left="collapsed"])[data-chat="open"]{
+    grid-template-columns: 240px 1fr 1fr !important;
+  }
+
+  /* ★ 文件预览页专属样式 ★ */
+  body[data-page="file-preview"] .fp-badge-pptx{
+    background:rgba(216,82,82,.10) !important;
+    border-color:rgba(216,82,82,.32) !important;
+    color:#9A3D3D !important;
+  }
+  body[data-page="file-preview"] .fp-badge-pptx [data-lucide]{
+    color:#C84A4A !important;
+  }
+  body[data-page="file-preview"] .fp-viewer{
+    margin:24px 0 8px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  body[data-page="file-preview"] .fp-slide-stage{
+    background:#FBFAF7;
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(60,50,40,.04);
+  }
+  body[data-page="file-preview"] .fp-stage-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 12px;
+    background:rgba(255,255,255,.6);
+    border-bottom:1px solid var(--border);
+    font-size:12px;color:var(--text-2);
+  }
+  body[data-page="file-preview"] .fp-nav-btn{
+    width:24px;height:24px;border-radius:5px;
+    background:transparent;border:1px solid transparent;
+    display:grid;place-items:center;cursor:pointer;
+    color:var(--text-3);
+    transition:all .12s var(--ease);
+  }
+  body[data-page="file-preview"] .fp-nav-btn:hover{
+    background:var(--surface-2);border-color:var(--border-2);
+    color:var(--text);
+  }
+  body[data-page="file-preview"] .fp-nav-btn [data-lucide]{width:14px;height:14px}
+  body[data-page="file-preview"] .fp-page-no{
+    font-weight:600;color:var(--text-1);
+    font-variant-numeric:tabular-nums;letter-spacing:.01em;
+    min-width:64px;text-align:center;
+  }
+  body[data-page="file-preview"] .fp-page-total{color:var(--text-4);font-weight:500}
+  body[data-page="file-preview"] .fp-stage-spacer{flex:1}
+  body[data-page="file-preview"] .fp-stage-cite{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:3px 9px;border-radius:5px;
+    background:var(--gold-bg);color:var(--gold-deep);
+    font-size:11px;font-weight:600;
+  }
+  body[data-page="file-preview"] .fp-stage-cite [data-lucide]{width:11px;height:11px;color:var(--gold)}
+
+  /* PPT slide 主体 */
+  body[data-page="file-preview"] .fp-slide{
+    aspect-ratio:16/9;
+    background:#FFFFFF;
+    padding:36px 42px;
+    display:flex;flex-direction:column;gap:18px;
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+    position:relative;
+  }
+  body[data-page="file-preview"] .fp-slide-title{
+    font-size:24px;font-weight:700;color:#1A1A1A;
+    letter-spacing:-.01em;
+    padding-bottom:12px;border-bottom:3px solid #C84A4A;
+    align-self:flex-start;
+  }
+  body[data-page="file-preview"] .fp-slide-points{
+    list-style:none;padding:0;margin:0;
+    display:flex;flex-direction:column;gap:10px;
+  }
+  body[data-page="file-preview"] .fp-slide-points li{
+    display:flex;align-items:flex-start;gap:12px;
+    font-size:15px;line-height:1.7;color:#3A3733;
+  }
+  body[data-page="file-preview"] .fp-slide-num{
+    flex-shrink:0;
+    width:24px;height:24px;border-radius:50%;
+    background:#C84A4A;color:#fff;
+    display:grid;place-items:center;
+    font-size:13px;font-weight:700;
+    margin-top:2px;
+  }
+  body[data-page="file-preview"] .fp-slide-points b{color:#1A1A1A;font-weight:700}
+
+  body[data-page="file-preview"] .fp-slide-figure{
+    flex:1;min-height:140px;
+    background:#FBFAF7;border:1px dashed #DDD5C0;
+    border-radius:8px;
+    display:grid;place-items:center;
+    position:relative;
+  }
+  body[data-page="file-preview"] .fp-fig-axes{
+    position:relative;width:240px;height:140px;
+  }
+  body[data-page="file-preview"] .fp-fig-axis-x,
+  body[data-page="file-preview"] .fp-fig-axis-y{
+    position:absolute;background:#9A968F;
+  }
+  body[data-page="file-preview"] .fp-fig-axis-x{
+    left:0;right:0;top:50%;height:1px;
+  }
+  body[data-page="file-preview"] .fp-fig-axis-y{
+    top:0;bottom:0;left:50%;width:1px;
+  }
+  body[data-page="file-preview"] .fp-fig-label{
+    position:absolute;font-size:10.5px;color:var(--text-3);font-style:italic;
+  }
+  body[data-page="file-preview"] .fp-fig-lx{right:0;top:calc(50% - 14px)}
+  body[data-page="file-preview"] .fp-fig-ly{left:calc(50% + 4px);top:0}
+  body[data-page="file-preview"] .fp-fig-curve{
+    position:absolute;font-size:11px;font-weight:600;
+    padding:2px 6px;border-radius:4px;
+    background:rgba(255,255,255,.85);
+    font-family:ui-monospace,Menlo,monospace;
+  }
+  body[data-page="file-preview"] .fp-fig-up{
+    top:8px;left:54%;color:#C84A4A;border:1px solid rgba(200,74,74,.3);
+  }
+  body[data-page="file-preview"] .fp-fig-down{
+    bottom:8px;left:54%;color:#2E7A4A;border:1px solid rgba(46,122,74,.3);
+  }
+  body[data-page="file-preview"] .fp-fig-narrow{
+    top:8px;left:8%;color:#A87E2C;border:1px solid rgba(168,126,44,.3);
+  }
+  body[data-page="file-preview"] .fp-slide-foot{
+    position:absolute;bottom:14px;right:18px;
+    font-size:10.5px;color:var(--text-4);letter-spacing:.005em;
+  }
+
+  /* 缩略图横条 */
+  body[data-page="file-preview"] .fp-strip{
+    display:flex;gap:8px;overflow-x:auto;
+    padding:2px 2px 8px;
+  }
+  body[data-page="file-preview"] .fp-thumb{
+    flex-shrink:0;
+    width:96px;height:74px;
+    background:#FFFFFF;border:1px solid var(--border);
+    border-radius:6px;padding:8px 10px;
+    cursor:pointer;text-align:left;
+    display:flex;flex-direction:column;gap:5px;
+    transition:all .15s var(--ease);
+    position:relative;
+  }
+  body[data-page="file-preview"] .fp-thumb:hover{
+    border-color:var(--border-warm);
+    transform:translateY(-1px);
+  }
+  body[data-page="file-preview"] .fp-thumb.active{
+    border-color:#C84A4A;
+    box-shadow:0 0 0 2px rgba(200,74,74,.12);
+  }
+  body[data-page="file-preview"] .fp-thumb-no{
+    font-size:11px;font-weight:700;color:var(--text-3);
+    font-variant-numeric:tabular-nums;
+  }
+  body[data-page="file-preview"] .fp-thumb.active .fp-thumb-no{color:#C84A4A}
+  body[data-page="file-preview"] .fp-thumb-title{
+    font-size:11.5px;color:var(--text-2);line-height:1.4;
+    overflow:hidden;text-overflow:ellipsis;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  }
+  body[data-page="file-preview"] .fp-thumb.active .fp-thumb-title{color:var(--text);font-weight:600}
+  body[data-page="file-preview"] .fp-thumb-cite-ico{
+    position:absolute;top:5px;right:5px;
+    width:11px;height:11px;color:var(--gold);
+  }
+  body[data-page="file-preview"] .fp-thumb.more{
+    background:transparent;border-style:dashed;
+    color:var(--text-3);
+    display:grid;place-items:center;
+    text-align:center;
+  }
+  body[data-page="file-preview"] .fp-thumb.more .fp-thumb-no [data-lucide]{
+    width:14px;height:14px;
+  }
+
+  /* ★ AI 摘要 pane 内容样式 ★ */
+  body[data-page="file-preview"] .fp-ai-block{
+    margin-bottom:20px;padding-bottom:18px;
+    border-bottom:1px solid var(--border);
+  }
+  body[data-page="file-preview"] .fp-ai-block:last-of-type{
+    border-bottom:0;margin-bottom:8px;padding-bottom:0;
+  }
+  body[data-page="file-preview"] .fp-ai-label{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;font-weight:700;letter-spacing:.04em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  body[data-page="file-preview"] .fp-ai-label [data-lucide]{
+    width:13px;height:13px;color:var(--gold);
+  }
+  body[data-page="file-preview"] .fp-ai-text{
+    font-size:13px;line-height:1.78;color:var(--text-1);
+    letter-spacing:.005em;
+  }
+  body[data-page="file-preview"] .fp-ai-text b{color:var(--text);font-weight:600}
+  body[data-page="file-preview"] .fp-ai-list{
+    list-style:none;padding:0;margin:0;
+    display:flex;flex-direction:column;gap:7px;
+  }
+  body[data-page="file-preview"] .fp-ai-list li{
+    font-size:12.5px;line-height:1.68;color:var(--text-1);
+    padding-left:14px;position:relative;letter-spacing:.005em;
+  }
+  body[data-page="file-preview"] .fp-ai-list li::before{
+    content:'';position:absolute;left:2px;top:9px;
+    width:4px;height:4px;border-radius:50%;
+    background:var(--gold);
+  }
+  body[data-page="file-preview"] .fp-ai-list b{color:var(--text);font-weight:600}
+  body[data-page="file-preview"] .fp-ai-list .wlink{
+    color:var(--gold-deep);text-decoration:underline;
+    text-decoration-color:rgba(122,93,32,.3);
+    text-underline-offset:2px;
+    cursor:pointer;
+  }
+  body[data-page="file-preview"] .fp-ai-list .wlink:hover{
+    text-decoration-color:var(--gold-deep);
+  }
+
+  /* ③ topbar 通栏：横贯整个屏幕，三列从 52px 下方开始 */
+  body[data-page="file-preview"] .topbar{
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+  body[data-page="file-preview"] .app{
+    padding-top: 52px !important;
+    box-sizing: border-box !important;
+  }
+  /* 对话态下 topbar 被原 CSS 隐藏（height:0 opacity:0），padding-top 也要取消 */
+  body[data-page="file-preview"] .app[data-chat="open"],
+  body[data-page="file-preview"] .app[data-chat="empty"]{
+    padding-top: 0 !important;
+  }
+  body[data-page="file-preview"] .app[data-chat="open"] .topbar,
+  body[data-page="file-preview"] .app[data-chat="empty"] .topbar{
+    display: none !important;
+  }
+
+  /* ★ 合并行 topbar 内的子元素：竖分隔 / 紧凑面包屑 / inline actions ★ */
+  body[data-page="file-preview"] .topbar.topbar-merged{
+    gap: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 52px !important;
+    padding: 0 18px !important;
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-sep{
+    width: 1px; height: 20px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  /* 面包屑在 topbar 行内：缩字号 + 压缩内边距 + 长内容省略 */
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb{
+    display: flex; align-items: center; gap: 4px;
+    flex: 0 1 auto; min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    background: transparent !important;
+    border: 0 !important;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item,
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current{
+    font-size: 12.5px;
+    padding: 4px 6px;
+    border-radius: 5px;
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--text-3);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item:hover{
+    background: var(--surface-2);
+    color: var(--text-1);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item [data-lucide],
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current [data-lucide]{
+    width: 13px; height: 13px;
+    color: var(--text-3);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current{
+    color: var(--text);
+    font-weight: 600;
+    background: var(--gold-bg);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current [data-lucide]{
+    color: var(--gold);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-sep{
+    color: var(--text-4);
+    display: inline-flex;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-sep [data-lucide]{
+    width: 12px; height: 12px;
+  }
+
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-spacer{
+    flex: 1 1 auto; min-width: 8px;
+  }
+
+  /* actions 在 topbar 行内：缩 padding 跟 view-switcher 30px 同高 */
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-action{
+    height: 30px;
+    padding: 0 10px !important;
+    font-size: 12.5px !important;
+    border-radius: 6px !important;
+    display: inline-flex; align-items: center; gap: 5px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-action [data-lucide]{
+    width: 13px; height: 13px;
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .tb-action:hover{
+    background: var(--surface-2);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action{
+    background: var(--gold-bg);
+    color: var(--gold-deep);
+    border-color: rgba(168,126,44,.22);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action [data-lucide]{
+    color: var(--gold);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action:hover{
+    background: var(--gold-bg-2);
+  }
+  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-sep{
+    width: 1px; height: 16px;
+    background: var(--border);
+    margin: 0 2px;
+    display: inline-block;
+  }
+
+  /* AI 整理已默认展开时按钮态：图标换成 panel-right-close（JS 已处理） */
+  body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action-meta.tb-action .lucide-panel-right-open,
+  body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action-meta.tb-action [data-lucide="panel-right-open"]{
+    display: none;
+  }
+
+  /* ★ file-preview 默认双栏：让 sidebar-right 在 data-right="expanded" 下显形（覆盖 v28.css 通用规则） */
+  body[data-page="file-preview"] .app[data-right="expanded"] .sidebar-right{
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  /* file-preview 即使 view=folder 也保留右栏（与 wiki-entry 不同：03 切文件夹会让位，04 反而要保留 AI 摘要） */
+  body[data-page="file-preview"] .app[data-view="folder"][data-right="expanded"] .sidebar-right,
+  body[data-page="file-preview"] .app[data-view="graph"][data-right="expanded"] .sidebar-right{
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* ④ wiki-page 在 file-preview · 双栏态下：拉满主区，padding 48px 跟右栏对齐 */
+  body[data-page="file-preview"] .wiki-page{
+    max-width: 880px;
+  }
+  body[data-page="file-preview"] .app[data-right="expanded"] .wiki-page,
+  body[data-page="file-preview"] .app[data-chat="open"] .wiki-page{
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 42px 48px 96px !important;
+  }
+  /* 面包屑条在双栏 expanded 下，也跟着改 padding */
+  body[data-page="file-preview"] .app[data-right="expanded"] .entry-bcbar{
+    padding: 10px 48px !important;
+  }
+  /* 右栏内容区跟主区一样的 48 左 padding */
+  body[data-page="file-preview"] .app[data-right="expanded"] .canvas-head{
+    padding: 8px 48px 8px !important;
+  }
+  body[data-page="file-preview"] .app[data-right="expanded"] .cv-pane{
+    padding: 42px 48px 96px !important;
+  }
+  body[data-page="file-preview"] .app[data-right="expanded"] .cv-meta{
+    max-width: 520px !important;
+    margin: 0 !important;
+  }
+</style>
+</head>
+<body data-page="file-preview">
+
+<div class="app" id="app" data-view="wiki" data-chat="closed" data-left="collapsed" data-right="expanded">
+
+  <!-- ════════════ 左栏 · 宽侧栏 240px / 折叠 56px ════════════ -->
+  <aside class="sidebar-left">
+
+    <!-- 品牌 -->
+    <div class="sb-brand">
+      <div class="sb-brand-mark" title="飞象 AI">FX</div>
+      <div class="sb-brand-name">飞象 AI</div>
+      <button class="sb-collapse-btn" onclick="toggleSide('left')" title="收起 / 展开 (⌘\)">
+        <i data-lucide="panel-left-close" id="left-icon"></i>
+      </button>
+    </div>
+
+    <!-- 搜索 -->
+    <button class="sb-search" onclick="showToast('（演示）⌘K · 搜索 Wiki、文件、题目')">
+      <i data-lucide="search"></i>
+      <span class="sb-search-label">搜索 Wiki、文件…</span>
+      <span class="kbd">⌘K</span>
+      <span class="sb-tip">搜索 ⌘K</span>
+    </button>
+
+    <!-- 新对话主按钮 -->
+    <button class="sb-new-chat" onclick="openChat('new')">
+      <i data-lucide="message-square-plus"></i>
+      <span class="sb-new-chat-label">新对话</span>
+      <span class="sb-tip">新对话</span>
+    </button>
+
+    <!-- 滚动区 -->
+    <div class="sb-scroll">
+
+      <!-- 知识库 section -->
+      <div class="sb-section">
+        <div class="sb-group-label">我的知识库</div>
+
+        <button class="sb-kb" data-kb="personal" onclick="switchKb('personal','张老师 · 个人',87)">
+          <i data-lucide="bookmark"></i>
+          <span class="kb-name">张老师 · 个人</span>
+          <span class="kb-count">87</span>
+        </button>
+
+        <div class="sb-group-label">团队知识库</div>
+
+        <button class="sb-kb active" data-kb="math-group" onclick="switchKb('math-group','初中数学教研组',925)">
+          <i data-lucide="users-round"></i>
+          <span class="kb-name">初中数学教研组</span>
+          <span class="kb-count">925</span>
+          <span class="sb-tip">初中数学教研组 · 925 份</span>
+        </button>
+
+        <button class="sb-kb" data-kb="school" onclick="switchKb('school','北京 101 中学 · 公共库',1247)">
+          <i data-lucide="school"></i>
+          <span class="kb-name">北京 101 中学</span>
+          <span class="kb-count">1,247</span>
+        </button>
+
+        <button class="sb-kb" data-kb="grade-2" onclick="switchKb('grade-2','初二数学备课组',412)">
+          <i data-lucide="book-marked"></i>
+          <span class="kb-name">初二数学备课组</span>
+          <span class="kb-count">412</span>
+        </button>
+
+        <button class="sb-kb" data-kb="grade-3" onclick="switchKb('grade-3','初三数学备课组',531)">
+          <i data-lucide="book-marked"></i>
+          <span class="kb-name">初三数学备课组</span>
+          <span class="kb-count">531</span>
+        </button>
+      </div>
+
+      <!-- 其他模块 -->
+      <div class="sb-section">
+        <button class="sb-item" onclick="navTo('qbank')">
+          <i data-lucide="file-stack"></i>
+          <span class="sb-item-label">题库</span>
+          <span class="sb-item-badge">12</span>
+          <span class="sb-tip">题库 · 12 个待审</span>
+        </button>
+        <button class="sb-item" id="sb-chat" onclick="openChat('history')">
+          <i data-lucide="message-square-text"></i>
+          <span class="sb-item-label">历史对话</span>
+          <span class="sb-tip">历史对话</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 底部 -->
+    <div class="sb-foot">
+      <button class="sb-item" onclick="showToast('（演示）打开使用指南')">
+        <i data-lucide="circle-help"></i>
+        <span class="sb-item-label">使用指南</span>
+        <span class="sb-tip">使用指南</span>
+      </button>
+      <button class="sb-item" onclick="showToast('（演示）打开设置')">
+        <i data-lucide="settings"></i>
+        <span class="sb-item-label">设置</span>
+        <span class="sb-tip">设置</span>
+      </button>
+      <button class="sb-user" onclick="showToast('（演示）个人中心')">
+        <span class="sb-avatar">张</span>
+        <span class="sb-user-name">张老师</span>
+        <i data-lucide="chevron-up"></i>
+        <span class="sb-tip">张老师</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════════════ 中栏 · 工作区 ════════════ -->
+  <main class="workspace">
+
+    <!-- 顶栏 · 单行合并：视图切换 + 面包屑 + 当前页 actions + 通知 -->
+    <header class="topbar topbar-merged">
+      <!-- 左 1：视图切换器 -->
+      <div class="view-switcher" role="tablist">
+        <button class="vs-btn" data-view="wiki" onclick="window.location.href='02-wiki-home.html'" title="回 Wiki 首页">
+          <i data-lucide="book-open"></i>
+          Wiki
+        </button>
+        <button class="vs-btn" data-view="graph" onclick="window.location.href='03-wiki-entry.html?view=graph'" title="回知识图谱视图">
+          <i data-lucide="network"></i>
+          知识图谱
+        </button>
+        <button class="vs-btn active" data-view="folder" onclick="window.location.href='03-wiki-entry.html?view=folder'" title="回到 文件夹视图">
+          <i data-lucide="folder"></i>
+          文件夹
+        </button>
+      </div>
+
+      <!-- 左 2：竖分隔 -->
+      <span class="tb-sep" aria-hidden="true"></span>
+
+      <!-- 左 3：面包屑 -->
+      <nav class="entry-breadcrumb tb-breadcrumb" aria-label="面包屑">
+        <a class="ebc-item" href="02-wiki-home.html" title="回到 初中数学教研组 知识库">
+          <i data-lucide="library"></i>
+          <span>初中数学教研组</span>
+        </a>
+        <span class="ebc-sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+        <a class="ebc-item" href="02-wiki-home.html#grade-9" title="九年级">
+          <span>数学 · 九年级</span>
+        </a>
+        <span class="ebc-sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+        <a class="ebc-item" href="03-wiki-entry.html" title="回到 二次函数图像与性质 Wiki">
+          <i data-lucide="folder"></i>
+          <span>二次函数图像与性质 · 文件夹</span>
+        </a>
+        <span class="ebc-sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+        <span class="ebc-current">
+          <i data-lucide="file-text"></i>
+          <span>导入课件.pptx</span>
+        </span>
+      </nav>
+
+      <!-- 中：spacer -->
+      <div class="tb-spacer"></div>
+
+      <!-- 右 1：当前页 actions -->
+      <button class="ebc-action ebc-action-meta tb-action" id="btn-toggle-right" onclick="toggleRight()" title="收起 / 展开右侧 AI 内容栏">
+        <i data-lucide="panel-right-open"></i>
+        <span>AI 整理</span>
+      </button>
+      <span class="ebc-action-sep" aria-hidden="true"></span>
+      <button class="ebc-action tb-action" onclick="showToast('（演示）导出为 PDF / Word / Markdown')" title="下载">
+        <i data-lucide="download"></i>
+        <span>下载</span>
+      </button>
+      <button class="ebc-action tb-action" onclick="showToast('（演示）分享给同事 / 复制链接')" title="分享">
+        <i data-lucide="share-2"></i>
+        <span>分享</span>
+      </button>
+      <button class="ebc-action tb-action" onclick="showToast('（演示）收藏到「张老师 · 个人」')" title="收藏">
+        <i data-lucide="bookmark-plus"></i>
+        <span>收藏</span>
+      </button>
+
+      <!-- 右 2：竖分隔 -->
+      <span class="tb-sep" aria-hidden="true"></span>
+
+      <!-- 右 3：通知 -->
+      <button class="tb-btn" onclick="showToast('（演示）打开通知中心')" title="通知">
+        <i data-lucide="bell"></i>
+      </button>
+    </header>
+
+    <!-- 主滚动区 -->
+    <div class="workspace-scroll">
+
+      <article class="wiki-page wiki-entry file-preview-page" id="view-wiki">
+
+        <!-- ───── 文件 Hero ───── -->
+        <header class="entry-hero">
+          <div class="entry-kicker">
+            <span class="entry-badge fp-badge-pptx"><i data-lucide="presentation"></i> PPTX · 原文件</span>
+            <span class="entry-subj">数学 · 九年级 · 函数 · 第一课时</span>
+          </div>
+          <h1 class="entry-title">二次函数 · 导入课件.pptx</h1>
+          <p class="entry-lead">
+            张老师为<b>八(3)班第一课时</b>准备的导入课件，覆盖 <b>开口方向、对称轴、顶点坐标</b> 三个核心考点。
+            飞象 AI 读完这份课件后，把第 <b>3、5、12 页</b> 的内容融进了
+            <a class="wlink" onclick="window.location.href='03-wiki-entry.html'">《二次函数图像与性质》</a> Wiki——
+            右侧看 AI 是怎么吸收这份资料的。
+          </p>
+          <div class="entry-meta">
+            <span class="em-item"><i data-lucide="user"></i> 张老师 · 上传 <b>5 天前</b></span>
+            <span class="em-sep">·</span>
+            <span class="em-item"><i data-lucide="layout-grid"></i> <b>28 页</b></span>
+            <span class="em-sep">·</span>
+            <span class="em-item"><i data-lucide="hard-drive"></i> 4.2 MB</span>
+            <span class="em-sep">·</span>
+            <span class="em-item"><i data-lucide="hash"></i> AI 引用 <b>3 处</b> 到 Wiki</span>
+            <span class="em-sep">·</span>
+            <span class="em-item"><i data-lucide="eye"></i> <b>8 位</b> 老师查看过</span>
+          </div>
+        </header>
+
+        <!-- ───── PPT 预览主体 ───── -->
+        <div class="fp-viewer">
+
+          <!-- 大图：当前页 -->
+          <div class="fp-slide-stage">
+            <div class="fp-stage-bar">
+              <button class="fp-nav-btn" onclick="showToast('（演示）上一页')" title="上一页">
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <span class="fp-page-no">P3 <span class="fp-page-total">/ 28</span></span>
+              <button class="fp-nav-btn" onclick="showToast('（演示）下一页')" title="下一页">
+                <i data-lucide="chevron-right"></i>
+              </button>
+              <div class="fp-stage-spacer"></div>
+              <span class="fp-stage-cite"><i data-lucide="link"></i> 本页被 Wiki §1 开口方向 引用</span>
+            </div>
+
+            <div class="fp-slide">
+              <div class="fp-slide-title">3 · 开口方向 — 由系数 a 决定</div>
+              <ul class="fp-slide-points">
+                <li><span class="fp-slide-num">①</span><span>当 <b>a &gt; 0</b>：开口<b>向上</b>，函数有最<b>小</b>值</span></li>
+                <li><span class="fp-slide-num">②</span><span>当 <b>a &lt; 0</b>：开口<b>向下</b>，函数有最<b>大</b>值</span></li>
+                <li><span class="fp-slide-num">③</span><span><b>|a|</b> 越大，开口越<b>窄</b>；反之越扁</span></li>
+              </ul>
+              <div class="fp-slide-figure">
+                <div class="fp-fig-axes">
+                  <div class="fp-fig-curve fp-fig-up" title="a&gt;0 抛物线开口向上">y = x²</div>
+                  <div class="fp-fig-curve fp-fig-down" title="a&lt;0 抛物线开口向下">y = -x²</div>
+                  <div class="fp-fig-curve fp-fig-narrow" title="|a|&gt;1 开口变窄">y = 2x²</div>
+                  <div class="fp-fig-axis-x"></div>
+                  <div class="fp-fig-axis-y"></div>
+                  <div class="fp-fig-label fp-fig-lx">x</div>
+                  <div class="fp-fig-label fp-fig-ly">y</div>
+                </div>
+              </div>
+              <div class="fp-slide-foot">二次函数 · 第一课时 · 张老师 · 2026 春</div>
+            </div>
+          </div>
+
+          <!-- 缩略图横条 -->
+          <div class="fp-strip">
+            <button class="fp-thumb" data-p="1" onclick="showToast('（演示）跳到 P1 · 封面')">
+              <span class="fp-thumb-no">1</span>
+              <span class="fp-thumb-title">封面</span>
+            </button>
+            <button class="fp-thumb" data-p="2" onclick="showToast('（演示）跳到 P2')">
+              <span class="fp-thumb-no">2</span>
+              <span class="fp-thumb-title">教学目标</span>
+            </button>
+            <button class="fp-thumb active" data-p="3">
+              <span class="fp-thumb-no">3</span>
+              <span class="fp-thumb-title">开口方向</span>
+              <i data-lucide="link" class="fp-thumb-cite-ico" title="本页被 Wiki 引用"></i>
+            </button>
+            <button class="fp-thumb" data-p="4" onclick="showToast('（演示）跳到 P4')">
+              <span class="fp-thumb-no">4</span>
+              <span class="fp-thumb-title">对称轴</span>
+            </button>
+            <button class="fp-thumb" data-p="5" onclick="showToast('（演示）跳到 P5')">
+              <span class="fp-thumb-no">5</span>
+              <span class="fp-thumb-title">顶点坐标</span>
+              <i data-lucide="link" class="fp-thumb-cite-ico" title="本页被 Wiki 引用"></i>
+            </button>
+            <button class="fp-thumb" data-p="6" onclick="showToast('（演示）跳到 P6')">
+              <span class="fp-thumb-no">6</span>
+              <span class="fp-thumb-title">增减性</span>
+            </button>
+            <button class="fp-thumb more" onclick="showToast('（演示）展开全部 28 页缩略图')">
+              <span class="fp-thumb-no"><i data-lucide="more-horizontal"></i></span>
+              <span class="fp-thumb-title">全部 28 页</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ───── 底部说明（占位，下面所有旧 wiki 内容会被删掉） ───── -->
+        <div class="wiki-foot entry-foot" style="margin-top:32px">
+          这份原文件由 <b>张老师 5 天前上传</b>。飞象 AI 已读完 28 页，把第 <b>3、5、12 页</b> 的内容
+          融进了《二次函数图像与性质》Wiki——右边「AI 整理」面板里能看到 AI 怎么吸收这份资料，以及它衍生出了哪些
+          相关 Wiki、AI 出过的题、其他同主题资料。
+          <a onclick="window.location.href='03-wiki-entry.html'">查看本文件参与的 Wiki →</a>
+        </div>
+
+        <!-- 以下是旧 wiki 词条内容，下面这段会被 CSS hide。保留为 fallback。 -->
+        <div hidden>
+        <!-- ───── 正文 1：开口方向 ───── -->
+        <section class="entry-sec" id="s-open">
+          <h2 class="entry-h2">1 · 开口方向</h2>
+          <p class="entry-p">
+            将函数写成一般式 <span class="m">y = ax² + bx + c</span> 后，<b>a 决定开口方向</b>：
+          </p>
+          <ul class="entry-ul">
+            <li><b>a &gt; 0</b>：开口<b>向上</b>，函数有最<b>小</b>值；</li>
+            <li><b>a &lt; 0</b>：开口<b>向下</b>，函数有最<b>大</b>值；</li>
+            <li><b>|a| 越大</b>，开口<b>越窄</b>；反之越扁。</li>
+          </ul>
+          <p class="entry-p">
+            进一步的几何意义见
+            <a class="wlink" onclick="openWiki('函数图像变换')">函数图像变换</a>——
+            a 也控制了抛物线相对于 <span class="m">y = x²</span> 的<b>纵向拉伸/翻转</b>。
+          </p>
+          <p class="entry-cite">
+            <i data-lucide="quote"></i>
+            来源：
+            <a class="flink" onclick="showToast('（演示）打开《二次函数·导入课件.pptx》第 3 页')">导入课件.pptx · P3</a>
+            <span class="sep">·</span>
+            <a class="flink" onclick="showToast('（演示）打开《教学设计·二次函数.docx》第 2 页')">教学设计 · P2</a>
+          </p>
+        </section>
+
+        <!-- ───── 正文 2：对称轴 ───── -->
+        <section class="entry-sec" id="s-axis">
+          <h2 class="entry-h2">2 · 对称轴</h2>
+          <p class="entry-p">
+            抛物线是<b>轴对称图形</b>，其对称轴是一条平行于 y 轴的直线，方程为：
+          </p>
+          <div class="entry-formula">x = − b / (2a)</div>
+          <p class="entry-p">
+            对称轴是连接 <a class="wlink" onclick="scrollToSec('s-vertex')">顶点</a> 与 <b>函数最值</b> 的关键。
+            一旦确定对称轴位置，就能用
+            <a class="wlink" onclick="openWiki('轴对称')">轴对称</a> 性质，由抛物线上任一点反推另一点的坐标。
+          </p>
+          <p class="entry-cite">
+            <i data-lucide="quote"></i>
+            来源：
+            <a class="flink" onclick="showToast('（演示）打开《配套习题汇编.pdf》第 12 页')">配套习题汇编.pdf · P12</a>
+            <span class="sep">·</span>
+            <a class="flink" onclick="showToast('（演示）打开王建华公开课板书')">公开课板书 · 王建华</a>
+          </p>
+        </section>
+
+        <!-- ───── 正文 3：顶点坐标 ───── -->
+        <section class="entry-sec" id="s-vertex">
+          <h2 class="entry-h2">3 · 顶点坐标</h2>
+          <p class="entry-p">
+            顶点是抛物线的最高点或最低点，对应函数的<b>最值</b>。一般式下顶点坐标公式：
+          </p>
+          <div class="entry-formula">( − b/(2a),  (4ac − b²) / (4a) )</div>
+          <p class="entry-p">
+            实际教学中，更推荐先把函数<b>配方</b>为顶点式
+            <span class="m">y = a(x − h)² + k</span>，
+            则顶点直接是 <b>(h, k)</b>。配方法见
+            <a class="wlink" onclick="openWiki('一元二次方程综合')">一元二次方程综合 · 配方法</a>。
+          </p>
+          <p class="entry-cite">
+            <i data-lucide="quote"></i>
+            来源：
+            <a class="flink" onclick="showToast('（演示）打开《教学设计·二次函数.docx》第 5 页')">教学设计 · P5</a>
+            <span class="sep">·</span>
+            <a class="flink" onclick="showToast('（演示）打开《赵明杰·错题剖析.docx》')">赵明杰·错题剖析</a>
+          </p>
+        </section>
+
+        <!-- ───── 正文 4：增减性 ───── -->
+        <section class="entry-sec" id="s-mono">
+          <h2 class="entry-h2">4 · 增减性</h2>
+          <p class="entry-p">
+            以对称轴 <span class="m">x = -b/(2a)</span> 为界，函数的单调性如下：
+          </p>
+          <ul class="entry-ul">
+            <li><b>a &gt; 0</b>：对称轴左侧 y 随 x 增大而<b>减小</b>；右侧 y 随 x 增大而<b>增大</b>；</li>
+            <li><b>a &lt; 0</b>：左侧<b>增大</b>，右侧<b>减小</b>；</li>
+            <li>结合<a class="wlink" onclick="openWiki('一元一次不等式')">不等式</a>，常用来求"使 y 在某区间单调"的参数范围。</li>
+          </ul>
+          <p class="entry-p">
+            <b>易错点</b>（八(3)班上学期错题统计）：
+            学生常忽略<b>对称轴随参数 m 在变化</b>这一前提，把 m 当作已知数代入。
+            详见 <a class="flink" onclick="showToast('（演示）打开《八(3)班·错题精选》')">八(3)班·错题精选</a>。
+          </p>
+          <p class="entry-cite">
+            <i data-lucide="quote"></i>
+            来源：
+            <a class="flink" onclick="showToast('（演示）打开《海淀区 2026 一模卷·数学.pdf》T6')">海淀区 2026 一模卷 · T6</a>
+            <span class="sep">·</span>
+            <a class="flink" onclick="showToast('（演示）打开《八(3)班·错题精选》')">八(3)班·错题精选</a>
+          </p>
+        </section>
+
+        <!-- ───── 正文 5：与坐标轴交点 ───── -->
+        <section class="entry-sec" id="s-cross">
+          <h2 class="entry-h2">5 · 与坐标轴的交点</h2>
+          <p class="entry-p">
+            令 x = 0，得 y 轴交点 <b>(0, c)</b>；令 y = 0，方程
+            <span class="m">ax² + bx + c = 0</span> 的根即为 x 轴交点的横坐标，
+            个数由<b>判别式</b> Δ = b² − 4ac 决定：
+          </p>
+          <ul class="entry-ul">
+            <li><b>Δ &gt; 0</b>：与 x 轴交于<b>两点</b>；</li>
+            <li><b>Δ = 0</b>：与 x 轴<b>相切</b>（仅一个交点）；</li>
+            <li><b>Δ &lt; 0</b>：与 x 轴<b>无交点</b>。</li>
+          </ul>
+          <p class="entry-p">
+            这与 <a class="wlink" onclick="openWiki('一元二次方程综合')">一元二次方程</a> 的根的情况一一对应——
+            "图像看 Δ"是处理函数与方程综合题的标准套路。
+          </p>
+          <p class="entry-cite">
+            <i data-lucide="quote"></i>
+            来源：
+            <a class="flink" onclick="showToast('（演示）打开《配套习题汇编.pdf》第 15 页')">配套习题汇编 · P15</a>
+            <span class="sep">·</span>
+            <a class="flink" onclick="showToast('（演示）打开《北京中考真题 2021-2025》')">北京中考真题 2021-2025</a>
+          </p>
+        </section>
+
+        <!-- ───── 相关词条 ───── -->
+        <section class="entry-sec" id="s-related">
+          <h2 class="entry-h2">相关词条</h2>
+          <p class="entry-p entry-related-intro">
+            学生学这一节时，通常需要先掌握下面这些前置概念；学完之后，会去到这些进阶应用：
+          </p>
+          <div class="related-cluster">
+            <div class="rc-group">
+              <div class="rc-label">前置 · 学这一节前要先会</div>
+              <p class="subject-para">
+                <a class="wlink" onclick="openWiki('一次函数')">一次函数</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('一元二次方程综合')">一元二次方程</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('整式乘法与因式分解')">整式乘法与因式分解</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('轴对称')">轴对称</a>
+              </p>
+            </div>
+            <div class="rc-group">
+              <div class="rc-label">进阶 · 学完之后能用来做什么</div>
+              <p class="subject-para">
+                <a class="wlink" onclick="openWiki('二次函数应用题')">二次函数应用题</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('中考压轴·函数综合')">中考压轴 · 函数综合</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('动点问题与变化规律')">动点问题</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('函数图像变换')">函数图像变换</a>
+              </p>
+            </div>
+            <div class="rc-group">
+              <div class="rc-label">同章 · 一起出现频率最高</div>
+              <p class="subject-para">
+                <a class="wlink" onclick="openWiki('反比例函数综合')">反比例函数综合</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('相似三角形判定与性质')">相似三角形</a>
+                <span class="sep">·</span>
+                <a class="wlink" onclick="openWiki('圆与直线的位置关系')">圆与直线</a>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ───── 本词条来源（raw sources）───── -->
+        <section class="entry-sec" id="s-sources">
+          <h2 class="entry-h2">
+            本词条来源
+            <span class="h2-note">12 份原文件 · AI 引用追溯到行级</span>
+          </h2>
+          <p class="entry-p entry-sources-intro">
+            这一页所有内容，都来自下面这 12 份资料。<b>每段正文末尾的引文</b>都会跳回原文相应位置——
+            想看原版始终能回去。
+          </p>
+          <ul class="src-list">
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《二次函数·导入课件.pptx》')">
+                <i data-lucide="presentation"></i>
+                <span class="src-name">二次函数·导入课件.pptx</span>
+                <span class="src-by">张老师 · 上传于 5 天前</span>
+                <span class="src-use">引用 3 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《教学设计·二次函数.docx》')">
+                <i data-lucide="file-text"></i>
+                <span class="src-name">教学设计·二次函数.docx</span>
+                <span class="src-by">张老师 · 上传于 5 天前</span>
+                <span class="src-use">引用 4 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《配套习题汇编.pdf》')">
+                <i data-lucide="book"></i>
+                <span class="src-name">八下函数·配套习题汇编.pdf</span>
+                <span class="src-by">教研组共建 · 1 个月前</span>
+                <span class="src-use">引用 6 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《海淀区 2026 一模卷·数学.pdf》')">
+                <i data-lucide="file-text"></i>
+                <span class="src-name">海淀区 2026 一模卷·数学.pdf</span>
+                <span class="src-by">李素芬 · 上传于 1 周前</span>
+                <span class="src-use">引用 5 处（T6 / T22 等）</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《SAS 判定·公开课板书.jpg》')">
+                <i data-lucide="image"></i>
+                <span class="src-name">王建华·公开课板书（4 张）</span>
+                <span class="src-by">王建华 · 上传于 2 周前</span>
+                <span class="src-use">引用 2 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《赵明杰·错题剖析.docx》')">
+                <i data-lucide="file-text"></i>
+                <span class="src-name">赵明杰·错题剖析.docx</span>
+                <span class="src-by">赵明杰 · 上传于 2 周前</span>
+                <span class="src-use">引用 3 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《八(3)班·错题精选》')">
+                <i data-lucide="clipboard-list"></i>
+                <span class="src-name">八(3)班·错题精选.xlsx</span>
+                <span class="src-by">张老师 · 上传于 3 周前</span>
+                <span class="src-use">引用 2 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item" onclick="showToast('（演示）打开《北京中考真题 2021-2025》')">
+                <i data-lucide="folder-archive"></i>
+                <span class="src-name">北京中考真题 2021-2025（5 份）</span>
+                <span class="src-by">学校公共库 · 3 周前</span>
+                <span class="src-use">引用 8 处</span>
+              </a>
+            </li>
+            <li>
+              <a class="src-item more" onclick="showToast('（演示）展开剩余 4 份资料')">
+                <i data-lucide="more-horizontal"></i>
+                <span class="src-name">…还有 4 份资料</span>
+                <span class="src-by">点击展开</span>
+                <span class="src-use"></span>
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <!-- ───── 衍生对话与笔记（Karpathy: file back into wiki）───── -->
+        <section class="entry-sec" id="s-conv">
+          <h2 class="entry-h2">
+            衍生对话与笔记
+            <span class="h2-note">从这页延伸出的 4 段对话 / 老师备注 · AI 已归档回这页</span>
+          </h2>
+          <p class="entry-p entry-conv-intro">
+            老师跟 AI 围绕这一页问过的好问题、做过的好作品，可以归档回本词条，
+            下次再来这页就能直接看到。
+          </p>
+          <ul class="conv-list">
+
+            <li class="conv-item">
+              <div class="conv-head">
+                <i data-lucide="message-square-text" class="conv-ico"></i>
+                <span class="conv-title">
+                  <a onclick="openChat('replay','围绕「二次函数图像与性质」出 5 道分层练习，A/B/C 三难度，给八(3)班用')">
+                    围绕这页出 5 道分层练习，A/B/C 三难度
+                  </a>
+                </span>
+                <span class="conv-by">张老师 · 今天 18:42</span>
+              </div>
+              <p class="conv-snippet">
+                AI 已基于 12 份资料生成 <b>5 道题</b>（A 基础 2、B 提高 2、C 拔高 1），并导出到
+                <a class="flink" onclick="showToast('（演示）打开《八(3)班·随堂练习》')">八(3)班·随堂练习</a> 分组。
+              </p>
+            </li>
+
+            <li class="conv-item">
+              <div class="conv-head">
+                <i data-lucide="message-square-text" class="conv-ico"></i>
+                <span class="conv-title">
+                  <a onclick="openChat('replay','把第 4 节（增减性）换一种讲法，更直观一些')">
+                    第 4 节"增减性"能换种更直观的讲法吗？
+                  </a>
+                </span>
+                <span class="conv-by">张老师 · 昨天 11:08</span>
+              </div>
+              <p class="conv-snippet">
+                AI 给了 <b>2 种类比</b>："滑梯 + 缆车"模型；"球被斜抛"模型。张老师选了后者，
+                <a onclick="showToast('（演示）查看记录')">已采纳并写入本词条 §4 备注</a>。
+              </p>
+            </li>
+
+            <li class="conv-item">
+              <div class="conv-head">
+                <i data-lucide="sticky-note" class="conv-ico"></i>
+                <span class="conv-title">
+                  <a onclick="showToast('（演示）打开李老师笔记')">
+                    八(3)班讲到顶点坐标卡了——配方法做得不熟
+                  </a>
+                </span>
+                <span class="conv-by">李老师 · 3 天前</span>
+              </div>
+              <p class="conv-snippet">
+                建议下次教时<b>先复习 5 分钟配方法</b>，再讲顶点坐标公式。AI 已把这条提示放到
+                <a class="wlink" onclick="openWiki('一元二次方程综合')">一元二次方程 · 配方法</a> 顶部。
+              </p>
+            </li>
+
+            <li class="conv-item">
+              <div class="conv-head">
+                <i data-lucide="message-square-text" class="conv-ico"></i>
+                <span class="conv-title">
+                  <a onclick="openChat('replay','基于这一页做一份 12 页课件，给八(3)班第二课时用')">
+                    基于这一页做一份 12 页课件，给八(3)班第二课时用
+                  </a>
+                </span>
+                <span class="conv-by">张老师 · 上周</span>
+              </div>
+              <p class="conv-snippet">
+                AI 输出了 <b>12 页课件</b>，<a class="flink" onclick="showToast('（演示）打开课件')">《二次函数·第二课时.pptx》</a>
+                已保存进教研组共建库。
+              </p>
+            </li>
+
+          </ul>
+
+          <div class="conv-cta">
+            <i data-lucide="lightbulb"></i>
+            <span>
+              觉得某段对话有价值，想沉淀到这一页？
+              <a onclick="showToast('（演示）选择对话归档到本词条 · §备注 或 §例题')">把它归档到这里 →</a>
+            </span>
+          </div>
+        </section>
+
+        </div>
+        <!-- /旧 wiki fallback 结束 -->
+
+      </article>
+    </div>
+
+    <!-- ════════════ 对话流（chat 态显示） ════════════ -->
+    <div class="chat-stream" id="view-chat">
+      <div class="chat-head">
+        <nav class="ch-breadcrumb" aria-label="面包屑">
+          <a class="bc-item" href="02-wiki-home.html" title="回到 初中数学教研组 知识库">
+            <i data-lucide="library"></i>
+            <span>初中数学教研组</span>
+          </a>
+          <span class="bc-sep" aria-hidden="true">
+            <i data-lucide="chevron-right"></i>
+          </span>
+          <button class="bc-item" onclick="backToKnowledgeBase()" title="回到 二次函数图像与性质 词条">
+            <i data-lucide="book-open"></i>
+            <span>二次函数图像与性质</span>
+          </button>
+          <span class="bc-sep" aria-hidden="true">
+            <i data-lucide="chevron-right"></i>
+          </span>
+          <span class="bc-current">
+            <i data-lucide="message-square-text"></i>
+            <span id="ch-title">基于这一页给八(3)班出 5 道分层练习</span>
+          </span>
+        </nav>
+        <div class="ch-spacer"></div>
+        <div class="ch-ctx" title="飞象基于本词条 12 份资料回答">
+          <i data-lucide="layers"></i>
+          <span>本词条 · 12 份</span>
+        </div>
+      </div>
+
+      <!-- 空对话态：老师自由输入欢迎页 -->
+      <div class="chat-empty" id="chat-empty">
+        <div class="ce-hero">
+          <div class="ce-brand">
+            <span class="ce-brand-dot">飞</span>
+            <span class="ce-brand-name">飞象 AI</span>
+            <span class="ce-brand-sep">·</span>
+            <span class="ce-brand-tag">老师的 AI 助手</span>
+          </div>
+          <h1 class="ce-greet" id="ce-greet">下午好，张老师</h1>
+          <p class="ce-sub">基于<b id="ce-kb-name">数学组共建库</b>的 <b id="ce-kb-count">925</b> 份资料，问我任何事——或者直接生成教学内容</p>
+        </div>
+
+        <div class="ce-composer">
+          <textarea id="ce-input" rows="2"
+            placeholder="想做什么？比如：基于这条词条出一组阶梯练习给八(3)班用"
+            oninput="autosize(this);refreshCeSend()"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();ceSend()}"></textarea>
+
+          <div class="ce-chips">
+            <button class="ce-chip" onclick="ceUseChip('基于「二次函数图像与性质」给八(3)班出 5 道分层练习，A/B/C 三难度')">
+              <i data-lucide="sparkles"></i><span>AI 组题</span>
+            </button>
+            <button class="ce-chip" onclick="ceUseChip('帮我把「二次函数图像与性质」做成第二课时课件，约 12 页')">
+              <i data-lucide="layout"></i><span>多页课件</span>
+            </button>
+            <button class="ce-chip" onclick="ceUseChip('给「二次函数图像与性质」做个 2 分钟动画讲解')">
+              <i data-lucide="play-circle"></i><span>教学动画</span>
+            </button>
+            <button class="ce-chip" onclick="ceUseChip('设计一个 5 分钟的课堂小游戏，关于「二次函数对称轴与顶点」')">
+              <i data-lucide="gamepad-2"></i><span>教学游戏</span>
+            </button>
+            <button class="ce-chip more" onclick="showToast('更多工具规划中：教案、学情分析、AI 翻译润色…')">
+              <i data-lucide="more-horizontal"></i>
+            </button>
+          </div>
+
+          <div class="ce-foot">
+            <div class="ce-foot-left">
+              <button class="ce-icon-btn" title="附件" onclick="showToast('（演示）添加附件')">
+                <i data-lucide="paperclip"></i>
+              </button>
+              <button class="ce-icon-btn" title="语音输入" onclick="showToast('（演示）语音输入')">
+                <i data-lucide="mic"></i>
+              </button>
+              <span class="ce-divider"></span>
+              <button class="ce-kb-attach" onclick="showToast('当前范围：数学组共建库 · 925 份。点击切换上下文。')">
+                <i data-lucide="library"></i>
+                <span id="ce-kb-label">数学组 · 925 份</span>
+              </button>
+            </div>
+            <button class="ce-send idle" id="ce-send" onclick="ceSend()" title="发送（Enter）">
+              <i data-lucide="arrow-up"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="ce-trust">
+          <i data-lucide="lock"></i>
+          <span>对话只属于你 · 不进通用模型</span>
+        </div>
+      </div>
+
+      <div class="chat-body" id="chat-body">
+        <!-- 用户消息 -->
+        <div class="chat-msg user">
+          <div class="msg-bubble" id="chat-user-text">
+            围绕「二次函数图像与性质」出 5 道分层练习，A/B/C 三难度，给八(3)班用
+          </div>
+        </div>
+
+        <!-- AI 回复（带流式效果 + 引用 + 操作） -->
+        <div class="chat-msg ai" id="chat-ai-msg">
+          <div class="msg-avatar">F</div>
+          <div class="msg-content">
+            <p id="chat-ai-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 中间底部输入 -->
+      <div class="chat-composer">
+        <div class="cc-wrap">
+          <div class="cc-input">
+            <textarea id="cc-textarea" rows="1" placeholder="继续问飞象，比如「再难一点」「换个出题角度」…"
+              oninput="autosize(this);refreshCcSend()"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendInChat()}"></textarea>
+            <button class="cc-btn" title="附件" onclick="showToast('（演示）添加附件')">
+              <i data-lucide="paperclip"></i>
+            </button>
+            <button class="cc-btn send idle" id="cc-send" title="发送（Enter）" onclick="sendInChat()">
+              <i data-lucide="arrow-up"></i>
+            </button>
+          </div>
+          <div class="cc-hint">
+            <b>Enter</b> 发送 · <b>Shift+Enter</b> 换行 · 回到 Wiki 可点右上角 ×
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════ 底部 Command Bar ════════════ -->
+    <div class="bottom-bar" id="bottom-bar">
+
+      <!-- 上次对话回溯标签 -->
+      <div class="bb-resume-row" id="bb-resume-row" style="display:none">
+        <button class="bb-resume" onclick="resumeLastChat()">
+          <i data-lucide="message-square-text"></i>
+          <span class="resume-label">上次跟飞象聊到</span>
+          <span class="resume-name">围绕《二次函数》出 5 道分层练习</span>
+          <span class="resume-close" onclick="event.stopPropagation();hideResume()" title="不再提示">
+            <i data-lucide="x"></i>
+          </span>
+        </button>
+      </div>
+
+      <div class="bb-wrap">
+        <!-- 工具 chips（默认收起，聚焦展开 · 全部基于当前词条） -->
+        <div class="bb-tools">
+          <button class="bb-chip" tabindex="-1" onclick="useFromBar('基于这一页给八(3)班出 5 道分层练习，A/B/C 三难度')">
+            <i data-lucide="sparkles"></i> 基于这页出题
+          </button>
+          <button class="bb-chip" tabindex="-1" onclick="useFromBar('把这一页做成第二课时课件，约 12 页，给八(3)班用')">
+            <i data-lucide="layout"></i> 做成课件
+          </button>
+          <button class="bb-chip" tabindex="-1" onclick="useFromBar('把第 4 节「增减性」换一种更直观的讲法')">
+            <i data-lucide="messages-square"></i> 换种讲法
+          </button>
+          <button class="bb-chip" tabindex="-1" onclick="useFromBar('给这一页做个 2 分钟动画讲解')">
+            <i data-lucide="play-circle"></i> 教学动画
+          </button>
+        </div>
+
+        <!-- 默认一行：上下文 + 输入 + 按钮 -->
+        <div class="bb-input">
+          <button class="bb-ctx" tabindex="-1"
+            onclick="showToast('AI 正基于：本词条 12 份原文件。点击切换为「整个数学组库」。')">
+            <i data-lucide="book-open" class="lead"></i>
+            <span class="ctx-name">本词条 · 12 份资料</span>
+            <i data-lucide="chevron-down" class="chev"></i>
+          </button>
+          <textarea id="bb-textarea" rows="1" placeholder="基于这一页问飞象点什么…"
+            oninput="autosize(this);refreshBarSend()"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitFromBar()}"></textarea>
+          <button class="bb-input-btn" tabindex="-1" title="附件" onclick="showToast('（演示）添加附件')">
+            <i data-lucide="paperclip"></i>
+          </button>
+          <button class="bb-input-btn send idle" id="bb-send" title="发送（Enter）" onclick="submitFromBar()">
+            <i data-lucide="arrow-up"></i>
+          </button>
+        </div>
+
+        <!-- hint（默认收起，聚焦展开） -->
+        <div class="bb-hint">
+          <b>Enter</b> 发送 · <b>Shift+Enter</b> 换行 · AI 只基于你的资料回答
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ════════════ 右栏 · Canvas（chat 态下 1:1） ════════════ -->
+  <aside class="sidebar-right">
+
+    <!-- Canvas 顶部 tab 切换 · 文件预览态的 AI 视图 -->
+    <div class="canvas-head">
+      <div class="canvas-tabs" id="canvas-tabs">
+        <!-- 元信息 tabs · 阅读 mode 显示 -->
+        <button class="cv-tab tab-meta active" data-cv="wiki" onclick="switchCanvas('wiki')">
+          <i data-lucide="sparkles"></i>
+          AI 摘要
+        </button>
+        <button class="cv-tab tab-meta" data-cv="backlinks" onclick="switchCanvas('backlinks')">
+          <i data-lucide="book-open"></i>
+          关联 Wiki
+          <span class="cv-tab-meta">· 3</span>
+        </button>
+        <button class="cv-tab tab-meta" data-cv="related" onclick="switchCanvas('related')">
+          <i data-lucide="files"></i>
+          同主题资料
+          <span class="cv-tab-meta">· 11</span>
+        </button>
+
+        <!-- AI 产物 tab · chat-open mode 显示 -->
+        <button class="cv-tab tab-canvas" data-cv="quiz" onclick="switchCanvas('quiz')" hidden id="cv-tab-quiz">
+          <i data-lucide="sparkles"></i>
+          题目集
+          <span class="cv-tab-meta">· 5 道</span>
+        </button>
+      </div>
+      <button class="cv-collapse-btn" onclick="collapseRight()" title="收起 AI 面板">
+        <i data-lucide="panel-right-close"></i>
+      </button>
+    </div>
+
+    <div class="canvas-body">
+
+      <!-- Pane 1：AI 摘要 · 默认 active -->
+      <div class="cv-pane active" data-pane="wiki">
+        <article class="cv-meta">
+
+          <header class="cm-head">
+            <div class="cm-head-title">AI 摘要</div>
+            <div class="cm-head-sub">
+              飞象 AI 整理于 <b>今天 09:14</b> · 基于全文 28 页提炼
+            </div>
+          </header>
+
+          <div class="fp-ai-block">
+            <div class="fp-ai-label"><i data-lucide="target"></i> 这份课件主要讲什么</div>
+            <p class="fp-ai-text">
+              张老师为<b>八(3)班</b>第一课时准备的导入课件，串起<b>3 个核心考点</b>：
+              <b>开口方向</b>（P3）、<b>对称轴</b>（P12）、<b>顶点坐标</b>（P5）。
+              整体节奏偏导入型——用 5 张图像对比让学生先建立直觉，再给出代数公式。
+            </p>
+          </div>
+
+          <div class="fp-ai-block">
+            <div class="fp-ai-label"><i data-lucide="git-compare"></i> 与组里其他课件的差异</div>
+            <ul class="fp-ai-list">
+              <li><b>图示数量更多</b>——5 张抛物线对比，比组内平均（2.1 张）更直观</li>
+              <li><b>例题偏少</b>——只在 P14 给了 2 道；李老师课件平均 6 道</li>
+              <li><b>未覆盖增减性</b>——P6 之后跳到对称轴，缺第 4 节的内容</li>
+            </ul>
+          </div>
+
+          <div class="fp-ai-block">
+            <div class="fp-ai-label"><i data-lucide="lightbulb"></i> AI 推荐的搭配资料</div>
+            <ul class="fp-ai-list">
+              <li>
+                <a class="wlink" onclick="openWiki('一元二次方程综合')">配套习题汇编.pdf</a>
+                · P12-P15 补齐例题
+              </li>
+              <li>
+                <a class="wlink" onclick="showToast('（演示）打开《八(3)班·错题精选》')">八(3)班·错题精选</a>
+                · 针对易错点配讲解
+              </li>
+            </ul>
+          </div>
+
+          <footer class="cm-foot">
+            <i data-lucide="info"></i>
+            <span>摘要由 AI 基于全文生成 · 内容仅供参考，最终判断以原文件为准。</span>
+          </footer>
+
+        </article>
+      </div>
+
+      <!-- Pane 2：关联 Wiki -->
+      <div class="cv-pane" data-pane="backlinks">
+        <article class="cv-meta">
+
+          <header class="cm-head">
+            <div class="cm-head-title">关联 Wiki · 3 个</div>
+            <div class="cm-head-sub">
+              本文件被 <b>3 个 Wiki</b> 引用 · 点击进入 Wiki 看更全的整理
+            </div>
+          </header>
+
+          <ul class="cm-backlink-list">
+            <li class="cm-backlink">
+              <a class="cm-bl-name" onclick="window.location.href='03-wiki-entry.html'">
+                <i data-lucide="book-open"></i>
+                二次函数图像与性质
+              </a>
+              <span class="cm-bl-count">本文件 P3 / P5 / P12 被引用 · 3 处</span>
+            </li>
+            <li class="cm-backlink">
+              <a class="cm-bl-name" onclick="openWiki('中考压轴 · 函数综合')">
+                <i data-lucide="book-open"></i>
+                中考压轴 · 函数综合
+              </a>
+              <span class="cm-bl-count">本文件 P5（顶点公式） 被引用 · 1 处</span>
+            </li>
+            <li class="cm-backlink">
+              <a class="cm-bl-name" onclick="openWiki('分层练习设计法')">
+                <i data-lucide="book-open"></i>
+                分层练习设计法
+              </a>
+              <span class="cm-bl-count">本文件 P3 例题 被用作 A 档基础题源</span>
+            </li>
+          </ul>
+
+          <footer class="cm-foot">
+            <i data-lucide="info"></i>
+            <span>每当本文件被新 Wiki 引用，飞象 AI 会自动出现在这里。</span>
+          </footer>
+
+        </article>
+      </div>
+
+      <!-- Pane 3：同主题资料 -->
+      <div class="cv-pane" data-pane="related">
+        <article class="cv-meta">
+
+          <header class="cm-head">
+            <div class="cm-head-title">同主题资料 · 11 份</div>
+            <div class="cm-head-sub">
+              组里其他老师准备的「二次函数·第一课时」相关资料 · AI 自动归类
+            </div>
+          </header>
+
+          <ul class="cm-source-list">
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《二次函数·导入课件 v2.pptx》')">
+                <i data-lucide="presentation"></i>
+                二次函数·导入课件 v2.pptx
+              </a>
+              <span class="cm-src-pages">李老师 · 30 页</span>
+            </li>
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《教学设计·二次函数.docx》')">
+                <i data-lucide="file-text"></i>
+                教学设计·二次函数.docx
+              </a>
+              <span class="cm-src-pages">张老师 · 12 页</span>
+            </li>
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《配套习题汇编.pdf》')">
+                <i data-lucide="book"></i>
+                配套习题汇编.pdf
+              </a>
+              <span class="cm-src-pages">教研组共建 · 36 页</span>
+            </li>
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《王老师·公开课板书.pdf》')">
+                <i data-lucide="image"></i>
+                王老师·公开课板书.pdf
+              </a>
+              <span class="cm-src-pages">王建华 · 4 张</span>
+            </li>
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《八(3)班·二次函数周测卷.pdf》')">
+                <i data-lucide="file-text"></i>
+                八(3)班·二次函数周测卷.pdf
+              </a>
+              <span class="cm-src-pages">张老师 · 2 页</span>
+            </li>
+            <li class="cm-source">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《海淀区 2026 一模卷》')">
+                <i data-lucide="file-text"></i>
+                海淀区 2026 一模卷·数学.pdf
+              </a>
+              <span class="cm-src-pages">李素芬 · T6</span>
+            </li>
+            <li class="cm-source cm-source-more" id="cm-source-more">
+              <a class="cm-src-name" onclick="toggleSources()">
+                <i data-lucide="chevron-down"></i>
+                展开全部 11 份
+              </a>
+            </li>
+            <li class="cm-source cm-source-hidden">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《赵明杰·错题剖析.docx》')">
+                <i data-lucide="file-text"></i>
+                赵明杰·错题剖析.docx
+              </a>
+              <span class="cm-src-pages">赵明杰 · 8 页</span>
+            </li>
+            <li class="cm-source cm-source-hidden">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《八(3)班·错题精选.xlsx》')">
+                <i data-lucide="clipboard-list"></i>
+                八(3)班·错题精选.xlsx
+              </a>
+              <span class="cm-src-pages">张老师 · 42 行</span>
+            </li>
+            <li class="cm-source cm-source-hidden">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《北京中考真题 2021-2025》')">
+                <i data-lucide="folder-archive"></i>
+                北京中考真题 2021-2025
+              </a>
+              <span class="cm-src-pages">公共库 · 5 份</span>
+            </li>
+            <li class="cm-source cm-source-hidden">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《二次函数·课堂例题集.docx》')">
+                <i data-lucide="file-text"></i>
+                二次函数·课堂例题集.docx
+              </a>
+              <span class="cm-src-pages">李老师 · 10 页</span>
+            </li>
+            <li class="cm-source cm-source-hidden">
+              <a class="cm-src-name" onclick="showToast('（演示）打开《人教版八下教师用书 P78》')">
+                <i data-lucide="book"></i>
+                人教版八下教师用书.pdf
+              </a>
+              <span class="cm-src-pages">公共库 · P78</span>
+            </li>
+          </ul>
+
+          <footer class="cm-foot">
+            <i data-lucide="info"></i>
+            <span>同主题文件由 AI 根据知识点聚类 · 点击文件名可预览。</span>
+          </footer>
+
+        </article>
+      </div>
+
+      <!-- Pane 2：题目集作品（AI 生成后切到这里） -->
+      <div class="cv-pane" data-pane="quiz">
+        <div class="cv-quiz-head">
+          <h1>《二次函数》分层练习 · 5 道</h1>
+          <div class="meta">
+            AI 基于 <b>12 份资料</b> 生成 · 难度 <b>A / B / C 三档</b> ·
+            适配 <b>八(3)班</b> 学情 · <b>今天 18:42</b>
+          </div>
+        </div>
+
+        <div class="cv-quiz-group">
+          <div class="cv-quiz-group-label a">A · 基础题</div>
+          <div class="cv-quiz-item">
+            <span class="qi-no">A1</span>
+            <span class="qi-q">已知二次函数 y = 2x² − 4x + 1，求其对称轴和顶点坐标。</span>
+            <div class="qi-a">参考答案：对称轴 <b>x = 1</b>，顶点 <b>(1, −1)</b></div>
+            <div class="qi-src"><i data-lucide="link-2"></i> 改编自《配套习题汇编》P12</div>
+          </div>
+          <div class="cv-quiz-item">
+            <span class="qi-no">A2</span>
+            <span class="qi-q">下列函数的图像开口方向，正确的是（   ）<br>A. y = −3x²+1 向上 &nbsp; B. y = x²−2 向上 &nbsp; C. y = −x²−x 向上 &nbsp; D. y = 2x² 向下</span>
+            <div class="qi-a">参考答案：<b>B</b></div>
+            <div class="qi-src"><i data-lucide="link-2"></i> 改编自《导入课件》P3 例 2</div>
+          </div>
+        </div>
+
+        <div class="cv-quiz-group">
+          <div class="cv-quiz-group-label b">B · 提高题</div>
+          <div class="cv-quiz-item">
+            <span class="qi-no">B1</span>
+            <span class="qi-q">抛物线 y = ax² + bx + c 的顶点为 (2, −3)，且经过点 (0, 5)，求 a、b、c。</span>
+            <div class="qi-a">参考答案：<b>a = 2, b = −8, c = 5</b></div>
+            <div class="qi-src"><i data-lucide="link-2"></i> 改编自《教学设计·二次函数》P7</div>
+          </div>
+          <div class="cv-quiz-item">
+            <span class="qi-no">B2</span>
+            <span class="qi-q">已知 y = x² − 2mx + 3，当 x ≥ 1 时 y 随 x 增大而增大，求 m 的取值范围。</span>
+            <div class="qi-a">参考答案：<b>m ≤ 1</b>（关键：对称轴 x = m 在 1 的左侧）</div>
+            <div class="qi-src"><i data-lucide="link-2"></i> 王老师·公开课板书原题</div>
+          </div>
+        </div>
+
+        <div class="cv-quiz-group">
+          <div class="cv-quiz-group-label c">C · 拔高题</div>
+          <div class="cv-quiz-item">
+            <span class="qi-no">C1</span>
+            <span class="qi-q">设抛物线 y = x² − (k+2)x + 2k 与 x 轴交于 A、B 两点，与 y 轴交于 C 点。若 △ABC 面积为 3，求 k。</span>
+            <div class="qi-a">参考答案：<b>k = 3 或 k = −1</b>（需讨论 k 正负与韦达定理）</div>
+            <div class="qi-src"><i data-lucide="link-2"></i> 海淀区 2026 一模 T22 改编</div>
+          </div>
+        </div>
+
+        <div class="cv-actions">
+          <button class="cv-action primary" onclick="showToast('（演示）已导出为 .docx，已发送到「八(3)班·随堂练习」分组')">
+            <i data-lucide="download"></i>
+            导出为 Word
+          </button>
+          <button class="cv-action" onclick="showToast('（演示）已加入《二次函数》第二课时教案')">
+            <i data-lucide="book-plus"></i>
+            加入教案
+          </button>
+          <button class="cv-action" onclick="showToast('（演示）让 AI 再改改难度')">
+            <i data-lucide="refresh-ccw"></i>
+            重新生成
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- 占位（hidden）：兼容旧 JS 中 ai-textarea 引用 -->
+  <div style="display:none">
+    <textarea id="ai-textarea"></textarea>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="v28.js?v=20260512ag"></script>
+<script>
+  /* wiki-entry · 根据 URL ?w= 参数动态切换词条标题（共用模板） */
+  (function(){
+    const params = new URLSearchParams(location.search);
+    const w = params.get('w');
+    if(!w || w === '二次函数图像与性质') return;
+
+    /* 1. tab 标题 */
+    document.title = `${w} · 飞象 AI [build ag]`;
+
+    /* 2. 面包屑末项 */
+    const lastCrumb = document.querySelector('.entry-breadcrumb .ebc-current span:last-child');
+    if(lastCrumb) lastCrumb.textContent = w;
+
+    /* 3. wiki hero 大标题 */
+    const heroTitle = document.querySelector('.entry-hero .entry-title');
+    if(heroTitle) heroTitle.textContent = w;
+
+    /* 4. 顶部 wiki badge 旁的学科标签（如果词条名带「函数」「几何」可以保留；这里简化处理） */
+    /* 跳过，演示阶段所有词条都属于「数学 · 九年级 · 函数」也合理 */
+
+    /* 5. hero 下加一行极低调的演示提示，正文为何不变 */
+    const meta = document.querySelector('.entry-hero .entry-meta');
+    if(meta && !document.getElementById('demo-fallback-hint')){
+      const hint = document.createElement('div');
+      hint.id = 'demo-fallback-hint';
+      hint.style.cssText = 'margin-top:14px;padding:8px 12px;background:rgba(192,142,79,.06);border:1px solid rgba(192,142,79,.18);border-radius:8px;font-size:12px;color:var(--text-2);line-height:1.5;letter-spacing:.005em;display:flex;gap:8px;align-items:flex-start;';
+      hint.innerHTML = `<i data-lucide="info" style="width:14px;height:14px;color:var(--gold);flex-shrink:0;margin-top:2px;"></i><span>演示版：所有 wiki 词条共用本页结构。当前以 <b>《二次函数图像与性质》</b> 的正文作范式，正式版本《${w}》会有 AI 独立整理的内容。</span>`;
+      meta.parentNode.insertBefore(hint, meta.nextSibling);
+      if(window.lucide) lucide.createIcons();
+    }
+  })();
+</script>
+</body>
+</html>

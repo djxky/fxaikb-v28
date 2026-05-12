@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>飞象 AI · 教研组共建的活 Wiki [v28 · 3 演示 · 精简版]</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer onload="window.lucide && lucide.createIcons()"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F3EF;
+  --surface:#FFFFFF;
+  --surface-2:#FBFAF7;
+  --border:#E8E4DC;
+  --border-warm:#DDD5C0;
+  --border-2:#D9D3C4;
+  --gold:#A87E2C;
+  --gold-deep:#7A5D20;
+  --gold-light:#C9A76E;
+  --gold-bg:rgba(201,167,110,.10);
+  --gold-bg-2:rgba(201,167,110,.18);
+  --text:#1A1A1A;
+  --text-1:#2F2C28;
+  --text-2:#5A5550;
+  --text-3:#9A968F;
+  --text-4:#B8B3AA;
+  --radius:14px;
+  --radius-lg:18px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* 噪点纹理 */
+body::before{
+  content:'';pointer-events:none;position:fixed;inset:0;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.6;
+}
+.page{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:60px 36px 80px}
+
+/* ── HERO ── */
+.hero{margin-bottom:56px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:18px;
+  background:var(--gold-bg);padding:5px 12px;border-radius:20px;
+  border:1px solid rgba(168,126,44,.2);
+}
+.hero-eyebrow i{width:12px;height:12px}
+.hero-h1{
+  font-size:clamp(34px,4.6vw,52px);font-weight:700;
+  letter-spacing:-.025em;line-height:1.14;
+  color:var(--text);margin-bottom:18px;
+}
+.hero-h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#A87E2C 0%,#C9A76E 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:16.5px;color:var(--text-2);line-height:1.78;max-width:660px;
+}
+.hero-sub b{color:var(--text);font-weight:600}
+.hero-sub-2{
+  margin-top:10px;
+  font-size:15px;
+  color:var(--text-3);
+  border-left:2px solid var(--gold-light);
+  padding-left:14px;
+  max-width:640px;
+}
+.hero-sub-2 b{color:var(--text-2)}
+
+.anchor{
+  margin-top:24px;display:flex;align-items:flex-start;gap:14px;
+  padding:16px 22px;border-left:3px solid var(--gold);
+  background:var(--surface-2);border-radius:0 var(--radius) var(--radius) 0;
+  max-width:700px;
+}
+.anchor-icon{
+  flex-shrink:0;width:28px;height:28px;border-radius:8px;
+  background:var(--gold-bg);display:grid;place-items:center;
+}
+.anchor-icon i{width:14px;height:14px;color:var(--gold)}
+.anchor-text{font-size:13.5px;color:var(--text-2);line-height:1.72}
+.anchor-text b{color:var(--text);font-weight:600}
+
+/* ── 区段标题 ── */
+.section-label{
+  font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--text-3);
+  text-transform:uppercase;margin-bottom:10px;
+}
+.section-headline{
+  font-size:22px;font-weight:700;letter-spacing:-.015em;
+  color:var(--text);margin-bottom:6px;
+}
+.section-sub{
+  font-size:14px;color:var(--text-2);line-height:1.7;
+  margin-bottom:26px;max-width:640px;
+}
+.section-sub b{color:var(--text);font-weight:600}
+
+/* ── 3 张大场景卡 · 上下堆叠 · 卡内左右 ── */
+.scenes-section{margin-bottom:56px}
+.scenes-stack{display:flex;flex-direction:column;gap:18px}
+
+.scene-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:0;overflow:hidden;
+  display:grid;grid-template-columns:380px 1fr;
+  transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s,border-color .2s;
+  text-decoration:none;color:inherit;
+  position:relative;
+}
+.scene-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 38px -18px rgba(60,50,40,.18);
+  border-color:var(--border-2);
+}
+.scene-card.creation{
+  background:linear-gradient(140deg,#FDFCF9 0%,#F9F5EC 100%);
+  border-color:var(--border-warm);
+}
+
+/* 左：迷你页面线框区 */
+.scene-thumb{
+  background:var(--surface-2);
+  border-right:1px solid var(--border);
+  padding:24px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;min-height:230px;
+}
+.scene-card.creation .scene-thumb{
+  background:rgba(255,255,255,.55);
+  border-right-color:var(--border-warm);
+}
+
+/* 通用线框元素 */
+.wf{
+  width:100%;background:#fff;border:1px solid var(--border-2);border-radius:7px;
+  box-shadow:0 4px 14px -6px rgba(60,50,40,.10);
+  display:grid;font-size:0;
+  overflow:hidden;position:relative;
+}
+.wf-topbar{
+  height:14px;background:#FAF8F3;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:4px;padding:0 8px;
+}
+.wf-topbar::before,
+.wf-topbar::after{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:rgba(168,126,44,.4);
+}
+.wf-topbar::after{background:rgba(168,126,44,.2)}
+.wf-blk{background:#F1ECDE;border-radius:3px}
+.wf-blk.gold{background:rgba(201,167,110,.32)}
+.wf-blk.text{background:linear-gradient(90deg,#E8E4D6,#F2EFE4)}
+.wf-blk.line{background:#E8E4DC;height:5px}
+.wf-blk.short{width:60%}
+.wf-blk.mini{height:4px}
+
+/* 线框 A · 新用户空态：单栏 + 上传引导 */
+.wf-empty{
+  grid-template-rows:14px 1fr;
+  aspect-ratio:16/10;
+}
+.wf-empty-body{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;padding:16px;
+}
+.wf-empty-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(201,167,110,.22);
+  display:grid;place-items:center;color:var(--gold-deep);
+}
+.wf-empty-icon i{width:18px;height:18px}
+.wf-empty-cta{
+  width:120px;height:18px;border-radius:5px;
+  background:var(--text);position:relative;
+}
+.wf-empty-cta::after{
+  content:'上传';position:absolute;inset:0;
+  display:grid;place-items:center;
+  color:#FAFAF8;font-size:10px;letter-spacing:.04em;
+  font-family:-apple-system,sans-serif;
+}
+.wf-empty-hint{
+  font-size:9px;color:var(--text-3);letter-spacing:.04em;
+  font-family:-apple-system,sans-serif;
+}
+
+/* 线框 B · Wiki 首页：左窄导航 + 中 Wiki + 底栏对话 */
+.wf-wiki{
+  grid-template-rows:14px 1fr;
+  aspect-ratio:16/10;
+}
+.wf-wiki-body{
+  display:grid;grid-template-columns:32px 1fr;
+  height:100%;
+}
+.wf-wiki-side{
+  background:#F8F5EC;border-right:1px solid var(--border);
+  padding:8px 5px;display:flex;flex-direction:column;gap:5px;
+}
+.wf-wiki-side .wf-sb-icon{
+  width:18px;height:18px;border-radius:4px;
+  background:rgba(168,126,44,.18);margin:0 auto;
+}
+.wf-wiki-side .wf-sb-icon.active{
+  background:rgba(168,126,44,.55);
+  box-shadow:0 0 0 1px rgba(168,126,44,.35);
+}
+.wf-wiki-main{
+  display:flex;flex-direction:column;
+  padding:10px 10px 0;gap:6px;
+  position:relative;
+}
+.wf-wiki-h{
+  width:60%;height:8px;border-radius:3px;
+  background:linear-gradient(90deg,#A87E2C,#C9A76E);
+  opacity:.7;margin-bottom:2px;
+}
+.wf-wiki-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  flex:1;
+}
+.wf-wiki-grid .wf-tile{
+  background:#F5F1E2;border-radius:4px;
+  display:flex;flex-direction:column;
+  padding:5px;gap:3px;
+}
+.wf-wiki-grid .wf-tile-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);opacity:.6;
+}
+.wf-wiki-grid .wf-tile-l{background:#EEE9D6;height:3px;border-radius:2px}
+.wf-wiki-grid .wf-tile-l.short{width:60%}
+.wf-wiki-bottom{
+  height:18px;border-top:1px solid var(--border);
+  background:rgba(255,255,255,.7);
+  margin:6px -10px 0;padding:0 8px;
+  display:flex;align-items:center;gap:5px;
+}
+.wf-wiki-bottom-pill{
+  flex:1;height:10px;border-radius:5px;
+  background:var(--surface-2);border:1px solid var(--border);
+}
+.wf-wiki-bottom-send{
+  width:14px;height:10px;border-radius:3px;background:var(--gold);
+}
+
+/* 线框 C · 文件预览：左窄栏 + 中原文件 + 右 AI · 1:1 双栏 */
+.wf-file{
+  grid-template-rows:14px 1fr;
+  aspect-ratio:16/10;
+}
+.wf-file-body{
+  display:grid;grid-template-columns:22px 1fr 1fr;
+  height:100%;
+}
+.wf-file-side{
+  background:#F8F5EC;border-right:1px solid var(--border);
+}
+.wf-file-mid{
+  padding:8px;border-right:1px dashed var(--border-2);
+  display:flex;flex-direction:column;gap:5px;
+  position:relative;
+}
+.wf-file-mid-tag{
+  align-self:flex-start;
+  height:8px;width:38px;
+  background:rgba(216,82,82,.20);border:1px solid rgba(216,82,82,.32);
+  border-radius:3px;
+}
+.wf-file-mid-h{
+  width:80%;height:6px;border-radius:2px;background:#2F2C28;opacity:.85;
+}
+.wf-file-mid-slide{
+  flex:1;background:#fff;border:1px solid var(--border);border-radius:4px;
+  display:flex;flex-direction:column;padding:6px;gap:3px;
+  margin-top:3px;
+}
+.wf-file-mid-slide-title{
+  height:5px;width:62%;background:#C84A4A;border-radius:2px;
+}
+.wf-file-mid-slide-line{
+  height:3px;background:#E8E4DC;border-radius:1.5px;
+}
+.wf-file-mid-slide-line.short{width:70%}
+.wf-file-mid-slide-line.shorter{width:55%}
+.wf-file-right{
+  padding:8px;
+  display:flex;flex-direction:column;gap:5px;
+  background:#FBFAF7;
+}
+.wf-file-right-tabs{
+  display:flex;gap:3px;height:7px;
+}
+.wf-file-right-tab{flex:1;background:#EEE9D6;border-radius:2px}
+.wf-file-right-tab.active{background:var(--gold);opacity:.7}
+.wf-file-right-label{
+  width:48%;height:4px;background:rgba(168,126,44,.55);border-radius:1px;
+  margin-top:3px;
+}
+.wf-file-right-text{
+  height:3px;background:#E8E4DC;border-radius:1.5px;
+}
+.wf-file-right-text.short{width:80%}
+.wf-file-right-text.shorter{width:60%}
+.wf-file-right-divider{
+  height:1px;background:var(--border);margin:3px 0;
+}
+.wf-file-right-list-item{
+  height:4px;background:rgba(168,126,44,.30);border-radius:1.5px;width:75%;
+}
+
+/* 线框 C-new · 文件夹列表：左窄栏 + 右文件列表 · Finder/网盘风 */
+.wf-folder{
+  grid-template-rows:14px 1fr;
+  aspect-ratio:16/10;
+}
+.wf-folder-body{
+  display:grid;grid-template-columns:22px 1fr;
+  height:100%;
+}
+.wf-folder-side{
+  background:#F8F5EC;border-right:1px solid var(--border);
+}
+.wf-folder-main{
+  padding:9px 11px 8px;
+  display:flex;flex-direction:column;gap:6px;
+  background:#fff;
+}
+/* 路径 / 列头条 */
+.wf-folder-path{
+  display:flex;gap:6px;align-items:center;
+  padding-bottom:6px;border-bottom:1px solid var(--border);
+}
+.wf-folder-path-crumb{
+  width:34px;height:5px;background:#E8E4DC;border-radius:2px;
+  position:relative;
+}
+.wf-folder-path-crumb + .wf-folder-path-crumb::before{
+  content:'›';position:absolute;left:-9px;top:-5px;
+  font-size:9px;color:var(--text-4);font-family:-apple-system,sans-serif;
+}
+.wf-folder-path-current{
+  width:42px;background:rgba(168,126,44,.32);
+}
+/* 列表 */
+.wf-folder-list{
+  display:flex;flex-direction:column;gap:1px;flex:1;
+}
+.wf-folder-row{
+  display:flex;align-items:center;gap:7px;
+  padding:4px 6px;border-radius:4px;
+  flex:1;min-height:0;
+}
+.wf-folder-row-hover{
+  background:var(--gold-bg);
+  box-shadow:inset 0 0 0 1px rgba(168,126,44,.22);
+}
+.wf-folder-ico{
+  flex-shrink:0;
+  width:10px;height:12px;border-radius:2px;
+  background:#E8E4DC;position:relative;
+}
+.wf-folder-ico.ppt{background:rgba(216,82,82,.55)}
+.wf-folder-ico.pdf{background:rgba(192,80,80,.42)}
+.wf-folder-ico.doc{background:rgba(72,116,178,.45)}
+.wf-folder-ico.img{background:rgba(118,164,98,.50)}
+.wf-folder-name{
+  flex:1;height:5px;border-radius:2px;
+  background:#E8E4DC;max-width:60%;
+}
+.wf-folder-name-active{
+  background:linear-gradient(90deg,#A87E2C,#C9A76E);opacity:.85;
+}
+.wf-folder-meta{
+  flex-shrink:0;
+  width:28px;height:4px;border-radius:2px;
+  background:#EEE9D6;
+}
+
+/* 右：文案区 */
+.scene-body{
+  padding:30px 32px 28px;
+  display:flex;flex-direction:column;gap:0;min-width:0;
+}
+.scene-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  flex-wrap:wrap;
+}
+.scene-num{
+  flex-shrink:0;
+  width:30px;height:30px;border-radius:8px;
+  background:var(--gold-bg);border:1px solid rgba(168,126,44,.22);
+  display:grid;place-items:center;
+  font-size:13.5px;font-weight:700;color:var(--gold-deep);
+  font-variant-numeric:tabular-nums;
+}
+.scene-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10.5px;font-weight:600;letter-spacing:.06em;
+  padding:3px 9px;border-radius:20px;
+  background:#F5F3EF;border:1px solid var(--border);
+  color:var(--text-3);
+}
+.scene-tag.primary{
+  background:var(--gold-bg);border-color:rgba(168,126,44,.25);color:var(--gold-deep);
+}
+.scene-tag i{width:11px;height:11px;color:var(--gold)}
+.scene-page-name{
+  font-size:11px;font-weight:600;letter-spacing:.08em;
+  color:var(--text-3);
+  font-family:ui-monospace,Menlo,monospace;
+  margin-left:auto;
+}
+
+.scene-h{
+  font-size:21px;font-weight:600;letter-spacing:-.015em;
+  margin-bottom:10px;line-height:1.3;color:var(--text);
+}
+.scene-h em{
+  font-style:normal;color:var(--gold-deep);
+}
+.scene-lede{
+  font-size:13.5px;color:var(--text-2);line-height:1.72;
+  margin-bottom:14px;
+}
+.scene-lede b{color:var(--text);font-weight:600}
+
+.scene-flow{
+  font-size:12.5px;color:var(--text-2);line-height:1.72;
+  display:flex;flex-direction:column;gap:6px;margin-bottom:18px;
+}
+.scene-flow-item{display:flex;align-items:flex-start;gap:8px}
+.scene-flow-num{
+  flex-shrink:0;width:16px;height:16px;border-radius:50%;
+  background:var(--surface-2);border:1px solid var(--border-warm);
+  display:grid;place-items:center;
+  font-size:9.5px;font-weight:700;color:var(--gold);
+  font-variant-numeric:tabular-nums;margin-top:2px;
+}
+.scene-flow-item b{color:var(--text);font-weight:600}
+
+.scene-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:14px;border-top:1px solid var(--border);
+  margin-top:auto;gap:14px;
+}
+.scene-card.creation .scene-footer{border-top-color:rgba(221,213,192,.65)}
+.scene-meta{
+  font-size:11.5px;color:var(--text-3);line-height:1.5;
+  flex:1;min-width:0;
+}
+.scene-meta b{color:var(--text-2);font-weight:600}
+.scene-cta{
+  flex-shrink:0;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:8px;
+  background:var(--text);color:#FAFAF8;
+  font-size:13px;font-weight:600;
+  white-space:nowrap;
+  transition:background .15s,transform .15s;
+}
+.scene-card:hover .scene-cta{background:#3A3733}
+.scene-cta i{width:14px;height:14px}
+.scene-card.creation .scene-cta{
+  background:linear-gradient(135deg,#A87E2C,#7A5D20);
+}
+
+/* ── 底部 · 知识图谱 ── */
+.graph-section{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px 28px;
+  display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+}
+.graph-label{
+  font-size:10.5px;font-weight:600;letter-spacing:.18em;color:var(--text-3);
+  text-transform:uppercase;margin-bottom:8px;
+}
+.graph-section h3{font-size:15.5px;font-weight:600;letter-spacing:-.005em;margin-bottom:5px}
+.graph-section p{font-size:12.5px;color:var(--text-2);line-height:1.66;max-width:580px}
+.graph-section p b{color:var(--text);font-weight:600}
+.graph-btn{
+  flex-shrink:0;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:8px;
+  background:#fff;color:var(--text);
+  border:1px solid var(--border);
+  font-size:12.5px;font-weight:600;text-decoration:none;
+  white-space:nowrap;
+  transition:border-color .15s,transform .15s;
+}
+.graph-btn:hover{border-color:var(--gold-light);transform:translateY(-1px)}
+.graph-btn i{width:13px;height:13px;color:var(--gold)}
+
+/* ── 入场动画 ── */
+@keyframes fade-up{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero{animation:fade-up .55s cubic-bezier(.22,1,.36,1) both}
+.scenes-section{animation:fade-up .55s .12s cubic-bezier(.22,1,.36,1) both}
+.scene-card:nth-of-type(1){animation:fade-up .55s .18s cubic-bezier(.22,1,.36,1) both}
+.scene-card:nth-of-type(2){animation:fade-up .55s .26s cubic-bezier(.22,1,.36,1) both}
+.scene-card:nth-of-type(3){animation:fade-up .55s .34s cubic-bezier(.22,1,.36,1) both}
+.graph-section{animation:fade-up .55s .42s cubic-bezier(.22,1,.36,1) both}
+
+/* ── 响应式 ── */
+@media(max-width:860px){
+  .page{padding:48px 22px 72px}
+  .hero-h1{font-size:32px}
+  .scene-card{grid-template-columns:1fr}
+  .scene-thumb{border-right:none;border-bottom:1px solid var(--border);min-height:170px}
+  .scene-card.creation .scene-thumb{border-right:none;border-bottom-color:var(--border-warm)}
+  .graph-section{grid-template-columns:1fr}
+  .scene-footer{flex-direction:column;align-items:flex-start;gap:14px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">
+      <i data-lucide="book-open"></i>
+      飞象 AI · 教师端 · v28
+    </div>
+    <h1 class="hero-h1">整组的资料，<br>AI 织成了一张 <em>活的 Wiki</em>。</h1>
+    <p class="hero-sub">
+      <b>这不是云盘</b>——AI 替整组 <b>8 位老师</b>持续维护一张活 Wiki：
+      <b>925 份资料 + 历史对话</b>全部读过，织成 <b>42 个层级化的知识页</b>。
+    </p>
+    <p class="hero-sub hero-sub-2">
+      <b>每段都能追回原文件</b>；老师跟 AI 聊出的好答案<b>自动沉淀回 Wiki</b>——
+      用得越多，这张 Wiki 长得越聪明。
+    </p>
+  </header>
+
+  <!-- 3 张大场景卡 -->
+  <section class="scenes-section">
+    <div class="section-label">3 个演示</div>
+    <h2 class="section-headline">点开任意一张卡，进入对应页面</h2>
+    <p class="section-sub">
+      左边是页面结构示意，右边是场景说明。
+    </p>
+
+    <div class="scenes-stack">
+
+      <!-- 场景 1 · 新用户 · 空知识库 → 上传演示 -->
+      <a class="scene-card" href="02-personal-home.html">
+        <div class="scene-thumb">
+          <div class="wf wf-empty">
+            <div class="wf-topbar"></div>
+            <div class="wf-empty-body">
+              <div class="wf-empty-icon"><i data-lucide="upload-cloud"></i></div>
+              <div class="wf-empty-cta"></div>
+              <div class="wf-empty-hint">demo 数据已就位 · 上传后替换</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <div class="scene-head">
+            <div class="scene-num">1</div>
+            <span class="scene-tag">新用户 · 首次使用</span>
+            <span class="scene-page-name">02-personal-home.html</span>
+          </div>
+
+          <h3 class="scene-h">张老师刚装上飞象 · 第一次打开</h3>
+          <p class="scene-lede">
+            <b>个人知识库还没有上传任何资料</b>，但页面不是空白引导——
+            飞象先放了一份「演示用的示例 Wiki」，让他立刻看到上传资料后，
+            自己的知识库会被 AI 整理成什么样。点上传按钮，演示数据就替换为自己的内容。
+          </p>
+
+          <div class="scene-footer">
+            <span class="scene-cta">
+              看新用户页 <i data-lucide="arrow-right"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 场景 2 · 老用户首页 · Wiki + 对话 -->
+      <a class="scene-card creation" href="02-wiki-home.html">
+        <div class="scene-thumb">
+          <div class="wf wf-wiki">
+            <div class="wf-topbar"></div>
+            <div class="wf-wiki-body">
+              <div class="wf-wiki-side">
+                <span class="wf-sb-icon active"></span>
+                <span class="wf-sb-icon"></span>
+                <span class="wf-sb-icon"></span>
+                <span class="wf-sb-icon"></span>
+              </div>
+              <div class="wf-wiki-main">
+                <div class="wf-wiki-h"></div>
+                <div class="wf-wiki-grid">
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                  <div class="wf-tile">
+                    <span class="wf-tile-dot"></span>
+                    <span class="wf-tile-l"></span>
+                    <span class="wf-tile-l short"></span>
+                  </div>
+                </div>
+                <div class="wf-wiki-bottom">
+                  <span class="wf-wiki-bottom-pill"></span>
+                  <span class="wf-wiki-bottom-send"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <div class="scene-head">
+            <div class="scene-num">2</div>
+            <span class="scene-tag primary"><i data-lucide="star"></i> 老用户 · 日常工作</span>
+            <span class="scene-page-name">02-wiki-home.html</span>
+          </div>
+
+          <h3 class="scene-h">张老师每天的工作起点 · 团队 Wiki 首页</h3>
+          <p class="scene-lede">
+            打开飞象默认落在 Wiki 首页。组里的 <b>925 份资料、42 个知识页</b>
+            已由 AI 完成整理。他可以直接翻 Wiki 看内容、找原资料；
+            也可以在底部输入框里一句话，<b>让 AI 基于全组沉淀</b>出题、做课件、做教学动画。
+          </p>
+
+          <div class="scene-footer">
+            <span class="scene-cta">
+              看 Wiki 首页 <i data-lucide="arrow-right"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 场景 3 · 老用户翻文件夹 · 列表 → 点文件 → 详情 -->
+      <a class="scene-card" href="03-wiki-entry.html?view=folder">
+        <div class="scene-thumb">
+          <div class="wf wf-folder">
+            <div class="wf-topbar"></div>
+            <div class="wf-folder-body">
+              <div class="wf-folder-side"></div>
+              <div class="wf-folder-main">
+                <!-- 文件夹列表标题行（路径 + 列头） -->
+                <div class="wf-folder-path">
+                  <span class="wf-folder-path-crumb"></span>
+                  <span class="wf-folder-path-crumb"></span>
+                  <span class="wf-folder-path-crumb wf-folder-path-current"></span>
+                </div>
+                <div class="wf-folder-list">
+                  <div class="wf-folder-row">
+                    <span class="wf-folder-ico ppt"></span>
+                    <span class="wf-folder-name"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                  <div class="wf-folder-row wf-folder-row-hover">
+                    <span class="wf-folder-ico ppt"></span>
+                    <span class="wf-folder-name wf-folder-name-active"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                  <div class="wf-folder-row">
+                    <span class="wf-folder-ico pdf"></span>
+                    <span class="wf-folder-name"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                  <div class="wf-folder-row">
+                    <span class="wf-folder-ico doc"></span>
+                    <span class="wf-folder-name"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                  <div class="wf-folder-row">
+                    <span class="wf-folder-ico img"></span>
+                    <span class="wf-folder-name"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                  <div class="wf-folder-row">
+                    <span class="wf-folder-ico pdf"></span>
+                    <span class="wf-folder-name"></span>
+                    <span class="wf-folder-meta"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-body">
+          <div class="scene-head">
+            <div class="scene-num">3</div>
+            <span class="scene-tag">老用户 · 查找原件</span>
+            <span class="scene-page-name">03 ?view=folder → 04</span>
+          </div>
+
+          <h3 class="scene-h">张老师要找一份具体资料 · 按文件夹查阅原件</h3>
+          <p class="scene-lede">
+            比翻 Wiki 更直接的方式：切到「文件夹」视图，按 <b>学科 / 年级 / 章节</b> 铺开列表浏览。
+            点开任意一份文件，画面 <b>默认拆成 1:1 双栏</b>——左侧是原文件预览（可翻页），
+            右侧是 AI 整理好的摘要、关联 Wiki、同主题资料。
+          </p>
+
+          <div class="scene-footer">
+            <span class="scene-cta">
+              看文件夹列表 <i data-lucide="arrow-right"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- 底部 · 知识图谱（v27 老入口） -->
+  <div class="graph-section">
+    <div>
+      <div class="graph-label">底层 · 知识图谱</div>
+      <h3>Wiki 背后的数据血缘</h3>
+      <p>
+        每个 Wiki 知识页都不是 AI 凭空生成——它后面是一张<b>以知识点为节点、资料为来源的图谱</b>。
+        老师看到的「AI 引用 12 份资料」就是这张图谱产品化之后的结果。
+      </p>
+    </div>
+    <a class="graph-btn" href="https://mapi.feixiangxingqiu.biz/fedebug/agora/feat/wiki-knowledge-graph/index.html#/knowledge-graph?kbId=3" target="_blank" rel="noopener">
+      <i data-lucide="network"></i>
+      查看图谱 Demo
+    </a>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    if(window.lucide) lucide.createIcons();
+  });
+  if(window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
