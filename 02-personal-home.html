@@ -5,149 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>飞象 AI · 我的知识库</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512ap" />
+<link rel="stylesheet" href="v28.css?v=20260512bd" />
 </head>
 <body data-page="personal-home">
 
 <div class="app" id="app" data-view="wiki" data-chat="closed" data-kb="personal">
 
-  <!-- ════════════ 左栏 · 宽侧栏 240px / 折叠 56px ════════════ -->
-  <aside class="sidebar-left">
-
-    <!-- 品牌 -->
-    <div class="sb-brand">
-      <div class="sb-brand-mark" title="飞象 AI">FX</div>
-      <div class="sb-brand-name">飞象 AI</div>
-      <button class="sb-collapse-btn" onclick="toggleSide('left')" title="收起 / 展开 (⌘\)">
-        <i data-lucide="panel-left-close" id="left-icon"></i>
-      </button>
-    </div>
-
-    <!-- 搜索 -->
-    <button class="sb-search" onclick="showToast('（演示）⌘K · 搜索 Wiki、文件、题目')">
-      <i data-lucide="search"></i>
-      <span class="sb-search-label">搜索 Wiki、文件…</span>
-      <span class="kbd">⌘K</span>
-      <span class="sb-tip">搜索 ⌘K</span>
-    </button>
-
-    <!-- 新对话主按钮 -->
-    <button class="sb-new-chat" onclick="openChat('new')">
-      <i data-lucide="message-square-plus"></i>
-      <span class="sb-new-chat-label">新对话</span>
-      <span class="sb-tip">新对话</span>
-    </button>
-
-    <!-- 滚动区 -->
-    <div class="sb-scroll">
-
-      <!-- 知识库 section -->
-      <div class="sb-section">
-        <div class="sb-group-label">我的知识库</div>
-
-        <button class="sb-kb active" data-kb="personal" onclick="switchKb('personal','张老师 · 个人',87)">
-          <i data-lucide="bookmark"></i>
-          <span class="kb-name">张老师 · 个人</span>
-          <span class="kb-count">87</span>
-          <span class="sb-tip">张老师 · 个人 · 87 份</span>
-        </button>
-
-        <div class="sb-group-label">团队知识库</div>
-
-        <button class="sb-kb" data-kb="math-group" onclick="switchKb('math-group','初中数学教研组',925)">
-          <i data-lucide="users-round"></i>
-          <span class="kb-name">初中数学教研组</span>
-          <span class="kb-count">925</span>
-        </button>
-
-        <button class="sb-kb" data-kb="school" onclick="switchKb('school','北京 101 中学 · 公共库',1247)">
-          <i data-lucide="school"></i>
-          <span class="kb-name">北京 101 中学</span>
-          <span class="kb-count">1,247</span>
-        </button>
-
-        <button class="sb-kb" data-kb="grade-2" onclick="switchKb('grade-2','初二数学备课组',412)">
-          <i data-lucide="book-marked"></i>
-          <span class="kb-name">初二数学备课组</span>
-          <span class="kb-count">412</span>
-        </button>
-
-        <button class="sb-kb" data-kb="grade-3" onclick="switchKb('grade-3','初三数学备课组',531)">
-          <i data-lucide="book-marked"></i>
-          <span class="kb-name">初三数学备课组</span>
-          <span class="kb-count">531</span>
-        </button>
-      </div>
-
-      <!-- 其他模块 -->
-      <div class="sb-section">
-        <button class="sb-item" onclick="navTo('qbank')">
-          <i data-lucide="file-stack"></i>
-          <span class="sb-item-label">题库</span>
-          <span class="sb-item-badge">12</span>
-          <span class="sb-tip">题库 · 12 个待审</span>
-        </button>
-        <button class="sb-item" id="sb-chat" onclick="openChat('history')">
-          <i data-lucide="message-square-text"></i>
-          <span class="sb-item-label">历史对话</span>
-          <span class="sb-tip">历史对话</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- 底部 -->
-    <div class="sb-foot">
-      <button class="sb-item" onclick="showToast('（演示）打开使用指南')">
-        <i data-lucide="circle-help"></i>
-        <span class="sb-item-label">使用指南</span>
-        <span class="sb-tip">使用指南</span>
-      </button>
-      <button class="sb-item" onclick="showToast('（演示）打开设置')">
-        <i data-lucide="settings"></i>
-        <span class="sb-item-label">设置</span>
-        <span class="sb-tip">设置</span>
-      </button>
-      <button class="sb-user" onclick="showToast('（演示）个人中心')">
-        <span class="sb-avatar">张</span>
-        <span class="sb-user-name">张老师</span>
-        <i data-lucide="chevron-up"></i>
-        <span class="sb-tip">张老师</span>
-      </button>
-    </div>
-  </aside>
+  <!-- ════════════ 左栏 · 公共壳由 v28-shell.js 渲染 ════════════ -->
+  <aside class="sidebar-left" id="v28-sidebar"></aside>
 
   <!-- ════════════ 中栏 · 工作区 ════════════ -->
   <main class="workspace">
 
-    <!-- 顶栏 -->
-    <header class="topbar">
-      <!-- 当前 KB 名称（仅左栏折叠时显示） -->
-      <span class="tb-kb-current" id="tb-kb-current">
-        <i data-lucide="bookmark"></i>
-        <span class="tb-kb-name">张老师 · 个人知识库</span>
-      </span>
-      <!-- 视图切换器 -->
-      <div class="view-switcher" role="tablist">
-        <button class="vs-btn active" data-view="wiki" onclick="switchView('wiki')">
+    <!-- 顶栏 · 公共壳由 v28-shell.js 渲染 -->
+    <header class="topbar" id="v28-topbar"></header>
+
+    <!-- Wiki 顶部条 · 当前位置 + 当前页操作 -->
+    <div class="entry-bcbar entry-bcbar-home">
+      <nav class="entry-breadcrumb" aria-label="面包屑">
+        <span class="ebc-current">
+          <i data-lucide="bookmark"></i>
+          <span>我的知识库</span>
+        </span>
+        <span class="ebc-sep" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+        <span class="ebc-current">
           <i data-lucide="book-open"></i>
-          Wiki
-        </button>
-        <button class="vs-btn" data-view="graph" onclick="switchView('graph')">
-          <i data-lucide="network"></i>
-          知识图谱
-        </button>
-        <button class="vs-btn" data-view="folder" onclick="switchView('folder')">
-          <i data-lucide="folder"></i>
-          文件夹
-        </button>
-      </div>
+          <span>Wiki 首页</span>
+        </span>
+      </nav>
 
-      <div class="tb-spacer"></div>
+      <div class="ebc-spacer"></div>
 
-      <button class="tb-btn" onclick="showToast('（演示）打开通知中心')" title="通知">
-        <i data-lucide="bell"></i>
+      <button class="ebc-action" onclick="showToast('（演示）导出我的知识库 Wiki 汇总')" title="下载">
+        <i data-lucide="download"></i>
+        <span>下载</span>
       </button>
-    </header>
+      <button class="ebc-action" onclick="showToast('（演示）分享我的知识库 Wiki 首页')" title="分享">
+        <i data-lucide="share-2"></i>
+        <span>分享</span>
+      </button>
+    </div>
 
     <!-- 主滚动区 -->
     <div class="workspace-scroll">
@@ -811,6 +708,7 @@
 
 <div id="toast"></div>
 
-<script src="v28.js?v=20260512ap"></script>
+<script src="v28-shell.js?v=20260512bd"></script>
+<script src="v28.js?v=20260512bd"></script>
 </body>
 </html>

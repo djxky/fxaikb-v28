@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>导入课件.pptx · 飞象 AI [build ak · 顶栏合并 1 行]</title>
+<title>导入课件.pptx · 飞象 AI [build ap · 顶栏统一 + KB 名]</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512ag" />
+<link rel="stylesheet" href="v28.css?v=20260512bd" />
 <!-- 兜底·内联样式（不走 v28.css 缓存） -->
 <!-- 默认 collapsed=56px icon-only；点 sb-collapse-btn → 切到展开态 240px -->
 <style>
@@ -21,8 +21,6 @@
     overflow:hidden;
   }
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-brand-name,
-  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search > .sb-search-label,
-  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search > .kbd,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-new-chat > .sb-new-chat-label,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-section-head,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-group-label,
@@ -38,17 +36,6 @@
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb .kb-count{
     display:none !important;
   }
-  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-brand{
-    flex-direction:column !important;
-    gap:6px !important;
-    padding:0 0 10px !important;
-    align-items:center !important;
-  }
-  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-collapse-btn{
-    margin:0 !important;
-    width:26px !important;height:26px !important;
-  }
-  body[data-page="file-preview"] .app[data-left="collapsed"] .sb-search,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-new-chat,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-kb,
   body[data-page="file-preview"] .app[data-left="collapsed"] .sb-item,
@@ -233,7 +220,7 @@
   body[data-page="file-preview"] .fp-thumb-title{
     font-size:11.5px;color:var(--text-2);line-height:1.4;
     overflow:hidden;text-overflow:ellipsis;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   }
   body[data-page="file-preview"] .fp-thumb.active .fp-thumb-title{color:var(--text);font-weight:600}
   body[data-page="file-preview"] .fp-thumb-cite-ico{
@@ -297,139 +284,6 @@
     text-decoration-color:var(--gold-deep);
   }
 
-  /* ③ topbar 通栏：横贯整个屏幕，三列从 52px 下方开始 */
-  body[data-page="file-preview"] .topbar{
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 50 !important;
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-  body[data-page="file-preview"] .app{
-    padding-top: 52px !important;
-    box-sizing: border-box !important;
-  }
-  /* 对话态下 topbar 被原 CSS 隐藏（height:0 opacity:0），padding-top 也要取消 */
-  body[data-page="file-preview"] .app[data-chat="open"],
-  body[data-page="file-preview"] .app[data-chat="empty"]{
-    padding-top: 0 !important;
-  }
-  body[data-page="file-preview"] .app[data-chat="open"] .topbar,
-  body[data-page="file-preview"] .app[data-chat="empty"] .topbar{
-    display: none !important;
-  }
-
-  /* ★ 合并行 topbar 内的子元素：竖分隔 / 紧凑面包屑 / inline actions ★ */
-  body[data-page="file-preview"] .topbar.topbar-merged{
-    gap: 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    height: 52px !important;
-    padding: 0 18px !important;
-    background: var(--surface) !important;
-    border-bottom: 1px solid var(--border) !important;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-sep{
-    width: 1px; height: 20px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-  /* 面包屑在 topbar 行内：缩字号 + 压缩内边距 + 长内容省略 */
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb{
-    display: flex; align-items: center; gap: 4px;
-    flex: 0 1 auto; min-width: 0;
-    overflow: hidden;
-    padding: 0;
-    background: transparent !important;
-    border: 0 !important;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item,
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current{
-    font-size: 12.5px;
-    padding: 4px 6px;
-    border-radius: 5px;
-    display: inline-flex; align-items: center; gap: 4px;
-    color: var(--text-3);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item:hover{
-    background: var(--surface-2);
-    color: var(--text-1);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-item [data-lucide],
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current [data-lucide]{
-    width: 13px; height: 13px;
-    color: var(--text-3);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current{
-    color: var(--text);
-    font-weight: 600;
-    background: var(--gold-bg);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-current [data-lucide]{
-    color: var(--gold);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-sep{
-    color: var(--text-4);
-    display: inline-flex;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-breadcrumb .ebc-sep [data-lucide]{
-    width: 12px; height: 12px;
-  }
-
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-spacer{
-    flex: 1 1 auto; min-width: 8px;
-  }
-
-  /* actions 在 topbar 行内：缩 padding 跟 view-switcher 30px 同高 */
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-action{
-    height: 30px;
-    padding: 0 10px !important;
-    font-size: 12.5px !important;
-    border-radius: 6px !important;
-    display: inline-flex; align-items: center; gap: 5px;
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-2);
-    cursor: pointer;
-    transition: background .15s, color .15s, border-color .15s;
-    white-space: nowrap;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-action [data-lucide]{
-    width: 13px; height: 13px;
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .tb-action:hover{
-    background: var(--surface-2);
-    color: var(--text);
-    border-color: var(--border);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action{
-    background: var(--gold-bg);
-    color: var(--gold-deep);
-    border-color: rgba(168,126,44,.22);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action [data-lucide]{
-    color: var(--gold);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-meta.tb-action:hover{
-    background: var(--gold-bg-2);
-  }
-  body[data-page="file-preview"] .topbar.topbar-merged .ebc-action-sep{
-    width: 1px; height: 16px;
-    background: var(--border);
-    margin: 0 2px;
-    display: inline-block;
-  }
-
-  /* AI 整理已默认展开时按钮态：图标换成 panel-right-close（JS 已处理） */
-  body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action-meta.tb-action .lucide-panel-right-open,
-  body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action-meta.tb-action [data-lucide="panel-right-open"]{
-    display: none;
-  }
-
   /* ★ file-preview 默认双栏：让 sidebar-right 在 data-right="expanded" 下显形（覆盖 v28.css 通用规则） */
   body[data-page="file-preview"] .app[data-right="expanded"] .sidebar-right{
     opacity: 1 !important;
@@ -473,137 +327,18 @@
 
 <div class="app" id="app" data-view="wiki" data-chat="closed" data-left="collapsed" data-right="expanded">
 
-  <!-- ════════════ 左栏 · 宽侧栏 240px / 折叠 56px ════════════ -->
-  <aside class="sidebar-left">
-
-    <!-- 品牌 -->
-    <div class="sb-brand">
-      <div class="sb-brand-mark" title="飞象 AI">FX</div>
-      <div class="sb-brand-name">飞象 AI</div>
-      <button class="sb-collapse-btn" onclick="toggleSide('left')" title="收起 / 展开 (⌘\)">
-        <i data-lucide="panel-left-close" id="left-icon"></i>
-      </button>
-    </div>
-
-    <!-- 搜索 -->
-    <button class="sb-search" onclick="showToast('（演示）⌘K · 搜索 Wiki、文件、题目')">
-      <i data-lucide="search"></i>
-      <span class="sb-search-label">搜索 Wiki、文件…</span>
-      <span class="kbd">⌘K</span>
-      <span class="sb-tip">搜索 ⌘K</span>
-    </button>
-
-    <!-- 新对话主按钮 -->
-    <button class="sb-new-chat" onclick="openChat('new')">
-      <i data-lucide="message-square-plus"></i>
-      <span class="sb-new-chat-label">新对话</span>
-      <span class="sb-tip">新对话</span>
-    </button>
-
-    <!-- 滚动区 -->
-    <div class="sb-scroll">
-
-      <!-- 知识库 section -->
-      <div class="sb-section">
-        <div class="sb-group-label">我的知识库</div>
-
-        <button class="sb-kb" data-kb="personal" onclick="switchKb('personal','张老师 · 个人',87)">
-          <i data-lucide="bookmark"></i>
-          <span class="kb-name">张老师 · 个人</span>
-          <span class="kb-count">87</span>
-        </button>
-
-        <div class="sb-group-label">团队知识库</div>
-
-        <button class="sb-kb active" data-kb="math-group" onclick="switchKb('math-group','初中数学教研组',925)">
-          <i data-lucide="users-round"></i>
-          <span class="kb-name">初中数学教研组</span>
-          <span class="kb-count">925</span>
-          <span class="sb-tip">初中数学教研组 · 925 份</span>
-        </button>
-
-        <button class="sb-kb" data-kb="school" onclick="switchKb('school','北京 101 中学 · 公共库',1247)">
-          <i data-lucide="school"></i>
-          <span class="kb-name">北京 101 中学</span>
-          <span class="kb-count">1,247</span>
-        </button>
-
-        <button class="sb-kb" data-kb="grade-2" onclick="switchKb('grade-2','初二数学备课组',412)">
-          <i data-lucide="book-marked"></i>
-          <span class="kb-name">初二数学备课组</span>
-          <span class="kb-count">412</span>
-        </button>
-
-        <button class="sb-kb" data-kb="grade-3" onclick="switchKb('grade-3','初三数学备课组',531)">
-          <i data-lucide="book-marked"></i>
-          <span class="kb-name">初三数学备课组</span>
-          <span class="kb-count">531</span>
-        </button>
-      </div>
-
-      <!-- 其他模块 -->
-      <div class="sb-section">
-        <button class="sb-item" onclick="navTo('qbank')">
-          <i data-lucide="file-stack"></i>
-          <span class="sb-item-label">题库</span>
-          <span class="sb-item-badge">12</span>
-          <span class="sb-tip">题库 · 12 个待审</span>
-        </button>
-        <button class="sb-item" id="sb-chat" onclick="openChat('history')">
-          <i data-lucide="message-square-text"></i>
-          <span class="sb-item-label">历史对话</span>
-          <span class="sb-tip">历史对话</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- 底部 -->
-    <div class="sb-foot">
-      <button class="sb-item" onclick="showToast('（演示）打开使用指南')">
-        <i data-lucide="circle-help"></i>
-        <span class="sb-item-label">使用指南</span>
-        <span class="sb-tip">使用指南</span>
-      </button>
-      <button class="sb-item" onclick="showToast('（演示）打开设置')">
-        <i data-lucide="settings"></i>
-        <span class="sb-item-label">设置</span>
-        <span class="sb-tip">设置</span>
-      </button>
-      <button class="sb-user" onclick="showToast('（演示）个人中心')">
-        <span class="sb-avatar">张</span>
-        <span class="sb-user-name">张老师</span>
-        <i data-lucide="chevron-up"></i>
-        <span class="sb-tip">张老师</span>
-      </button>
-    </div>
-  </aside>
+  <!-- ════════════ 左栏 · 公共壳由 v28-shell.js 渲染 ════════════ -->
+  <aside class="sidebar-left" id="v28-sidebar"></aside>
 
   <!-- ════════════ 中栏 · 工作区 ════════════ -->
   <main class="workspace">
 
-    <!-- 顶栏 · 单行合并：视图切换 + 面包屑 + 当前页 actions + 通知 -->
-    <header class="topbar topbar-merged">
-      <!-- 左 1：视图切换器 -->
-      <div class="view-switcher" role="tablist">
-        <button class="vs-btn" data-view="wiki" onclick="window.location.href='02-wiki-home.html'" title="回 Wiki 首页">
-          <i data-lucide="book-open"></i>
-          Wiki
-        </button>
-        <button class="vs-btn" data-view="graph" onclick="window.location.href='03-wiki-entry.html?view=graph'" title="回知识图谱视图">
-          <i data-lucide="network"></i>
-          知识图谱
-        </button>
-        <button class="vs-btn active" data-view="folder" onclick="window.location.href='03-wiki-entry.html?view=folder'" title="回到 文件夹视图">
-          <i data-lucide="folder"></i>
-          文件夹
-        </button>
-      </div>
+    <!-- 顶栏 · 公共壳由 v28-shell.js 渲染 -->
+    <header class="topbar" id="v28-topbar"></header>
 
-      <!-- 左 2：竖分隔 -->
-      <span class="tb-sep" aria-hidden="true"></span>
-
-      <!-- 左 3：面包屑 -->
-      <nav class="entry-breadcrumb tb-breadcrumb" aria-label="面包屑">
+    <!-- 面包屑 + 当前页 actions（下沉一行，跟 03 同款 entry-bcbar） -->
+    <div class="entry-bcbar">
+      <nav class="entry-breadcrumb" aria-label="面包屑">
         <a class="ebc-item" href="02-wiki-home.html" title="回到 初中数学教研组 知识库">
           <i data-lucide="library"></i>
           <span>初中数学教研组</span>
@@ -624,36 +359,22 @@
         </span>
       </nav>
 
-      <!-- 中：spacer -->
-      <div class="tb-spacer"></div>
+      <div class="ebc-spacer"></div>
 
-      <!-- 右 1：当前页 actions -->
-      <button class="ebc-action ebc-action-meta tb-action" id="btn-toggle-right" onclick="toggleRight()" title="收起 / 展开右侧 AI 内容栏">
+      <button class="ebc-action ebc-action-meta" id="btn-toggle-right" onclick="toggleRight()" title="查看飞象对这份原文件的 AI 解读">
         <i data-lucide="panel-right-open"></i>
-        <span>AI 整理</span>
+        <span>AI 解读</span>
       </button>
       <span class="ebc-action-sep" aria-hidden="true"></span>
-      <button class="ebc-action tb-action" onclick="showToast('（演示）导出为 PDF / Word / Markdown')" title="下载">
+      <button class="ebc-action" onclick="showToast('（演示）导出为 PDF / Word / Markdown')" title="下载">
         <i data-lucide="download"></i>
         <span>下载</span>
       </button>
-      <button class="ebc-action tb-action" onclick="showToast('（演示）分享给同事 / 复制链接')" title="分享">
+      <button class="ebc-action" onclick="showToast('（演示）分享给同事 / 复制链接')" title="分享">
         <i data-lucide="share-2"></i>
         <span>分享</span>
       </button>
-      <button class="ebc-action tb-action" onclick="showToast('（演示）收藏到「张老师 · 个人」')" title="收藏">
-        <i data-lucide="bookmark-plus"></i>
-        <span>收藏</span>
-      </button>
-
-      <!-- 右 2：竖分隔 -->
-      <span class="tb-sep" aria-hidden="true"></span>
-
-      <!-- 右 3：通知 -->
-      <button class="tb-btn" onclick="showToast('（演示）打开通知中心')" title="通知">
-        <i data-lucide="bell"></i>
-      </button>
-    </header>
+    </div>
 
     <!-- 主滚动区 -->
     <div class="workspace-scroll">
@@ -763,7 +484,7 @@
         <!-- ───── 底部说明（占位，下面所有旧 wiki 内容会被删掉） ───── -->
         <div class="wiki-foot entry-foot" style="margin-top:32px">
           这份原文件由 <b>张老师 5 天前上传</b>。飞象 AI 已读完 28 页，把第 <b>3、5、12 页</b> 的内容
-          融进了《二次函数图像与性质》Wiki——右边「AI 整理」面板里能看到 AI 怎么吸收这份资料，以及它衍生出了哪些
+          融进了《二次函数图像与性质》Wiki——右边「AI 解读」面板里能看到 AI 怎么吸收这份资料，以及它衍生出了哪些
           相关 Wiki、AI 出过的题、其他同主题资料。
           <a onclick="window.location.href='03-wiki-entry.html'">查看本文件参与的 Wiki →</a>
         </div>
@@ -1309,7 +1030,7 @@
     <!-- Canvas 顶部 tab 切换 · 文件预览态的 AI 视图 -->
     <div class="canvas-head">
       <div class="canvas-tabs" id="canvas-tabs">
-        <!-- 元信息 tabs · 阅读 mode 显示 -->
+        <!-- AI 解读 tabs · 阅读 mode 显示 -->
         <button class="cv-tab tab-meta active" data-cv="wiki" onclick="switchCanvas('wiki')">
           <i data-lucide="sparkles"></i>
           AI 摘要
@@ -1618,7 +1339,8 @@
 
 <div id="toast"></div>
 
-<script src="v28.js?v=20260512ag"></script>
+<script src="v28-shell.js?v=20260512bd"></script>
+<script src="v28.js?v=20260512bd"></script>
 <script>
   /* wiki-entry · 根据 URL ?w= 参数动态切换词条标题（共用模板） */
   (function(){

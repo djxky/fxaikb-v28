@@ -116,7 +116,7 @@ svg{ flex-shrink:0; }
 
 /* ────────────────────────────────────────────────────
    Wiki 条目页 · 默认单栏阅读
-   元信息右栏需要用户主动从面包屑条点开（data-right="expanded"）
+   「整理依据」右栏需要用户主动从面包屑条点开（data-right="expanded"）
    chat-open 时强制 1:1（AI 产物 canvas）
    ──────────────────────────────────────────────────── */
 
@@ -165,23 +165,26 @@ body[data-page="wiki-entry"] .app[data-chat="open"] .cv-tab.tab-meta{ display:no
 .cv-collapse-btn [data-lucide]{ width:15px;height:15px;stroke-width:1.85; }
 body[data-page="wiki-entry"] .app[data-chat="open"] .cv-collapse-btn{ display:none; }
 
-/* 面包屑条上的「元信息」按钮：展开态高亮（gold tint） */
+/* 面包屑条上的右栏按钮：展开态高亮（gold tint） */
 .ebc-action.ebc-action-meta{
   /* base style 同 .ebc-action 继承 */
 }
-body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta{
+body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta,
+body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action.ebc-action-meta{
   background:var(--gold-bg);
   color:var(--gold-deep);
   border-color:rgba(192,142,79,.28);
 }
-body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta [data-lucide]{
+body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta [data-lucide],
+body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action.ebc-action-meta [data-lucide]{
   color:var(--gold);
 }
 /* 展开时按钮图标变成关闭面板 */
-body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta .lucide-panel-right-open{
+body[data-page="wiki-entry"] .app[data-right="expanded"] .ebc-action.ebc-action-meta .lucide-panel-right-open,
+body[data-page="file-preview"] .app[data-right="expanded"] .ebc-action.ebc-action-meta .lucide-panel-right-open{
   display:none;
 }
-/* chat-open / 文件夹 / 图谱视图下，元信息按钮自动隐藏（用不上） */
+/* chat-open / 文件夹 / 图谱视图下，右栏按钮自动隐藏（用不上） */
 body[data-page="wiki-entry"] .app[data-chat="open"] .ebc-action.ebc-action-meta,
 body[data-page="wiki-entry"] .app[data-view="folder"] .ebc-action.ebc-action-meta,
 body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action.ebc-action-meta,
@@ -208,8 +211,9 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   padding:10px 0 8px;
-  overflow:hidden;
+  overflow:visible;
   min-width:0;
+  z-index:20;
 }
 
 /* === 品牌区 === */
@@ -241,27 +245,6 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .sb-collapse-btn:hover{ background:var(--surface-3);color:var(--text-2); }
 .sb-collapse-btn [data-lucide]{ width:13px;height:13px; }
 
-/* === 搜索 === */
-.sb-search{
-  margin:0 10px 8px;
-  display:flex;align-items:center;gap:7px;
-  padding:6px 10px;border-radius:7px;
-  background:var(--surface);border:1px solid var(--border);
-  color:var(--text-3);font-size:12px;cursor:pointer;
-  transition:border-color .15s, background .15s;
-  letter-spacing:.005em;
-  flex-shrink:0;
-}
-.sb-search:hover{ border-color:var(--gold-light); }
-.sb-search [data-lucide]{ width:13px;height:13px; }
-.sb-search > .sb-search-label{ flex:1;text-align:left; }
-.sb-search .kbd{
-  font-size:10px;color:var(--text-4);
-  font-family:ui-monospace,Menlo,monospace;
-  padding:1px 5px;border-radius:3px;
-  background:var(--surface-2);
-}
-
 /* === 新对话主按钮（金色 CTA） === */
 .sb-new-chat{
   margin:0 10px 14px;
@@ -291,6 +274,17 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   width:14px;height:14px;color:var(--gold);
   stroke-width:2;
 }
+.sb-chat-entry{
+  width:calc(100% - 20px);
+  margin:-8px 10px 12px;
+  flex-shrink:0;
+}
+.sb-divider{
+  height:1px;
+  margin:0 14px 10px;
+  background:var(--border);
+  flex-shrink:0;
+}
 
 /* === 主滚动区 === */
 .sb-scroll{
@@ -314,15 +308,24 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 
 /* 库分组小标题（替代之前的"知识库"大标题，承担轻量 section 锚点） */
 .sb-group-label{
-  padding:6px 10px 6px;
-  font-size:12px;color:var(--text-2);
+  padding:10px 10px 4px;
+  font-size:11.5px;color:var(--text-3);
   letter-spacing:0;
   font-weight:600;
+}
+.sb-group-label-muted{
+  font-weight:500;
+  color:var(--text-3);
 }
 /* 第一个分组（紧贴 scroll 顶）少一点上间距 */
 .sb-scroll > .sb-section:first-child > .sb-group-label:first-child{ padding-top:2px; }
 /* 同 section 内的第二个分组（"我的知识库"），跟上面 KB 列表拉开点 */
 .sb-kb + .sb-group-label{ padding-top:12px; }
+.sb-nav-divider{
+  height:1px;
+  margin:10px 10px 8px;
+  background:var(--border-3);
+}
 
 /* 知识库项 */
 .sb-kb{
@@ -395,6 +398,52 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   border-top:1px solid var(--border);
   margin:8px 0 0;
   flex-shrink:0;
+  position:relative;
+}
+.sb-account{ position:relative; }
+.sb-account.open .sb-user{ background:var(--surface-3); }
+.sb-account.open .sb-user > [data-lucide]{ transform:rotate(180deg); }
+.sb-account-menu{
+  position:absolute;
+  left:0;right:0;bottom:calc(100% + 8px);
+  padding:5px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:rgba(255,255,252,.98);
+  box-shadow:0 16px 40px rgba(46,39,28,.14),0 2px 8px rgba(46,39,28,.08);
+  opacity:0;
+  transform:translateY(4px) scale(.98);
+  pointer-events:none;
+  transition:opacity .14s var(--ease), transform .14s var(--ease);
+  z-index:80;
+}
+.sb-account.open .sb-account-menu{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.sb-account-menu button{
+  display:flex;align-items:center;gap:8px;
+  width:100%;
+  padding:7px 8px;
+  border-radius:7px;
+  font-size:12.5px;
+  color:var(--text);
+  text-align:left;
+  transition:background .12s,color .12s;
+}
+.sb-account-menu button:hover{
+  background:var(--gold-bg);
+  color:var(--gold-deep);
+}
+.sb-account-menu button [data-lucide]{
+  width:14px;height:14px;
+  color:var(--text-3);
+}
+.sb-account-menu button:hover [data-lucide]{ color:var(--gold-deep); }
+.sb-account-menu button:last-child{
+  margin-top:3px;
+  color:var(--text-3);
 }
 .sb-user{
   display:flex;align-items:center;gap:8px;
@@ -427,35 +476,49 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   padding:10px 0 8px;
 }
 .app[data-left="collapsed"] .sb-brand{
-  flex-direction:column;gap:6px;
+  position:relative;
+  display:grid;
+  place-items:center;
   padding:0 0 10px;
   align-items:center;
   width:100%;
 }
 .app[data-left="collapsed"] .sb-brand-name{ display:none; }
 .app[data-left="collapsed"] .sb-collapse-btn{
-  margin:0;
+  position:absolute;
+  top:0;left:50%;
+  margin:0 0 0 -13px;
   width:26px;height:26px;
+  background:rgba(251,248,240,.94);
+  box-shadow:0 2px 8px rgba(46,39,28,.12);
+  opacity:0;
+  transform:scale(.96);
+  transition:opacity .14s var(--ease), transform .14s var(--ease), background .15s, color .15s;
 }
-
-.app[data-left="collapsed"] .sb-search{
-  margin:0 0 6px;
-  width:32px;height:32px;
-  padding:0;
-  justify-content:center;
+.app[data-left="collapsed"] .sb-brand:hover .sb-collapse-btn{
+  opacity:1;
+  transform:scale(1);
 }
-.app[data-left="collapsed"] .sb-search > .sb-search-label,
-.app[data-left="collapsed"] .sb-search > .kbd{ display:none; }
-.app[data-left="collapsed"] .sb-search [data-lucide]{ width:14px;height:14px; }
+.app[data-left="collapsed"] .sb-brand:hover .sb-brand-mark{
+  opacity:.28;
+}
 
 .app[data-left="collapsed"] .sb-new-chat{
   margin:0 0 10px;
   width:32px;height:32px;
   padding:0;
   border-radius:7px;
+  justify-content:center;
 }
 .app[data-left="collapsed"] .sb-new-chat > .sb-new-chat-label{ display:none; }
 .app[data-left="collapsed"] .sb-new-chat [data-lucide]{ width:15px;height:15px; }
+.app[data-left="collapsed"] .sb-chat-entry{
+  margin:0 auto 10px;
+}
+.app[data-left="collapsed"] .sb-divider{
+  width:28px;
+  margin:0 auto 8px;
+}
 
 .app[data-left="collapsed"] .sb-scroll{
   padding:0;
@@ -467,14 +530,20 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 }
 .app[data-left="collapsed"] .sb-section-head,
 .app[data-left="collapsed"] .sb-group-label{ display:none; }
+.app[data-left="collapsed"] .sb-nav-divider{
+  width:24px;
+  margin:8px auto 6px;
+}
 
 .app[data-left="collapsed"] .sb-kb{
   width:32px;height:32px;
   padding:0;
+  display:flex;
+  align-items:center;
   justify-content:center;
   margin:0;
 }
-.app[data-left="collapsed"] .sb-kb:not(.active){ display:none; }
+.app[data-left="collapsed"] .sb-kb:not(.active):not(.sb-ai-qbank){ display:none; }
 .app[data-left="collapsed"] .sb-kb .kb-name,
 .app[data-left="collapsed"] .sb-kb .kb-count{ display:none; }
 .app[data-left="collapsed"] .sb-kb.active::before{ display:none; }
@@ -483,6 +552,8 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .app[data-left="collapsed"] .sb-item{
   width:32px;height:32px;
   padding:0;
+  display:flex;
+  align-items:center;
   justify-content:center;
   position:relative;
 }
@@ -501,10 +572,18 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   margin:8px 0 0;
 }
 .app[data-left="collapsed"] .sb-foot > .sb-item{ margin-left:auto;margin-right:auto; }
+.app[data-left="collapsed"] .sb-account-menu{
+  width:168px;
+  left:calc(100% + 10px);
+  right:auto;
+  bottom:0;
+}
 
 .app[data-left="collapsed"] .sb-user{
   padding:0;width:32px;height:32px;
   margin:4px auto 0;
+  display:flex;
+  align-items:center;
   justify-content:center;
 }
 .app[data-left="collapsed"] .sb-user .sb-user-name,
@@ -524,8 +603,7 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 }
 .app[data-left="collapsed"] .sb-tip{ display:block; }
 .app[data-left="collapsed"] .sb-kb:hover .sb-tip,
-.app[data-left="collapsed"] .sb-item:hover .sb-tip,
-.app[data-left="collapsed"] .sb-search:hover .sb-tip{ opacity:1; }
+.app[data-left="collapsed"] .sb-item:hover .sb-tip{ opacity:1; }
 
 /* ────────────────────────────────────────────────────
    中栏 · 工作区
@@ -533,7 +611,10 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .workspace{
   display:flex;flex-direction:column;
   background:var(--bg);
-  min-width:0;overflow:hidden;
+  /* 03/04 的顶部条需要跨过右栏；裁剪会让“通栏”失效。 */
+  min-width:0;overflow:visible;
+  position:relative;
+  z-index:3;
 }
 
 /* === 顶栏 === */
@@ -570,6 +651,33 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .tb-collapse:hover{ background:var(--surface-3);color:var(--text-2); }
 .tb-collapse [data-lucide]{ width:14px;height:14px; }
 
+/* ─── topbar · 当前 KB 名称 ─── */
+.tb-kb-current{
+  display:inline-flex;
+  align-items:center;gap:6px;
+  height:28px;
+  padding:0 12px;
+  border-radius:14px;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.01em;
+  color:var(--gold-deep);
+  background:var(--gold-bg);
+  border:1px solid rgba(168,126,44,.18);
+  max-width:220px;
+  overflow:hidden;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.tb-kb-current [data-lucide]{
+  width:13px;height:13px;
+  color:var(--gold);
+  flex-shrink:0;
+}
+.tb-kb-current .tb-kb-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 /* 视图切换器 */
 .view-switcher{
   display:inline-flex;align-items:center;
@@ -603,29 +711,30 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .tb-search{
   display:inline-flex;align-items:center;gap:7px;
   height:30px;padding:0 10px 0 11px;border-radius:7px;
-  background:transparent;
-  border:1px solid transparent;
+  background:var(--surface);
+  border:1px solid var(--border);
   color:var(--text-3);cursor:pointer;
   font-size:12.5px;
   transition:all .15s;
-  min-width:240px;
+  width:196px;
+  flex:0 0 196px;
 }
 .tb-search:hover{
-  border-color:var(--border);
+  border-color:var(--gold-light);
   background:var(--surface-2);
   color:var(--text-2);
+}
+.tb-search[aria-expanded="true"]{
+  border-color:rgba(168,126,44,.32);
+  background:var(--gold-bg);
+  color:var(--gold-deep);
 }
 .tb-search [data-lucide]{ width:13px;height:13px;color:inherit; }
 .tb-search > span:first-of-type{
   flex:1;text-align:left;
-}
-.tb-search .kbd{
-  display:inline-flex;align-items:center;
-  font-family:ui-monospace,Menlo,monospace;font-size:10px;
-  padding:1px 5px;border-radius:3px;
-  background:#F5F1E8;color:#A8A39B;
-  border:1px solid #E8E2D3;
-  letter-spacing:.02em;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .tb-btn{
   width:30px;height:30px;border-radius:7px;
@@ -636,6 +745,84 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 .tb-btn [data-lucide]{ width:14px;height:14px;color:var(--text-2); }
 .tb-btn:hover{ background:var(--surface-3); }
 .tb-btn:hover [data-lucide]{ color:var(--text); }
+
+.top-search-panel{
+  position:absolute;
+  top:52px;right:18px;
+  width:min(520px, calc(100% - 36px));
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:rgba(255,255,252,.98);
+  box-shadow:0 18px 48px rgba(46,39,28,.14),0 2px 8px rgba(46,39,28,.08);
+  opacity:0;
+  transform:translateY(-4px) scale(.985);
+  pointer-events:none;
+  transition:opacity .16s var(--ease), transform .16s var(--ease);
+  z-index:70;
+}
+.top-search-panel.open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.top-search-input{
+  display:flex;align-items:center;gap:9px;
+  height:38px;
+  padding:0 11px;
+  border:1px solid rgba(168,126,44,.22);
+  border-radius:10px;
+  background:var(--surface-2);
+}
+.top-search-input [data-lucide]{ width:15px;height:15px;color:var(--gold); }
+.top-search-input input{
+  flex:1;min-width:0;
+  font-size:13px;
+  color:var(--text);
+}
+.top-search-input input::placeholder{ color:var(--text-4); }
+.top-search-input .spot-esc{
+  font-family:ui-monospace,Menlo,monospace;
+  font-size:10px;color:var(--text-4);
+  border:1px solid var(--border);
+  border-radius:5px;
+  padding:1px 6px;
+  background:var(--surface);
+  cursor:pointer;
+}
+.top-search-results{
+  padding:8px 2px 0;
+  display:grid;gap:3px;
+}
+.top-search-item{
+  display:grid;
+  grid-template-columns:18px 1fr auto;
+  align-items:center;
+  gap:9px;
+  padding:8px 9px;
+  border-radius:9px;
+  color:var(--text-2);
+  cursor:pointer;
+  transition:background .12s,color .12s;
+}
+.top-search-item:hover{
+  background:var(--gold-bg);
+  color:var(--gold-deep);
+}
+.top-search-item [data-lucide]{ width:15px;height:15px;color:var(--text-3); }
+.top-search-item:hover [data-lucide]{ color:var(--gold-deep); }
+.top-search-main{
+  font-size:12.8px;font-weight:600;color:var(--text);
+  line-height:1.35;
+}
+.top-search-sub{
+  font-size:11.5px;color:var(--text-4);
+  line-height:1.35;
+}
+.top-search-type{
+  font-size:11px;color:var(--text-4);
+  white-space:nowrap;
+}
 
 .tb-new-chat{
   display:inline-flex;align-items:center;gap:5px;
@@ -998,7 +1185,7 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 }
 
 /* ────────────────────────────────────────────────────
-   Canvas · 元信息面板（阅读 mode · 来源 + 反向链接）
+   Canvas · 整理依据 / AI 解读面板（阅读 mode · 来源 + 反向链接）
    ──────────────────────────────────────────────────── */
 .cv-meta{
   font-size:13px;color:var(--text);
@@ -1747,6 +1934,8 @@ body[data-page="wiki-entry"] .app[data-right="expanded"] .wiki-page{
    右栏 · Canvas（chat 态下占据右半屏 1fr）
    ──────────────────────────────────────────────────── */
 .sidebar-right{
+  position:relative;
+  z-index:1;
   background:var(--surface);
   border-left:1px solid var(--border);
   display:flex;flex-direction:column;
@@ -1988,8 +2177,10 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .sidebar-right{
    ════════════════════════════════════════════════════════════ */
 
 /* 面包屑条 · 内容区顶部独立横条
-   左侧 = 当前位置；右侧 = 当前页操作（收藏/分享） */
+   左侧 = 当前位置；右侧 = 当前页操作（右栏/下载/分享） */
 .entry-bcbar{
+  position:relative;
+  z-index:6;
   display:flex;align-items:center;
   gap:8px;
   padding:10px 56px;
@@ -1997,9 +2188,22 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .sidebar-right{
   border-bottom:1px solid var(--border);
   font-size:13px;
 }
-/* 双栏 expanded 时，面包屑条 padding 改为 48px，跟 wiki-page 对齐 */
-body[data-page="wiki-entry"] .app[data-right="expanded"] .entry-bcbar{
+/* 双栏 expanded 时，主顶栏也跨过右栏，形成一整条顶部导航 */
+body[data-page="wiki-entry"] .app[data-right="expanded"] .topbar,
+body[data-page="file-preview"] .app[data-right="expanded"] .topbar{
+  width:calc(200% + 1px);
+  box-shadow:1px 0 0 var(--border);
+}
+/* 双栏 expanded 时，顶部条跨过右栏通栏展示 */
+body[data-page="wiki-entry"] .app[data-right="expanded"] .entry-bcbar,
+body[data-page="file-preview"] .app[data-right="expanded"] .entry-bcbar{
+  width:calc(200% + 1px);
   padding:10px 48px;
+  box-shadow:1px 0 0 var(--border);
+}
+body[data-page="wiki-entry"] .app[data-right="expanded"] .sidebar-right,
+body[data-page="file-preview"] .app[data-right="expanded"] .sidebar-right{
+  padding-top:102px;
 }
 .entry-breadcrumb{
   display:flex;align-items:center;gap:4px;

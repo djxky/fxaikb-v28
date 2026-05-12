@@ -26,6 +26,108 @@ function refreshCollapseIcons(){
   if(window.lucide) lucide.createIcons();
 }
 
+/* 账号菜单 · 设置等低频入口收进张老师头像 */
+function closeAccountMenus(){
+  document.querySelectorAll('.sb-account.open').forEach(account => {
+    account.classList.remove('open');
+    const trigger = account.querySelector('.sb-user');
+    if(trigger) trigger.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function toggleAccountMenu(event){
+  if(event) event.stopPropagation();
+  const trigger = event && event.currentTarget;
+  const account = trigger && trigger.closest('.sb-account');
+  if(!account) return;
+  const willOpen = !account.classList.contains('open');
+  closeAccountMenus();
+  account.classList.toggle('open', willOpen);
+  trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+}
+
+function accountMenuAction(label){
+  closeAccountMenus();
+  showToast(`（演示）打开${label}`);
+}
+
+/* 顶栏搜索 · 右侧短入口，下方展开搜索框 */
+function ensureTopSearchPanel(){
+  let panel = document.getElementById('top-search-panel');
+  if(panel) return panel;
+  const workspace = document.querySelector('.workspace');
+  const topbar = document.querySelector('.topbar');
+  if(!workspace || !topbar) return null;
+
+  panel = document.createElement('div');
+  panel.className = 'top-search-panel';
+  panel.id = 'top-search-panel';
+  panel.innerHTML = `
+    <div class="top-search-input">
+      <i data-lucide="search"></i>
+      <input id="top-search-input" type="text" placeholder="搜索 Wiki、文件、题目…" autocomplete="off" />
+      <span class="spot-esc" onclick="closeTopSearch()">Esc</span>
+    </div>
+    <div class="top-search-results">
+      <button class="top-search-item" onclick="showToast('（演示）打开「二次函数图像与性质」')">
+        <i data-lucide="book-open"></i>
+        <span>
+          <span class="top-search-main">二次函数图像与性质</span>
+          <span class="top-search-sub">Wiki · 引用 12 份资料</span>
+        </span>
+        <span class="top-search-type">Wiki</span>
+      </button>
+      <button class="top-search-item" onclick="window.location.href='04-file-preview.html'">
+        <i data-lucide="presentation"></i>
+        <span>
+          <span class="top-search-main">二次函数·导入课件.pptx</span>
+          <span class="top-search-sub">文件 · 张老师上传</span>
+        </span>
+        <span class="top-search-type">文件</span>
+      </button>
+      <button class="top-search-item" onclick="showToast('（演示）筛选题库：二次函数')">
+        <i data-lucide="file-stack"></i>
+        <span>
+          <span class="top-search-main">二次函数分层练习</span>
+          <span class="top-search-sub">题库 · 38 道相关题</span>
+        </span>
+        <span class="top-search-type">题目</span>
+      </button>
+    </div>
+  `;
+  topbar.insertAdjacentElement('afterend', panel);
+  if(window.lucide) lucide.createIcons();
+  return panel;
+}
+
+function closeTopSearch(){
+  const panel = document.getElementById('top-search-panel');
+  if(panel) panel.classList.remove('open');
+  document.querySelectorAll('.tb-search[aria-expanded="true"]').forEach(btn => {
+    btn.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function openTopSearch(){
+  closeAccountMenus();
+  const panel = ensureTopSearchPanel();
+  if(!panel) return;
+  panel.classList.add('open');
+  document.querySelectorAll('.tb-search').forEach(btn => btn.setAttribute('aria-expanded', 'true'));
+  setTimeout(() => {
+    const input = document.getElementById('top-search-input');
+    if(input) input.focus();
+  }, 40);
+}
+
+function toggleTopSearch(event){
+  if(event) event.stopPropagation();
+  const panel = ensureTopSearchPanel();
+  if(!panel) return;
+  if(panel.classList.contains('open')) closeTopSearch();
+  else openTopSearch();
+}
+
 /* ──────────────────────────────────────────────
    对话页 · 切到对话模块（不是浮窗，是页面切换）
    · 左栏保持原状（用户靠它回到知识库）
@@ -253,7 +355,7 @@ function switchCanvas(name){
   });
 }
 
-/* 右栏元信息面板 toggle（仅 03-wiki-entry · 默认收起，点击展开/再点收回） */
+/* 右栏面板 toggle：Wiki 展示整理依据，文件展示 AI 解读 */
 function toggleRight(){
   if(!app) return;
   if(app.dataset.right === 'expanded'){
@@ -491,6 +593,12 @@ function switchKb(id, name, count){
     }
   }
   if(countEl) countEl.textContent = count.toLocaleString();
+
+  /* 同步 topbar 当前 KB 名 */
+  const tbKbName = document.getElementById('tb-kb-name');
+  if(tbKbName){
+    tbKbName.textContent = name;
+  }
 
   showToast(`（演示）已切换到「${name}」 · ${count} 份资料`);
 }
@@ -796,7 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', e => {
     if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
       e.preventDefault();
-      showToast('（演示）⌘K · 搜索 Wiki / 文件 / 题目');
+      openTopSearch();
     }
     if((e.metaKey || e.ctrlKey) && e.key === '\\'){
       e.preventDefault();
@@ -805,5 +913,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if(e.key === 'Escape' && app.dataset.chat === 'open'){
       closeChat();
     }
+    if(e.key === 'Escape'){
+      closeAccountMenus();
+      closeTopSearch();
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if(!e.target.closest('.sb-account')) closeAccountMenus();
+    if(!e.target.closest('.top-search-panel') && !e.target.closest('.tb-search')) closeTopSearch();
   });
 });
