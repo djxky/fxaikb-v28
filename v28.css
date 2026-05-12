@@ -613,6 +613,8 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   background:var(--bg);
   /* 03/04 的顶部条需要跨过右栏；裁剪会让“通栏”失效。 */
   min-width:0;overflow:visible;
+  min-height:0;
+  max-height:100vh;
   position:relative;
   z-index:3;
 }
