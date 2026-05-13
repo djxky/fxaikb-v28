@@ -66,7 +66,8 @@ demo/v28-wiki-first/
 ├── 04-file-preview.html          # 文件预览 · 默认双栏 1:1
 ├── v28.css                       # 全局样式
 ├── v28-shell.js                  # 公共壳渲染（Sidebar / Topbar / Search / AccountMenu）
-├── v28.js                        # 全局交互（switchView / switchKb / toggleRight / openWiki / enterSubfolder）
+├── v28-folder.js                 # 公共 FolderView 渲染（唯一文件夹视图实现）
+├── v28.js                        # 全局交互（switchView / switchKb / toggleRight / openWiki）
 ├── kb-workbench.css/.js          # 早期工作台样式 / 交互（仍被部分页面引用）
 ├── kb-page-router.js             # 路由
 ├── PRODUCT-VISION.md             # 产品定位
@@ -92,9 +93,10 @@ demo/v28-wiki-first/
 - **侧栏对话入口**：`新对话` 下方直接放 `历史对话`，题库留在知识库导航后的业务模块区
 - **侧栏知识区结构**：`我的知识库` / `团队知识库`（若干空间）/ `AI 题库`；AI 题库不展示右侧数字
 - **公共壳已抽象**：4 个核心页面的 Sidebar / Topbar 由 `v28-shell.js` 渲染，避免重复改 4 份 HTML
+- **文件夹视图已收敛**：只有 `03-wiki-entry.html?view=folder` 承载 canonical FolderView，DOM 由 `v28-folder.js` 渲染；02 页面不再内嵌本地文件夹视图
 - **Wiki / 文件二级栏统一**：4 个 Wiki 相关页面都有通栏顶部条 + 下载 + 分享；Wiki 详情右栏按钮叫「整理依据」且默认收起；文件右栏按钮叫「AI 解读」且默认展开
 - 02 / 03 / 04 在 topbar 下面有独立 `entry-bcbar`（面包屑 + 下载/分享；03/04 额外有右栏入口）
-- **cache buster 当前版本**：`?v=20260512bd`（改 CSS/JS 后递增字母）
+- **cache buster 当前版本**：`?v=20260512be`（改 CSS/JS 后递增字母）
 
 ---
 
@@ -124,5 +126,5 @@ demo/v28-wiki-first/
 - **为什么 04 默认双栏？** —— 老板要求"看原文件时 AI 内容占 1:1"，体现 AI 不是辅助而是平等
 - **为什么 topbar 始终显示 KB 名？** —— 搜索与视图切换都上移到全局工作栏后，KB 名需要作为稳定上下文锚点常驻
 - **为什么所有文件都跳 04？** —— 演示用，避免老板乱点掉进死链。索引在 `index.html` 卡片文案里已写明
-- **为什么 03 既是 wiki 词条页又是文件夹视图？** —— 共用模板降低开发量；通过 `?view=` URL 参数切换；切换时 `switchView()` 处理
+- **为什么文件夹视图统一落到 03？** —— 三视图是全局能力，不应该每页复制；`switchView('folder')` 会统一导航到 `03-wiki-entry.html?view=folder`
 - **为什么 hero 文案要"这不是云盘"开头？** —— 用户明确要求基于 Karpathy 理论体现"区别于传统网盘"，否定式 hook 最快建立差异认知

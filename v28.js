@@ -455,9 +455,8 @@ function hideResume(){
 /* ──────────────────────────────────────────────
    视图切换 · wiki / graph / folder
    - graph：直接新窗口打开研发真实图谱（来自 KB 3 实数据）
-            不切当前视图状态，避免 iframe 跨域 / 加载失败割裂体验
-   - wiki / folder：02 首页真切 DOM；folder 自动折叠左栏到 dock
-   - 03 词条页：只有 Wiki 视图，folder toast + 回切
+   - folder：统一进入 03 的 canonical 文件夹视图，不在每页复制 DOM
+   - wiki：保留当前页 Wiki，或从 03 的 folder 回到词条
    ────────────────────────────────────────────── */
 const GRAPH_SRC = 'https://mapi.feixiangxingqiu.biz/fedebug/agora/feat/wiki-knowledge-graph/index.html#/knowledge-graph?kbId=3';
 let _prevLeftBeforeFolder = null;
@@ -467,6 +466,11 @@ function switchView(v, entryName){
   if(v === 'graph'){
     window.open(GRAPH_SRC, '_blank', 'noopener,noreferrer');
     showToast('知识图谱已在新窗口打开 · 来自研发实时数据');
+    return;
+  }
+
+  if(v === 'folder' && document.body.dataset.page !== 'wiki-entry'){
+    window.location.href = '03-wiki-entry.html?view=folder';
     return;
   }
 

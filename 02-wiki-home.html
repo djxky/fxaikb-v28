@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>飞象 AI · 工作台</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512scroll" />
+<link rel="stylesheet" href="v28.css?v=20260512be" />
 </head>
 <body data-page="wiki-home">
 
@@ -313,8 +313,8 @@
       </article>
     </div>
 
-    <!-- ════════════ 文件夹视图 ════════════ -->
-    <section class="folder-view" id="view-folder">
+    <!-- 旧文件夹视图已隔离：统一从 topbar 进入 03-wiki-entry.html?view=folder -->
+    <section class="folder-view-legacy" id="legacy-view-folder" hidden>
       <aside class="fv-tree">
         <div class="fv-tree-head">
           <i data-lucide="library"></i>
@@ -879,7 +879,18 @@
 
 <div id="toast"></div>
 
-<script src="v28-shell.js?v=20260512bd"></script>
-<script src="v28.js?v=20260512bd"></script>
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
 </body>
 </html>

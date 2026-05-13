@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>二次函数图像与性质 · 飞象 AI [build ap · 顶栏统一 + KB 名]</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512scroll" />
+<link rel="stylesheet" href="v28.css?v=20260512be" />
 <!-- 兜底·内联样式（不走 v28.css 缓存） -->
 <!-- 默认 collapsed=56px icon-only；点 sb-collapse-btn → 切到展开态 240px -->
 <style>
@@ -568,179 +568,8 @@
       </article>
     </div>
 
-    <!-- ════════════ 文件夹视图（data-view="folder" 时显示） ════════════ -->
-    <section class="folder-view" id="view-folder">
-      <div class="fv-list">
-        <div class="fv-list-head">
-          <button class="fv-back-btn" id="fv-back-btn" onclick="exitSubfolder()" title="返回上级文件夹" style="display:none">
-            <i data-lucide="arrow-left"></i>
-          </button>
-          <nav class="fv-breadcrumb" aria-label="路径">
-            <a class="fv-bc-item" onclick="showToast('（演示）回到根目录')"><i data-lucide="library"></i> 教研组</a>
-            <span class="fv-bc-sep">/</span>
-            <a class="fv-bc-item" onclick="showToast('（演示）九年级')">九年级</a>
-            <span class="fv-bc-sep">/</span>
-            <a class="fv-bc-item" onclick="showToast('（演示）数学')">数学</a>
-            <span class="fv-bc-sep">/</span>
-            <span id="fv-bc-tail">
-              <span class="fv-bc-current">二次函数</span>
-              <span class="fv-bc-meta">12 份资料 · 2 子文件夹 + 8 文件</span>
-            </span>
-          </nav>
-          <div class="fv-tools">
-            <button class="fv-tool" onclick="showToast('（演示）按上传时间 / 名称 / 大小排序')">
-              <i data-lucide="arrow-up-down"></i> 排序
-            </button>
-            <button class="fv-tool" onclick="showToast('（演示）上传新文件')">
-              <i data-lucide="upload"></i> 上传
-            </button>
-          </div>
-        </div>
-
-        <div class="fv-wiki-chips" id="fv-wiki-chips">
-          <div class="fwc-label">
-            <i data-lucide="sparkles"></i>
-            <span>飞象把这组资料整理成了 <b>2 个 Wiki</b></span>
-          </div>
-          <div class="fwc-chips">
-            <a class="fwc-chip" onclick="switchView('wiki','二次函数图像与性质')">
-              <i data-lucide="book-open"></i>
-              <span>二次函数图像与性质</span>
-            </a>
-            <a class="fwc-chip" onclick="openWiki('二次函数应用题')">
-              <i data-lucide="book-open"></i>
-              <span>二次函数应用题</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- 根目录 · 二次函数下：2 子文件夹 + 8 文件 -->
-        <table class="fv-table" id="fv-table-root">
-          <thead>
-            <tr>
-              <th class="col-name">名称</th>
-              <th class="col-by">上传者</th>
-              <th class="col-time">上传时间</th>
-              <th class="col-size">大小</th>
-              <th class="col-wiki">关联词条</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 子文件夹 · 列表里排在文件前面（Finder / 网盘 / Windows 标准排序） -->
-            <tr class="fv-row-folder" onclick="enterSubfolder('ppt')" title="进入「PPT 课件」子文件夹">
-              <td class="col-name"><i data-lucide="folder"></i> PPT 课件</td>
-              <td class="fv-cell-dash">—</td>
-              <td class="fv-cell-dash">—</td>
-              <td>4 份</td>
-              <td class="fv-cell-dash">—</td>
-            </tr>
-            <tr class="fv-row-folder" onclick="enterSubfolder('exercises')" title="进入「习题资料」子文件夹">
-              <td class="col-name"><i data-lucide="folder"></i> 习题资料</td>
-              <td class="fv-cell-dash">—</td>
-              <td class="fv-cell-dash">—</td>
-              <td>5 份</td>
-              <td class="fv-cell-dash">—</td>
-            </tr>
-            <!-- 直接文件 -->
-            <tr onclick="window.location.href='04-file-preview.html'" title="预览原文件 · 左 PPT / 右 AI 摘要 1:1">
-              <td class="col-name"><i data-lucide="presentation"></i> 二次函数·导入课件.pptx</td>
-              <td>张老师</td>
-              <td>5 天前</td>
-              <td>4.2 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="file-text"></i> 教学设计·二次函数.docx</td>
-              <td>张老师</td>
-              <td>5 天前</td>
-              <td>340 KB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="file-text"></i> 海淀区 2026 一模卷·数学.pdf</td>
-              <td>李素芬</td>
-              <td>1 周前</td>
-              <td>1.2 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数 · 圆 · 相似</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="image"></i> 王建华·公开课板书（4 张）</td>
-              <td>王建华</td>
-              <td>2 周前</td>
-              <td>3.6 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="file-text"></i> 赵明杰·错题剖析.docx</td>
-              <td>赵明杰</td>
-              <td>2 周前</td>
-              <td>220 KB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数 · 一元二次方程</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="clipboard-list"></i> 八(3)班·错题精选.xlsx</td>
-              <td>张老师</td>
-              <td>3 周前</td>
-              <td>180 KB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="folder-archive"></i> 北京中考真题 2021-2025（5 份）</td>
-              <td>学校公共库</td>
-              <td>3 周前</td>
-              <td>12 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">21 个词条</a></td>
-            </tr>
-            <tr class="more" onclick="showToast('（演示）展开剩余 2 份文件')">
-              <td class="col-name" colspan="5"><i data-lucide="more-horizontal"></i> …还有 2 份文件</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- 子文件夹「PPT 课件」下：4 份 PPT 文件 · 默认隐藏，enterSubfolder('ppt') 切显 -->
-        <table class="fv-table" id="fv-table-ppt" style="display:none">
-          <thead>
-            <tr>
-              <th class="col-name">名称</th>
-              <th class="col-by">上传者</th>
-              <th class="col-time">上传时间</th>
-              <th class="col-size">大小</th>
-              <th class="col-wiki">关联词条</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr onclick="window.location.href='04-file-preview.html'" title="预览原文件 · 左 PPT / 右 AI 摘要 1:1">
-              <td class="col-name"><i data-lucide="presentation"></i> 二次函数·导入课件.pptx</td>
-              <td>张老师</td>
-              <td>5 天前</td>
-              <td>4.2 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="presentation"></i> 抛物线图像专题.pptx</td>
-              <td>李素芬</td>
-              <td>2 周前</td>
-              <td>3.1 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="presentation"></i> 顶点公式推导.pptx</td>
-              <td>王建华</td>
-              <td>3 周前</td>
-              <td>1.8 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-            <tr onclick="window.location.href='04-file-preview.html'" title="演示：所有文件都进同一个 1:1 双栏预览页">
-              <td class="col-name"><i data-lucide="presentation"></i> 复习课·二次函数总结.pptx</td>
-              <td>张老师</td>
-              <td>1 个月前</td>
-              <td>2.4 MB</td>
-              <td><a class="wlink" onclick="event.stopPropagation();switchView('wiki','二次函数图像与性质')">二次函数图像与性质</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <!-- ════════════ 文件夹视图 · 公共 FolderView 由 v28-folder.js 渲染 ════════════ -->
+    <section class="folder-view" id="view-folder"></section>
 
     <!-- ════════════ 对话流（chat 态显示） ════════════ -->
     <div class="chat-stream" id="view-chat">
@@ -1291,8 +1120,9 @@
 
 <div id="toast"></div>
 
-<script src="v28-shell.js?v=20260512bd"></script>
-<script src="v28.js?v=20260512bd"></script>
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+<script src="v28-folder.js?v=20260512be"></script>
 <script>
   /* wiki-entry · 根据 URL ?w= 参数动态切换词条标题（共用模板） */
   (function(){
@@ -1339,56 +1169,17 @@
     });
   })();
 
-  /* 文件夹视图 · 子文件夹切换（演示用：root ↔ ppt）
-     · 真切换 tbody，路径条同步加一级，返回按钮显形
-     · 习题资料用 toast 占位（不重复造太多 mock 数据） */
-  function enterSubfolder(id){
-    const tableRoot   = document.getElementById('fv-table-root');
-    const tablePpt    = document.getElementById('fv-table-ppt');
-    const wikiChips   = document.getElementById('fv-wiki-chips');
-    const bcTail      = document.getElementById('fv-bc-tail');
-    const backBtn     = document.getElementById('fv-back-btn');
-
-    if(id === 'ppt'){
-      if(tableRoot) tableRoot.style.display = 'none';
-      if(tablePpt)  tablePpt.style.display  = 'table';
-      /* PPT 子文件夹只关联 1 个 wiki，胶囊条让位（避免重复信息） */
-      if(wikiChips) wikiChips.style.display = 'none';
-      if(bcTail) bcTail.innerHTML = `
-        <a class="fv-bc-item" onclick="exitSubfolder()" title="返回 二次函数 上级"><i data-lucide="folder"></i> 二次函数</a>
-        <span class="fv-bc-sep">/</span>
-        <span class="fv-bc-current">PPT 课件</span>
-        <span class="fv-bc-meta">4 份 PPT 文件</span>
-      `;
-      if(backBtn) backBtn.style.display = 'inline-flex';
-      if(window.lucide) lucide.createIcons();
-      return;
-    }
-
-    /* 其他子文件夹：占位 toast（演示阶段不重复造 mock） */
-    if(typeof showToast === 'function'){
-      const map = { exercises: '习题资料（5 份）' };
-      showToast('（演示）进入「' + (map[id] || id) + '」子文件夹 · 完整 mock 数据待补');
-    }
-  }
-
-  function exitSubfolder(){
-    const tableRoot   = document.getElementById('fv-table-root');
-    const tablePpt    = document.getElementById('fv-table-ppt');
-    const wikiChips   = document.getElementById('fv-wiki-chips');
-    const bcTail      = document.getElementById('fv-bc-tail');
-    const backBtn     = document.getElementById('fv-back-btn');
-
-    if(tableRoot) tableRoot.style.display = 'table';
-    if(tablePpt)  tablePpt.style.display  = 'none';
-    if(wikiChips) wikiChips.style.display = 'flex';
-    if(bcTail) bcTail.innerHTML = `
-      <span class="fv-bc-current">二次函数</span>
-      <span class="fv-bc-meta">12 份资料 · 2 子文件夹 + 8 文件</span>
-    `;
-    if(backBtn) backBtn.style.display = 'none';
-    if(window.lucide) lucide.createIcons();
-  }
 </script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
 </body>
 </html>

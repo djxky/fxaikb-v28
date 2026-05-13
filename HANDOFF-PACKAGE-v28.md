@@ -29,7 +29,7 @@
 | `.tb-search` / `.top-search-panel` | `GlobalSearch` | 顶栏短搜索 + 下拉搜索 |
 | `.sb-account-menu` | `AccountMenu` | 个人信息、设置、账号与安全 |
 | `.wiki-page` | `KnowledgeHome` / `WikiEntry` | 首页与词条共用基础排版 |
-| `.folder-view` | `FolderView` | 文件夹纯列表 |
+| `.folder-view` / `v28-folder.js` | `FolderView` | 文件夹纯列表，唯一公共实现 |
 | `.file-preview-layout` | `FilePreview` | 左原文件、右 AI 解读 |
 | `.chat-empty` / `.chat-page` | `ChatWorkspace` | 对话页面状态 |
 
@@ -40,7 +40,7 @@
 | `02-personal-home.html` | `/kb/personal/:kbId/wiki` | 个人知识库 Wiki 首页 |
 | `02-wiki-home.html` | `/kb/team/:kbId/wiki` | 团队知识库 Wiki 首页 |
 | `03-wiki-entry.html?w=xxx` | `/kb/:kbId/wiki/:wikiId` | Wiki 词条 |
-| `03-wiki-entry.html?view=folder` | `/kb/:kbId/files` 或 `/kb/:kbId/wiki/:wikiId/files` | 文件夹列表 |
+| `03-wiki-entry.html?view=folder` | `/kb/:kbId/files` 或 `/kb/:kbId/wiki/:wikiId/files` | 文件夹列表的 canonical demo 路由 |
 | `04-file-preview.html` | `/kb/:kbId/files/:fileId` | 文件预览 |
 | 图谱外链 | `/kb/:kbId/graph` | 未来产品内路由 |
 

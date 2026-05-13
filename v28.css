@@ -858,7 +858,7 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
 /* ════════════════════════════════════════════════
    视图切换：根据 app[data-view] 控制视图可见性
    wiki   → workspace-scroll（默认）
-   folder → folder-view（左树 + 右列表）
+   folder → canonical folder-view（纯列表，由 03 + v28-folder.js 承载）
    graph  → 新窗口打开研发真实图谱（不切当前视图）
    ════════════════════════════════════════════════ */
 .folder-view{
@@ -2609,7 +2609,7 @@ body[data-page="file-preview"] .app[data-right="expanded"] .sidebar-right{
 }
 
 /* ════════════════════════════════════════════════════════════
-   文件夹视图：左树 220px + 右列表
+   文件夹视图：纯列表（旧左树样式仅兼容隔离态 demo DOM）
    ════════════════════════════════════════════════════════════ */
 .folder-view{
   background:#fafaf7;

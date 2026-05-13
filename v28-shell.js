@@ -36,6 +36,7 @@
 
   function getActiveView(pageId){
     if(pageId === 'file-preview') return 'folder';
+    if(pageId !== 'wiki-entry') return 'wiki';
     const view = new URLSearchParams(location.search).get('view');
     return view || (document.getElementById('app')?.dataset.view || 'wiki');
   }
@@ -142,8 +143,11 @@
         viewButton('folder', '文件夹', 'folder', true, "window.location.href='03-wiki-entry.html?view=folder'", '回到 文件夹视图'),
       ].join('');
     } else {
+      const wikiAction = pageId === 'wiki-entry'
+        ? "switchView('wiki','二次函数图像与性质')"
+        : "switchView('wiki')";
       buttons = [
-        viewButton('wiki', 'Wiki', 'book-open', activeView === 'wiki', "switchView('wiki')"),
+        viewButton('wiki', 'Wiki', 'book-open', activeView === 'wiki', wikiAction),
         viewButton('graph', '知识图谱', 'network', activeView === 'graph', pageId === 'wiki-entry' ? "switchView('graph','二次函数图像与性质')" : "switchView('graph')"),
         viewButton('folder', '文件夹', 'folder', activeView === 'folder', pageId === 'wiki-entry' ? "switchView('folder','二次函数图像与性质')" : "switchView('folder')"),
       ].join('');

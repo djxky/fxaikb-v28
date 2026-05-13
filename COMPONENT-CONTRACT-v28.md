@@ -138,6 +138,12 @@ Events：
 
 职责：找原件。
 
+归属：
+
+- 只有一份 canonical 实现，由 `v28-folder.js` 渲染。
+- Demo 路由统一落到 `03-wiki-entry.html?view=folder`。
+- 02 首页不内嵌本地文件夹视图，只通过 topbar 导航进入公共 FolderView。
+
 Data：
 
 - `currentFolder`

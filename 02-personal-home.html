@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>飞象 AI · 我的知识库</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512scroll" />
+<link rel="stylesheet" href="v28.css?v=20260512be" />
 </head>
 <body data-page="personal-home">
 
@@ -312,74 +312,6 @@
 
       </article>
     </div>
-
-    <!-- ════════════ 文件夹视图（个人 KB） ════════════ -->
-    <section class="folder-view" id="view-folder">
-      <aside class="fv-tree">
-        <div class="fv-tree-head">
-          <i data-lucide="bookmark"></i>
-          <span class="ft-name">张老师 · 个人</span>
-          <span class="ft-count">87</span>
-        </div>
-
-        <ul class="fv-tree-list" id="personal-folder-tree">
-          <!-- JS 渲染 -->
-        </ul>
-
-        <div class="fv-tree-foot">
-          <button class="fv-tree-action" onclick="showToast('（演示）新建文件夹')">
-            <i data-lucide="folder-plus"></i> 新建文件夹
-          </button>
-        </div>
-      </aside>
-
-      <div class="fv-list">
-        <div class="fv-list-head">
-          <nav class="fv-breadcrumb" aria-label="路径">
-            <a class="fv-bc-item" onclick="personalOpenFolder('all')"><i data-lucide="bookmark"></i> 张老师 · 个人</a>
-            <span class="fv-bc-sep">/</span>
-            <span class="fv-bc-current" id="personal-current-folder">教案 / 课件</span>
-            <span class="fv-bc-meta" id="personal-current-meta">18 份资料</span>
-          </nav>
-          <div class="fv-tools">
-            <button class="fv-tool" onclick="showToast('（演示）按上传时间 / 名称 / 大小排序')">
-              <i data-lucide="arrow-up-down"></i> 排序
-            </button>
-            <button class="fv-tool" onclick="showToast('（演示）选择本地文件上传…')">
-              <i data-lucide="upload"></i> 上传
-            </button>
-            <button class="fv-tool danger" onclick="clearDemoData()">
-              <i data-lucide="trash-2"></i> 清空演示数据
-            </button>
-          </div>
-        </div>
-
-        <div class="fv-wiki-chips" id="personal-wiki-chips">
-          <div class="fwc-label">
-            <i data-lucide="sparkles"></i>
-            <span>飞象把这组资料整理成了 <b id="personal-wiki-chip-count">2 个 Wiki</b></span>
-          </div>
-          <div class="fwc-chips" id="personal-wiki-chips-list">
-            <!-- JS 渲染 -->
-          </div>
-        </div>
-
-        <table class="fv-table">
-          <thead>
-            <tr>
-              <th class="col-name">名称</th>
-              <th class="col-by">来源</th>
-              <th class="col-time">上传时间</th>
-              <th class="col-size">大小</th>
-              <th class="col-wiki">关联词条</th>
-            </tr>
-          </thead>
-          <tbody id="personal-file-tbody">
-            <!-- JS 渲染 -->
-          </tbody>
-        </table>
-      </div>
-    </section>
 
     <!-- ════════════ 对话流（chat 态显示） ════════════ -->
     <div class="chat-stream" id="view-chat">
@@ -708,7 +640,18 @@
 
 <div id="toast"></div>
 
-<script src="v28-shell.js?v=20260512bd"></script>
-<script src="v28.js?v=20260512bd"></script>
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
 </body>
 </html>

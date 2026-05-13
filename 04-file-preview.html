@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>导入课件.pptx · 飞象 AI [build ap · 顶栏统一 + KB 名]</title>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link rel="stylesheet" href="v28.css?v=20260512scroll" />
+<link rel="stylesheet" href="v28.css?v=20260512be" />
 <!-- 兜底·内联样式（不走 v28.css 缓存） -->
 <!-- 默认 collapsed=56px icon-only；点 sb-collapse-btn → 切到展开态 240px -->
 <style>
@@ -1339,8 +1339,8 @@
 
 <div id="toast"></div>
 
-<script src="v28-shell.js?v=20260512bd"></script>
-<script src="v28.js?v=20260512bd"></script>
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
 <script>
   /* wiki-entry · 根据 URL ?w= 参数动态切换词条标题（共用模板） */
   (function(){
@@ -1374,5 +1374,16 @@
     }
   })();
 </script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
 </body>
 </html>
