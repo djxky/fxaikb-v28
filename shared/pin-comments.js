@@ -284,13 +284,24 @@
 
     // ============= 样式注入 =============
     const css = `
+    /* FAB：三个统一圆 icon 按钮，垂直排列 */
     .pc-fab-wrap{position:fixed;right:20px;bottom:76px;z-index:99999;display:flex;flex-direction:column;gap:8px;align-items:flex-end;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif}
-    .pc-fab{display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;background:#111827;color:#fff;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 6px 20px -6px rgba(0,0,0,0.3);border:none;transition:transform .15s ease, background .15s ease}
-    .pc-fab:hover{transform:translateY(-1px)}
-    .pc-fab.on{background:#2563EB}
-    .pc-fab .pc-badge{background:rgba(255,255,255,0.2);padding:1px 7px;border-radius:999px;font-size:11px;font-weight:600;margin-left:2px}
-    .pc-fab-mini{width:36px;height:36px;border-radius:50%;background:#fff;color:#111;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px -4px rgba(0,0,0,0.15);font-size:14px}
-    .pc-fab-mini:hover{border-color:#2563EB;color:#2563EB}
+    .pc-fab-btn{position:relative;width:38px;height:38px;border-radius:50%;background:#fff;color:#374151;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px -4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.04);font-size:16px;line-height:1;padding:0;transition:transform .15s, border-color .15s, background .15s, color .15s}
+    .pc-fab-btn:hover{transform:translateY(-1px);border-color:#D1D5DB;background:#FAFAFA}
+    .pc-fab-btn.on{background:#2563EB;border-color:#2563EB;color:#fff}
+    .pc-fab-btn.on:hover{background:#1D4ED8;border-color:#1D4ED8}
+    .pc-fab-btn.muted{color:#9CA3AF;background:#F9FAFB}
+    .pc-fab-btn.muted:hover{color:#6B7280}
+    .pc-fab-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px #fff;line-height:1}
+    .pc-fab-badge.show{display:inline-flex}
+
+    /* 自定义 tooltip：黑底白字小气泡 + kbd 键盘按键 chip */
+    .pc-tooltip{position:fixed;z-index:100001;background:#1F2937;color:#fff;font-size:12px;line-height:1.4;padding:6px 10px;border-radius:6px;box-shadow:0 6px 18px -4px rgba(0,0,0,0.35);font-family:inherit;font-weight:500;letter-spacing:.01em;display:inline-flex;align-items:center;gap:8px;pointer-events:none;opacity:0;transform:translateX(4px);transition:opacity .12s ease, transform .12s ease;white-space:nowrap}
+    .pc-tooltip.show{opacity:1;transform:translateX(0)}
+    .pc-tooltip::after{content:"";position:absolute;top:50%;right:-4px;width:8px;height:8px;background:#1F2937;transform:translateY(-50%) rotate(45deg);border-radius:1px}
+    .pc-tooltip-text{font-weight:500}
+    .pc-kbd{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:rgba(255,255,255,0.16);color:#F3F4F6;border:1px solid rgba(255,255,255,0.18);border-bottom-width:2px;border-radius:4px;font-size:10.5px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,"SF Mono","Monaco","Consolas",monospace;letter-spacing:0;line-height:1}
+    .pc-kbd-sep{color:rgba(255,255,255,0.45);font-size:10px;margin:0 1px}
 
     body.pc-mode-on{user-select:none;cursor:crosshair}
     body.pc-mode-on .pc-hover-target{outline:2px dashed rgba(37,99,235,.55) !important;outline-offset:2px;cursor:crosshair !important}
@@ -336,23 +347,42 @@
     .pc-drawer-mask.show{opacity:1;pointer-events:auto}
     .pc-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;background:#fff;z-index:99997;box-shadow:-10px 0 30px -10px rgba(0,0,0,0.15);transform:translateX(100%);transition:transform .25s cubic-bezier(0.2,0.8,0.2,1);display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
     .pc-drawer.show{transform:translateX(0)}
-    .pc-drawer-head{padding:16px 18px 8px;border-bottom:1px solid #F3F4F6;background:#FAFAFA}
-    .pc-drawer-head .pc-title{font-size:15px;font-weight:700;color:#111827;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.005em}
-    .pc-drawer-head .pc-sub{font-size:12px;color:#6B7280;margin-top:2px}
 
-    /* 视图切换：本页 / 全项目（参考 v28 cv-tab segmented 风格） */
-    .pc-views{display:flex;gap:2px;margin-top:12px;background:#F3F4F6;padding:3px;border-radius:8px}
-    .pc-view{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:6px 10px;border:none;background:transparent;border-radius:6px;font-size:12px;color:#6B7280;cursor:pointer;font-weight:500;transition:background .15s, color .15s, box-shadow .15s;letter-spacing:.005em}
-    .pc-view:hover{color:#111827}
-    .pc-view.active{background:#fff;color:#92400E;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,0.06)}
-    .pc-view .pc-view-meta{color:#9CA3AF;font-weight:400;margin-left:1px;font-variant-numeric:tabular-nums}
-    .pc-view.active .pc-view-meta{color:#D97706}
+    /* 头部：标题 + 视图 dropdown + 关闭 同一行；状态 chip 第二行 */
+    .pc-drawer-head{padding:12px 14px 8px;border-bottom:1px solid #F3F4F6;background:#FAFAFA;position:relative}
+    .pc-drawer-head .pc-title{font-size:14px;font-weight:700;color:#111827;display:flex;align-items:center;gap:8px;letter-spacing:-.005em}
+    .pc-drawer-head .pc-title-text{flex-shrink:0}
+    .pc-drawer-head .pc-close-x{margin-left:auto;background:transparent;border:none;font-size:16px;cursor:pointer;color:#9CA3AF;width:24px;height:24px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1}
+    .pc-drawer-head .pc-close-x:hover{background:#F3F4F6;color:#111827}
 
-    /* 状态筛选：扁平 segmented，参考 v28 cv-tab 弱化版 */
-    .pc-drawer-head .pc-filters{display:flex;gap:2px;margin-top:8px;flex-wrap:wrap}
-    .pc-filter{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;border:none;background:transparent;font-size:12px;color:#6B7280;cursor:pointer;font-weight:500;transition:background .15s, color .15s;letter-spacing:.005em}
+    /* 视图 dropdown：触发器扁平 chip，菜单浮层 */
+    .pc-view-dd{position:relative;font-weight:500}
+    .pc-view-trigger{display:inline-flex;align-items:center;gap:4px;padding:4px 8px 4px 10px;border:1px solid #E5E7EB;background:#fff;border-radius:6px;font-size:12px;color:#1F2937;cursor:pointer;font-weight:500;font-family:inherit;transition:border-color .15s, background .15s;line-height:1.4;letter-spacing:.005em}
+    .pc-view-trigger:hover{border-color:#D1D5DB;background:#FAFAFA}
+    .pc-view-trigger.open{border-color:#D97706;background:#FEF3C7;color:#92400E}
+    .pc-view-trigger .pc-view-meta{color:#9CA3AF;font-weight:400;font-variant-numeric:tabular-nums;margin-left:2px}
+    .pc-view-trigger.open .pc-view-meta{color:#D97706}
+    .pc-view-trigger .pc-caret{font-size:9px;color:#9CA3AF;margin-left:2px;transition:transform .15s}
+    .pc-view-trigger.open .pc-caret{transform:rotate(180deg);color:#D97706}
+
+    .pc-view-menu{position:absolute;top:calc(100% + 4px);left:0;min-width:160px;background:#fff;border:1px solid #E5E7EB;border-radius:8px;box-shadow:0 12px 28px -10px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.04);padding:4px;z-index:100000;display:none}
+    .pc-view-menu.show{display:block}
+    .pc-view-option{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border:none;background:transparent;cursor:pointer;font-size:12.5px;border-radius:6px;text-align:left;color:#1F2937;font-family:inherit;font-weight:500;transition:background .12s}
+    .pc-view-option:hover{background:#F3F4F6}
+    .pc-view-option.active{color:#92400E;background:#FEF3C7}
+    .pc-view-option .pc-vo-meta{margin-left:auto;color:#9CA3AF;font-variant-numeric:tabular-nums;font-weight:400;font-size:11px}
+    .pc-view-option.active .pc-vo-meta{color:#D97706}
+    .pc-view-option .pc-vo-check{width:12px;height:12px;display:inline-flex;align-items:center;justify-content:center;color:#D97706;font-size:11px;flex-shrink:0;visibility:hidden}
+    .pc-view-option.active .pc-vo-check{visibility:visible}
+
+    /* 状态筛选：紧凑 chip，0 数字隐藏 + 字色变浅 */
+    .pc-drawer-head .pc-filters{display:flex;gap:1px;margin-top:8px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .pc-drawer-head .pc-filters::-webkit-scrollbar{display:none}
+    .pc-filter{display:inline-flex;align-items:center;gap:3px;padding:4px 8px;border-radius:6px;border:none;background:transparent;font-size:11.5px;color:#6B7280;cursor:pointer;font-weight:500;transition:background .15s, color .15s;letter-spacing:.005em;white-space:nowrap;font-family:inherit}
     .pc-filter:hover{background:#fff;color:#111827}
     .pc-filter.active{background:#FEF3C7;color:#92400E;font-weight:600}
+    .pc-filter.empty{color:#B5BAC1}
+    .pc-filter.empty:hover{color:#6B7280}
     .pc-filter .pc-filter-meta{color:#9CA3AF;font-weight:400;font-variant-numeric:tabular-nums}
     .pc-filter.active .pc-filter-meta{color:#D97706}
 
@@ -396,42 +426,161 @@
         document.head.appendChild(s);
     }
 
+    // ============= 自定义 tooltip（hover 露出快捷键）=============
+    let tooltipEl = null;
+    let tooltipShowTimer = null;
+    let tooltipHideTimer = null;
+    let tooltipCurrentTarget = null;
+
+    function ensureTooltip() {
+        if (tooltipEl) return tooltipEl;
+        tooltipEl = document.createElement('div');
+        tooltipEl.className = 'pc-tooltip pc-ui';
+        document.body.appendChild(tooltipEl);
+        return tooltipEl;
+    }
+
+    // 渲染 tooltip 内容：text + 1~2 个 kbd（用 / 分隔）
+    function renderTooltipContent(text, keys) {
+        const safe = escapeHtml(text || '');
+        let kbdHtml = '';
+        if (keys && keys.length) {
+            kbdHtml = keys.map((k, i) => {
+                const sep = i > 0 ? '<span class="pc-kbd-sep">/</span>' : '';
+                return `${sep}<span class="pc-kbd">${escapeHtml(k)}</span>`;
+            }).join('');
+        }
+        return `<span class="pc-tooltip-text">${safe}</span>${kbdHtml}`;
+    }
+
+    // 把 tooltip 定位在目标元素左侧居中（FAB 在右下角，往左展开）
+    function positionTooltipLeftOf(target) {
+        const tip = ensureTooltip();
+        const r = target.getBoundingClientRect();
+        // 临时显示以测量尺寸
+        tip.style.visibility = 'hidden';
+        tip.classList.add('show');
+        const tw = tip.offsetWidth;
+        const th = tip.offsetHeight;
+        tip.classList.remove('show');
+        tip.style.visibility = '';
+        const top = r.top + (r.height - th) / 2;
+        const left = r.left - tw - 10;
+        tip.style.top = Math.max(8, top) + 'px';
+        tip.style.left = Math.max(8, left) + 'px';
+    }
+
+    function showTooltipFor(target) {
+        const tip = ensureTooltip();
+        const text = target.getAttribute('data-pc-tip') || '';
+        const keysAttr = target.getAttribute('data-pc-keys') || '';
+        const keys = keysAttr ? keysAttr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        if (!text && !keys.length) return;
+        tip.innerHTML = renderTooltipContent(text, keys);
+        positionTooltipLeftOf(target);
+        clearTimeout(tooltipHideTimer);
+        tip.classList.add('show');
+    }
+
+    function hideTooltip() {
+        if (!tooltipEl) return;
+        tooltipEl.classList.remove('show');
+    }
+
+    // 全局事件代理：任何 .pc-ui 元素带 data-pc-tip 都生效
+    function bindTooltipEvents() {
+        document.addEventListener('mouseover', (e) => {
+            const t = e.target.closest && e.target.closest('[data-pc-tip]');
+            if (!t || !t.classList.contains('pc-ui')) return;
+            if (t === tooltipCurrentTarget) return;
+            tooltipCurrentTarget = t;
+            clearTimeout(tooltipShowTimer);
+            tooltipShowTimer = setTimeout(() => showTooltipFor(t), 250);
+        }, true);
+        document.addEventListener('mouseout', (e) => {
+            const t = e.target.closest && e.target.closest('[data-pc-tip]');
+            if (!t) return;
+            // 鼠标离开元素本体（不是进入子元素）
+            if (e.relatedTarget && t.contains(e.relatedTarget)) return;
+            clearTimeout(tooltipShowTimer);
+            if (t === tooltipCurrentTarget) tooltipCurrentTarget = null;
+            tooltipHideTimer = setTimeout(hideTooltip, 80);
+        }, true);
+        // 任何点击都立即关掉 tooltip（避免按钮按完气泡还赖着）
+        document.addEventListener('click', () => {
+            clearTimeout(tooltipShowTimer);
+            tooltipCurrentTarget = null;
+            hideTooltip();
+        }, true);
+    }
+
+    // ============= SVG icons (lucide 风格) =============
+    const ICONS = {
+        comment: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+        cursor:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 13 6 6"/><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>',
+        list:    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>',
+        eye:     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+        eyeOff:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>'
+    };
+
     function createFab() {
         const wrap = document.createElement('div');
         wrap.className = 'pc-fab-wrap pc-ui';
 
-        const list = document.createElement('button');
-        list.className = 'pc-fab-mini pc-ui';
-        list.title = '评论列表';
-        list.innerHTML = '☰';
-        list.onclick = () => toggleDrawer(true);
-
-        pinToggleBtn = document.createElement('button');
-        pinToggleBtn.className = 'pc-fab-mini pc-ui';
-        pinToggleBtn.onclick = togglePinsHidden;
-
+        // 评论模式（C）—— 主按钮，带右上角徽章
         fabBtn = document.createElement('button');
-        fabBtn.className = 'pc-fab pc-ui';
-        fabBtn.innerHTML = `<span>💬 评论</span><span class="pc-badge">${pins.length}</span>`;
+        fabBtn.className = 'pc-fab-btn pc-ui';
+        fabBtn.type = 'button';
+        fabBtn.innerHTML = `<span class="pc-fab-icon"></span><span class="pc-fab-badge"></span>`;
         fabBtn.onclick = toggleCommentMode;
 
+        // 评论清单（L）
+        const list = document.createElement('button');
+        list.className = 'pc-fab-btn pc-ui';
+        list.type = 'button';
+        list.setAttribute('data-pc-tip', '评论清单');
+        list.setAttribute('data-pc-keys', 'L');
+        list.innerHTML = ICONS.list;
+        list.onclick = () => toggleDrawer(!drawerOpen);
+
+        // 隐藏/显示 Pin（H）
+        pinToggleBtn = document.createElement('button');
+        pinToggleBtn.className = 'pc-fab-btn pc-ui';
+        pinToggleBtn.type = 'button';
+        pinToggleBtn.onclick = togglePinsHidden;
+
+        wrap.appendChild(fabBtn);
         wrap.appendChild(list);
         wrap.appendChild(pinToggleBtn);
-        wrap.appendChild(fabBtn);
         document.body.appendChild(wrap);
     }
 
     function refreshFab() {
         if (!fabBtn) return;
-        // FAB 徽章只显示本页计数（避免被全项目几百条吓到）
+        // FAB 徽章只显示本页待修改数（0 时隐藏徽章，避免视觉噪音）
         const local = pagePins();
         const open = local.filter(p => p.status === 'todo').length;
-        fabBtn.innerHTML = `<span>${isCommentMode ? '✕ 退出评论' : '💬 评论'}</span><span class="pc-badge">${open}/${local.length}</span>`;
+        const iconSlot = fabBtn.querySelector('.pc-fab-icon');
+        const badge = fabBtn.querySelector('.pc-fab-badge');
+        if (iconSlot) iconSlot.innerHTML = isCommentMode ? ICONS.cursor : ICONS.comment;
+        if (badge) {
+            badge.textContent = open > 99 ? '99+' : String(open);
+            badge.classList.toggle('show', open > 0 && !isCommentMode);
+        }
         fabBtn.classList.toggle('on', isCommentMode);
+        if (isCommentMode) {
+            fabBtn.setAttribute('data-pc-tip', '退出评论模式');
+            fabBtn.setAttribute('data-pc-keys', 'V,Esc');
+        } else {
+            fabBtn.setAttribute('data-pc-tip', open > 0 ? `进入评论模式 · 本页 ${open} 条待修改` : '进入评论模式');
+            fabBtn.setAttribute('data-pc-keys', 'C');
+        }
+
         if (pinToggleBtn) {
-            pinToggleBtn.title = pinsHidden ? '显示本页 Pin' : '隐藏本页 Pin';
-            pinToggleBtn.innerHTML = pinsHidden ? '◎' : '◉';
-            pinToggleBtn.style.color = pinsHidden ? '#9CA3AF' : '#2563EB';
+            pinToggleBtn.setAttribute('data-pc-tip', pinsHidden ? '显示本页 Pin' : '隐藏本页 Pin');
+            pinToggleBtn.setAttribute('data-pc-keys', 'H');
+            pinToggleBtn.innerHTML = pinsHidden ? ICONS.eyeOff : ICONS.eye;
+            pinToggleBtn.classList.toggle('muted', pinsHidden);
         }
     }
 
@@ -912,11 +1061,17 @@
         drawerEl.innerHTML = `
             <div class="pc-drawer-head">
                 <div class="pc-title">
-                    <span>评论清单</span>
-                    <button class="pc-close" data-act="close" style="background:transparent;border:none;font-size:18px;cursor:pointer;color:#9CA3AF">✕</button>
+                    <span class="pc-title-text">评论清单</span>
+                    <div class="pc-view-dd" data-role="view-dd">
+                        <button class="pc-view-trigger" data-act="view-toggle" type="button">
+                            <span class="pc-view-label">全项目</span>
+                            <span class="pc-view-meta">0</span>
+                            <span class="pc-caret">▾</span>
+                        </button>
+                        <div class="pc-view-menu" data-role="view-menu"></div>
+                    </div>
+                    <button class="pc-close-x" data-act="close" type="button" aria-label="关闭">✕</button>
                 </div>
-                <div class="pc-sub" data-role="sub">共 0 条 · 0 待修改</div>
-                <div class="pc-views" data-role="views"></div>
                 <div class="pc-filters" data-role="filters"></div>
             </div>
             <div class="pc-drawer-body" data-role="list"></div>
@@ -935,7 +1090,38 @@
             if (v && v.trim()) { setNick(v.trim()); renderDrawer(); }
         };
 
+        // 视图 dropdown 切换
+        const trigger = drawerEl.querySelector('[data-act="view-toggle"]');
+        trigger.onclick = (e) => {
+            e.stopPropagation();
+            toggleViewMenu();
+        };
+
         renderDrawer();
+    }
+
+    // ============= 视图 dropdown =============
+    let viewMenuOpen = false;
+    function toggleViewMenu(force) {
+        const next = typeof force === 'boolean' ? force : !viewMenuOpen;
+        if (next === viewMenuOpen) return;
+        viewMenuOpen = next;
+        const trigger = drawerEl.querySelector('[data-act="view-toggle"]');
+        const menu = drawerEl.querySelector('[data-role="view-menu"]');
+        if (!trigger || !menu) return;
+        trigger.classList.toggle('open', viewMenuOpen);
+        menu.classList.toggle('show', viewMenuOpen);
+        if (viewMenuOpen) {
+            // 延迟绑定外部点击关闭，避免捕获到当前点击事件
+            setTimeout(() => document.addEventListener('click', onOutsideViewClick, true), 0);
+        } else {
+            document.removeEventListener('click', onOutsideViewClick, true);
+        }
+    }
+    function onOutsideViewClick(e) {
+        const dd = drawerEl && drawerEl.querySelector('[data-role="view-dd"]');
+        if (!dd) return;
+        if (!dd.contains(e.target)) toggleViewMenu(false);
     }
 
     // 当前抽屉视图下应展示的 pin 集合（带本页内编号）
@@ -954,22 +1140,32 @@
         const local = pagePins();
         const totalAll = pins.length;
         const totalLocal = local.length;
-        const subBase = viewScope === 'page'
-            ? `本页 ${totalLocal} 条 · ${local.filter(p => p.status === 'todo').length} 待修改`
-            : `全项目 ${totalAll} 条 · ${pins.filter(p => p.status === 'todo').length} 待修改`;
-        drawerEl.querySelector('[data-role="sub"]').textContent = subBase;
         drawerEl.querySelector('[data-role="nick"]').textContent = getNick() || '未设置';
 
-        // 视图切换：本页 / 全项目
-        const views = drawerEl.querySelector('[data-role="views"]');
-        const pageCount = totalLocal;
-        const projectCount = totalAll;
-        views.innerHTML = `
-            <button class="pc-view ${viewScope === 'page' ? 'active' : ''}" data-v="page">本页<span class="pc-view-meta">· ${pageCount}</span></button>
-            <button class="pc-view ${viewScope === 'project' ? 'active' : ''}" data-v="project">全项目<span class="pc-view-meta">· ${projectCount}</span></button>
-        `;
-        views.querySelectorAll('button').forEach(b => {
-            b.onclick = () => {
+        // 视图 dropdown：触发器显示当前选中
+        const trigger = drawerEl.querySelector('[data-act="view-toggle"]');
+        const currentLabel = viewScope === 'page' ? '本页' : '全项目';
+        const currentCount = viewScope === 'page' ? totalLocal : totalAll;
+        trigger.querySelector('.pc-view-label').textContent = currentLabel;
+        trigger.querySelector('.pc-view-meta').textContent = currentCount;
+
+        // 视图 dropdown 菜单：两个选项
+        const menu = drawerEl.querySelector('[data-role="view-menu"]');
+        const opts = [
+            { v: 'page',    label: '本页',   count: totalLocal },
+            { v: 'project', label: '全项目', count: totalAll }
+        ];
+        menu.innerHTML = opts.map(o => `
+            <button class="pc-view-option ${viewScope === o.v ? 'active' : ''}" data-v="${o.v}" type="button">
+                <span class="pc-vo-check">✓</span>
+                <span>${o.label}</span>
+                <span class="pc-vo-meta">${o.count}</span>
+            </button>
+        `).join('');
+        menu.querySelectorAll('button').forEach(b => {
+            b.onclick = (e) => {
+                e.stopPropagation();
+                toggleViewMenu(false);
                 if (viewScope === b.dataset.v) return;
                 viewScope = b.dataset.v;
                 setView(viewScope);
@@ -977,15 +1173,18 @@
             };
         });
 
-        // 状态筛选（基于当前视图的范围）
+        // 状态筛选（基于当前视图的范围），count = 0 时隐藏数字、字色变浅
         const scopeSource = viewScope === 'page' ? local : pins;
         const filters = drawerEl.querySelector('[data-role="filters"]');
         const counts = { all: scopeSource.length };
         Object.keys(STATUS).forEach(k => counts[k] = scopeSource.filter(p => p.status === k).length);
         const items = [['all', '全部']].concat(Object.entries(STATUS).map(([k, v]) => [k, v.label]));
-        filters.innerHTML = items.map(([k, label]) =>
-            `<button class="pc-filter ${filterStatus === k ? 'active' : ''}" data-k="${k}">${label}<span class="pc-filter-meta">· ${counts[k]}</span></button>`
-        ).join('');
+        filters.innerHTML = items.map(([k, label]) => {
+            const c = counts[k];
+            const empty = c === 0 ? ' empty' : '';
+            const meta = c > 0 ? `<span class="pc-filter-meta">${c}</span>` : '';
+            return `<button class="pc-filter${filterStatus === k ? ' active' : ''}${empty}" data-k="${k}" type="button">${label}${meta}</button>`;
+        }).join('');
         filters.querySelectorAll('button').forEach(b => {
             b.onclick = () => { filterStatus = b.dataset.k; renderDrawer(); };
         });
@@ -1070,6 +1269,7 @@
     function toggleDrawer(open) {
         drawerOpen = open;
         if (open) renderDrawer();
+        else if (viewMenuOpen) toggleViewMenu(false);
         maskEl.classList.toggle('show', open);
         drawerEl.classList.toggle('show', open);
     }
@@ -1172,6 +1372,7 @@
         createPinLayer();
         createFab();
         createDrawer();
+        bindTooltipEvents();
         renderPins();
         refreshFab();
         // 加载完成后如果 URL 带 ?pc=<pinId>，等数据回来后自动跳转
@@ -1208,14 +1409,34 @@
             if (activeCard && !e.target.closest('.pc-ui')) closeActiveCard();
         });
 
-        // ESC 退出
+        // 键盘快捷键（Figma 风格）：
+        //   C = 进/退评论模式 · V = 退评论模式（Figma 默认指针）
+        //   L = 开关评论清单 · H = 切换隐藏 Pin · Esc = 逐层关闭
+        // 在 input/textarea/contenteditable / 卡片输入框内全部禁用，避免写评论时误触。
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                if (viewMenuOpen) { toggleViewMenu(false); return; }
                 if (activeCard) { closeActiveCard(); return; }
                 if (drawerOpen) { toggleDrawer(false); return; }
                 if (isCommentMode) toggleCommentMode();
+                return;
             }
+            if (isTypingTarget(e.target)) return;
+            if (e.metaKey || e.ctrlKey || e.altKey) return;
+            const k = e.key.toLowerCase();
+            if (k === 'c') { e.preventDefault(); toggleCommentMode(); }
+            else if (k === 'v') { e.preventDefault(); if (isCommentMode) toggleCommentMode(); }
+            else if (k === 'l') { e.preventDefault(); toggleDrawer(!drawerOpen); }
+            else if (k === 'h') { e.preventDefault(); togglePinsHidden(); }
         });
+
+        function isTypingTarget(t) {
+            if (!t || !t.tagName) return false;
+            const tag = t.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+            if (t.isContentEditable) return true;
+            return false;
+        }
     }
 
     if (document.readyState === 'loading') {
