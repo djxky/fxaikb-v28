@@ -92,6 +92,7 @@
             }));
         return {
             id: row.id,
+            pageKey: row.page_key,
             selector: row.selector,
             xPct: row.x_pct,
             yPct: row.y_pct,
@@ -107,9 +108,8 @@
         if (!isCloudReady()) return [];
         const { data, error } = await supabaseClient
             .from('comment_pins')
-            .select('id, selector, x_pct, y_pct, is_fixed, status, created_at, created_by, comment_messages(id, author, body, created_at)')
+            .select('id, page_key, selector, x_pct, y_pct, is_fixed, status, created_at, created_by, comment_messages(id, author, body, created_at)')
             .eq('project_key', PROJECT_KEY)
-            .eq('page_key', PAGE_KEY)
             .order('created_at', { ascending: true });
         if (error) throw error;
         return (data || [])
@@ -123,7 +123,8 @@
             return;
         }
         try {
-            pins = await fetchPins();
+            allPins = await fetchPins();
+            pins = allPins.filter(p => p.pageKey === PAGE_KEY);
             refreshAllUi();
         } catch (err) {
             console.error('[pin-comments] load failed', err);
@@ -226,6 +227,8 @@
 
     // ============= 状态 =============
     let pins = [];
+    let allPins = [];
+    let drawerScope = 'all';
     let isCommentMode = false;
     let drawerOpen = false;
     let activePinId = null;
@@ -650,6 +653,7 @@
                 const msg = await insertComment(savedPin.id, v);
                 savedPin.comments.push(msg);
                 if (!pins.some(p => p.id === savedPin.id)) pins.push(savedPin);
+                if (!allPins.some(p => p.id === savedPin.id)) allPins.push(savedPin);
                 closeActiveCard();
                 pinsHidden = false;
                 refreshAllUi();
@@ -778,6 +782,7 @@
             try {
                 await deletePin(pin.id);
                 pins = pins.filter(p => p.id !== pin.id);
+                allPins = allPins.filter(p => p.id !== pin.id);
                 closeActiveCard();
                 refreshAllUi();
             } catch (err) {
@@ -841,8 +846,13 @@
                     <span>评论清单</span>
                     <button class="pc-close" data-act="close" style="background:transparent;border:none;font-size:18px;cursor:pointer;color:#9CA3AF">✕</button>
                 </div>
-                <div class="pc-sub" data-role="sub">共 0 条 · 0 待修改</div>
-                <div class="pc-filters" data-role="filters"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+                    <div class="pc-sub" data-role="sub">共 0 条 · 0 待修改</div>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <div data-role="scope-tabs" style="display:flex;gap:1px;background:#F3F4F6;border-radius:6px;padding:2px"></div>
+                        <div data-role="status-filter" style="position:relative"></div>
+                    </div>
+                </div>
             </div>
             <div class="pc-drawer-body" data-role="list"></div>
             <div class="pc-drawer-foot">
@@ -863,29 +873,82 @@
         renderDrawer();
     }
 
+    function getDisplayPins() {
+        return drawerScope === 'all' ? allPins : pins;
+    }
+
+    function showStatusFilterDropdown(anchor, displayPins) {
+        const old = anchor.querySelector('.pc-sf-menu');
+        if (old) { old.remove(); return; }
+        const counts = { all: displayPins.length };
+        Object.keys(STATUS).forEach(k => counts[k] = displayPins.filter(p => p.status === k).length);
+        const menu = document.createElement('div');
+        menu.className = 'pc-sf-menu pc-ui';
+        menu.style.cssText = 'position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid #E5E7EB;border-radius:8px;box-shadow:0 10px 24px -8px rgba(0,0,0,0.2);padding:4px;z-index:99999;min-width:130px';
+        const allItems = [['all', '全部', null]].concat(Object.entries(STATUS).map(([k, v]) => [k, v.label, v.color]));
+        menu.innerHTML = allItems.map(([k, label, color]) => {
+            const active = filterStatus === k;
+            return `<button data-k="${k}" style="display:flex;align-items:center;gap:8px;width:100%;padding:6px 10px;border:none;background:${active ? '#F3F4F6' : 'transparent'};cursor:pointer;font-size:12px;border-radius:6px;text-align:left;color:#1F2937;font-weight:${active ? '600' : '400'}">
+                ${color ? `<span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0"></span>` : '<span style="width:7px;height:7px;flex-shrink:0"></span>'}
+                <span style="flex:1">${escapeHtml(label)}</span>
+                <span style="color:#9CA3AF">${counts[k]}</span>
+            </button>`;
+        }).join('');
+        anchor.appendChild(menu);
+        menu.querySelectorAll('button').forEach(b => {
+            b.onclick = () => { filterStatus = b.dataset.k; menu.remove(); renderDrawer(); };
+        });
+        setTimeout(() => {
+            const off = (e) => { if (!menu.contains(e.target) && !anchor.contains(e.target)) { menu.remove(); document.removeEventListener('click', off); } };
+            document.addEventListener('click', off);
+        }, 0);
+    }
+
+    function pageName(pageKey) {
+        const parts = String(pageKey || '').split('/');
+        const last = parts[parts.length - 1] || 'index';
+        return last.replace(/\.html$/, '') || 'index';
+    }
+
     function renderDrawer() {
         if (!drawerEl) return;
-        const open = pins.filter(p => p.status === 'todo').length;
-        drawerEl.querySelector('[data-role="sub"]').textContent = `共 ${pins.length} 条 · ${open} 待修改`;
+        const displayPins = getDisplayPins();
+        const open = displayPins.filter(p => p.status === 'todo').length;
+        drawerEl.querySelector('[data-role="sub"]').textContent = `共 ${displayPins.length} 条 · ${open} 待修改`;
         drawerEl.querySelector('[data-role="nick"]').textContent = getNick() || '未设置';
 
-        const filters = drawerEl.querySelector('[data-role="filters"]');
-        const counts = { all: pins.length };
-        Object.keys(STATUS).forEach(k => counts[k] = pins.filter(p => p.status === k).length);
-        const items = [['all', '全部']].concat(Object.entries(STATUS).map(([k, v]) => [k, v.label]));
-        filters.innerHTML = items.map(([k, label]) =>
-            `<button class="pc-filter ${filterStatus === k ? 'active' : ''}" data-k="${k}">${label} ${counts[k]}</button>`
-        ).join('');
-        filters.querySelectorAll('button').forEach(b => {
-            b.onclick = () => { filterStatus = b.dataset.k; renderDrawer(); };
-        });
+        const scopeTabs = drawerEl.querySelector('[data-role="scope-tabs"]');
+        if (scopeTabs) {
+            scopeTabs.innerHTML = [['all', '全部'], ['page', '本页']].map(([k, label]) =>
+                `<button data-s="${k}" style="padding:2px 9px;border-radius:4px;border:none;font-size:11px;font-weight:500;cursor:pointer;transition:all .12s;${drawerScope === k ? 'background:#fff;color:#111827;box-shadow:0 1px 2px rgba(0,0,0,0.1)' : 'background:transparent;color:#9CA3AF'}">${label}</button>`
+            ).join('');
+            scopeTabs.querySelectorAll('button').forEach(b => {
+                b.onclick = () => { drawerScope = b.dataset.s; filterStatus = 'all'; renderDrawer(); };
+            });
+        }
+
+        const statusFilter = drawerEl.querySelector('[data-role="status-filter"]');
+        if (statusFilter) {
+            const st = filterStatus === 'all' ? null : STATUS[filterStatus];
+            const label = st ? st.label : '全部';
+            const count = displayPins.filter(p => filterStatus === 'all' || p.status === filterStatus).length;
+            statusFilter.innerHTML = `<button data-role="status-btn" style="display:flex;align-items:center;gap:4px;padding:3px 8px 3px 10px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;font-size:11px;font-weight:500;cursor:pointer;color:#374151;white-space:nowrap">
+                ${st ? `<span style="width:6px;height:6px;border-radius:50%;background:${st.color};flex-shrink:0"></span>` : ''}
+                ${escapeHtml(label)} ${count} <span style="color:#9CA3AF;margin-left:1px;font-size:10px">▾</span>
+            </button>`;
+            statusFilter.querySelector('[data-role="status-btn"]').onclick = (e) => {
+                e.stopPropagation();
+                showStatusFilterDropdown(statusFilter, displayPins);
+            };
+        }
 
         renderDrawerList();
     }
 
     function renderDrawerList() {
         const list = drawerEl.querySelector('[data-role="list"]');
-        const view = pins
+        const displayPins = getDisplayPins();
+        const view = displayPins
             .map((p, i) => ({ p, i }))
             .filter(({ p }) => filterStatus === 'all' || p.status === filterStatus)
             .reverse();
@@ -898,23 +961,35 @@
             const last = p.comments[p.comments.length - 1];
             const preview = last ? last.body : '(空)';
             const author = last ? last.author : p.createdBy;
+            const isCrossPage = p.pageKey && p.pageKey !== PAGE_KEY;
+            const pageTag = isCrossPage
+                ? `<span style="font-size:10px;background:#F3F4F6;color:#6B7280;padding:1px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">${escapeHtml(pageName(p.pageKey))}</span>`
+                : '';
             return `
-                <div class="pc-list-item" data-id="${p.id}">
+                <div class="pc-list-item" data-id="${p.id}" data-page="${escapeHtml(p.pageKey || '')}">
                     <div class="pc-li-head">
                         <div class="pc-li-num">${i + 1}</div>
                         <div class="pc-li-status" style="background:${st.bg};color:${st.color}">${st.label}</div>
-                        <div style="margin-left:auto">${p.comments.length} 条</div>
+                        <div style="margin-left:auto;display:flex;align-items:center;gap:6px">${pageTag}<span>${p.comments.length} 条</span></div>
                     </div>
                     <div class="pc-li-body">${escapeHtml(preview)}</div>
-                    <div class="pc-li-foot"><span>${escapeHtml(author)}</span><span>${fmt(p.createdAt)}</span></div>
+                    <div class="pc-li-foot">
+                        <span>${escapeHtml(author)}</span>
+                        <span>${fmt(p.createdAt)}</span>
+                    </div>
                 </div>
             `;
         }).join('');
         list.querySelectorAll('.pc-list-item').forEach(el => {
             el.onclick = () => {
                 const id = el.dataset.id;
+                const pageKey = el.dataset.page;
                 toggleDrawer(false);
-                jumpToPin(id);
+                if (pageKey && pageKey !== PAGE_KEY) {
+                    window.location.href = pageKey;
+                } else {
+                    jumpToPin(id);
+                }
             };
         });
     }
