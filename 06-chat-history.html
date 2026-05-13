@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>飞象 AI · 历史对话</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="v28.css?v=20260512be" />
+  <style>
+    .ch-page{ padding: 18px 22px 56px; }
+    .ch-container{
+      width: min(920px, 100%);
+      margin: 0 auto;
+    }
+    .ch-head{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .ch-title{
+      font-size: 30px;
+      font-weight: 700;
+      color: #1A1A1A;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+    .ch-head-actions{
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ch-head-btn{
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      font-size: 12.5px;
+      color: #5A5550;
+      background: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .ch-head-btn [data-lucide]{ width: 13px; height: 13px; }
+    .ch-head-btn.ghost{ border-color:#D8D3C9; }
+    .ch-head-btn.ghost:hover{ background:#F5F1EB; border-color:#CFC9BD; color:#3A3A3A; }
+    .ch-head-btn.primary{
+      background:#A87E2C;
+      border-color:#A87E2C;
+      color:#FAFAF8;
+    }
+    .ch-head-btn.primary:hover{ background:#8F6A22; border-color:#8F6A22; }
+    .ch-head-btn.primary [data-lucide]{ color:#FAFAF8; }
+
+    .ch-search{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      width:100%;
+      margin-bottom:12px;
+      background:#fff;
+      border:1px solid #D8D3C9;
+      border-radius:8px;
+      padding:8px 12px;
+      transition:border-color .15s, box-shadow .15s;
+    }
+    .ch-search:focus-within{
+      border-color:#A87E2C;
+      box-shadow:0 0 0 2px rgba(168,126,44,.12);
+    }
+    .ch-search [data-lucide]{
+      width:14px;
+      height:14px;
+      color:#9A968F;
+      flex-shrink:0;
+    }
+    .ch-search input{
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      font-size:12.5px;
+      color:#3A3A3A;
+      font-family:inherit;
+    }
+    .ch-search input::placeholder{ color:#B8B3AA; }
+
+    .ch-list{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .ch-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      background:transparent;
+      border:none;
+      border-radius:8px;
+      padding:10px 10px;
+      text-align:left;
+      cursor:pointer;
+      transition:background .12s;
+    }
+    .ch-item:hover{ background:#F5F1EB; }
+    .ch-item:hover .ch-item-actions{ opacity:1; }
+
+    .ch-item-icon{
+      width:28px;
+      height:28px;
+      border-radius:6px;
+      border:1px solid #ECE9E2;
+      background:#FAFAF8;
+      display:grid;
+      place-items:center;
+      color:#A5A198;
+      flex-shrink:0;
+    }
+    .ch-item-icon [data-lucide]{ width:13px; height:13px; }
+
+    .ch-item-main{ min-width:0; flex:1; }
+    .ch-item-title{
+      font-size:12.8px;
+      color:#1E1B16;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      line-height:1.4;
+    }
+    .ch-item-meta{
+      margin-top:1px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:11px;
+      color:#B8B3AA;
+    }
+    .ch-item-actions{
+      display:flex;
+      align-items:center;
+      gap:2px;
+      opacity:0;
+      transition:opacity .12s;
+      flex-shrink:0;
+    }
+    .ch-action{
+      width:26px;
+      height:26px;
+      border:none;
+      border-radius:6px;
+      display:grid;
+      place-items:center;
+      background:transparent;
+      color:#9A968F;
+      cursor:pointer;
+      transition:background .12s, color .12s;
+    }
+    .ch-action [data-lucide]{ width:12px; height:12px; }
+    .ch-action:hover{
+      background:#E8E2D8;
+      color:#3A3A3A;
+    }
+  </style>
+</head>
+<body data-page="chat-history">
+
+<div class="app" id="app" data-view="wiki" data-chat="closed">
+  <aside class="sidebar-left" id="v28-sidebar"></aside>
+
+  <main class="workspace">
+    <header class="topbar" id="v28-topbar"></header>
+
+    <div class="workspace-scroll">
+      <section class="ch-page">
+        <div class="ch-container">
+          <div class="ch-head">
+            <h1 class="ch-title">历史对话</h1>
+            <div class="ch-head-actions">
+              <button class="ch-head-btn ghost" onclick="showToast('（演示）批量选择')">
+                <i data-lucide="check-square"></i>
+                <span>批量选择</span>
+              </button>
+              <button class="ch-head-btn primary" onclick="openChat('new')">
+                <i data-lucide="message-square-plus"></i>
+                <span>新对话</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="ch-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="搜索对话…" />
+          </div>
+
+          <div class="ch-list">
+            <div class="ch-item" onclick="openChat('resume')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">围绕「二次函数图像与性质」出 5 道分层练习，A/B/C 三难度，给八(3)班用</div>
+                <div class="ch-item-meta"><span>2026-05-13 18:42</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+
+            <div class="ch-item" onclick="showToast('（演示）打开对话')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">帮我把「二次函数图像与性质」整理成第二课时的课件提纲</div>
+                <div class="ch-item-meta"><span>2026-05-13 16:20</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+
+            <div class="ch-item" onclick="showToast('（演示）打开对话')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">全等三角形错题统计与讲评方案——基于八(2)班期中试卷</div>
+                <div class="ch-item-meta"><span>2026-05-12 21:15</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+
+            <div class="ch-item" onclick="showToast('（演示）打开对话')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">出 10 道二次函数变式题（B 卷难度），含解析</div>
+                <div class="ch-item-meta"><span>2026-05-12 14:30</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+
+            <div class="ch-item" onclick="showToast('（演示）打开对话')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">整理二次函数图像与性质的完整知识点大纲，适配中考考纲</div>
+                <div class="ch-item-meta"><span>2026-05-09 19:26</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+
+            <div class="ch-item" onclick="showToast('（演示）打开对话')">
+              <div class="ch-item-icon"><i data-lucide="message-circle"></i></div>
+              <div class="ch-item-main">
+                <div class="ch-item-title">帮我分析一下这份期中试卷的难度分布和得分率</div>
+                <div class="ch-item-meta"><span>2026-05-07 15:08</span></div>
+              </div>
+              <div class="ch-item-actions">
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）重命名')" title="重命名"><i data-lucide="pencil"></i></button>
+                <button class="ch-action" onclick="event.stopPropagation();showToast('（演示）删除对话')" title="删除"><i data-lucide="trash-2"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="sidebar-right"></aside>
+</div>
+
+<div id="toast"></div>
+
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb',
+    pageKey: '06-chat-history.html'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
+</body>
+</html>

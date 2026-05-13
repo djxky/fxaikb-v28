@@ -136,14 +136,24 @@ function toggleTopSearch(event){
 let _streamingTimer = null;
 
 function openChat(mode = 'new', initialText = ''){
+  const pageId = document.body?.dataset?.page || '';
+  const fromHistoryPage = pageId === 'chat-history';
+  const inFolderView = pageId === 'wiki-entry' && app?.dataset?.view === 'folder';
+
+  if(inFolderView){
+    showToast('文件夹视图不支持 AI 对话，请先打开 Wiki 词条或文件');
+    return;
+  }
+
   if(mode === 'history'){
-    app.dataset.chat = 'open';
-    setActiveModule('chat');
-    showToast('（演示）这里会显示历史对话列表 — 现在直接打开最近一次');
-    runChatDemo('围绕「二次函数图像与性质」出 5 道分层练习，A/B/C 三难度，给八(3)班用');
+    window.location.href = '06-chat-history.html';
     return;
   }
   if(mode === 'resume'){
+    if(fromHistoryPage){
+      window.location.href = '02-wiki-home.html?chat=resume';
+      return;
+    }
     app.dataset.chat = 'open';
     setActiveModule('chat');
     showToast('（演示）已恢复上次对话 · 围绕《二次函数》出 5 道分层练习');
@@ -154,9 +164,17 @@ function openChat(mode = 'new', initialText = ''){
      · 有 initialText（从底部 command bar 带入题）→ 直接进对话流
      · 没 initialText（点击 sidebar「+ 新对话」）→ 进空状态欢迎页，等老师自由输入 */
   if(initialText){
+    if(fromHistoryPage){
+      window.location.href = '02-wiki-home.html?chat=new&initial=' + encodeURIComponent(initialText);
+      return;
+    }
     app.dataset.chat = 'open';
     setActiveModule('chat');
     runChatDemo(initialText);
+    return;
+  }
+  if(fromHistoryPage){
+    window.location.href = '02-wiki-home.html?chat=new';
     return;
   }
   enterChatEmpty();
@@ -545,6 +563,10 @@ function openFolder(folderId){
    左栏 nav 跳转占位
    ────────────────────────────────────────────── */
 function navTo(target){
+  if(target === 'qbank'){
+    window.location.href = '05-ai-qbank.html';
+    return;
+  }
   const labels = {
     workbench: '工作台',
     qbank: '题库',
@@ -903,6 +925,19 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Wiki 条目页：1:1 双栏阅读，左栏永久 collapsed 让出空间 */
   if(document.body.dataset.page === 'wiki-entry' && app){
     app.dataset.left = 'collapsed';
+  }
+
+  /* 跨页对话路由：从历史页跳回工作台后再进入对话态 */
+  const pageId = document.body.dataset.page || '';
+  if(pageId === 'wiki-home' || pageId === 'personal-home'){
+    const params = new URLSearchParams(window.location.search);
+    const chatMode = params.get('chat');
+    const initial = params.get('initial') || '';
+    if(chatMode === 'resume'){
+      openChat('resume');
+    } else if(chatMode === 'new'){
+      openChat('new', initial);
+    }
   }
 
   document.addEventListener('keydown', e => {

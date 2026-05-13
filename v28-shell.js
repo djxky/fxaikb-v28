@@ -46,10 +46,13 @@
     if(!sidebar) return;
     const pageId = getPageId();
     const activeKb = getActiveKb(pageId);
+    const moduleOnlyPages = new Set(['ai-qbank', 'chat-history']);
     const kbHtml = KB_ITEMS.map(item => {
       if(item.type === 'group') return `<div class="sb-group-label ${item.className || ''}">${item.label}</div>`;
       if(item.type === 'divider') return `<div class="${item.className || 'sb-nav-divider'}" aria-hidden="true"></div>`;
-      const active = item.id === activeKb ? ' active' : '';
+      const isQbankPage = pageId === 'ai-qbank' && item.id === 'ai-qbank';
+      const isKbActive = !moduleOnlyPages.has(pageId) && item.id === activeKb;
+      const active = (isKbActive || isQbankPage) ? ' active' : '';
       const extra = item.className ? ` ${item.className}` : '';
       const count = item.count ? `<span class="kb-count">${item.count}</span>` : '';
       const tip = item.tip ? `<span class="sb-tip">${item.tip}</span>` : '';
@@ -77,7 +80,7 @@
         <span class="sb-new-chat-label">新对话</span>
         <span class="sb-tip">新对话</span>
       </button>
-      <button class="sb-item sb-chat-entry" id="sb-chat" onclick="openChat('history')">
+      <button class="sb-item sb-chat-entry${pageId === 'chat-history' ? ' active' : ''}" id="sb-chat" onclick="openChat('history')">
         <i data-lucide="message-square-text"></i>
         <span class="sb-item-label">历史对话</span>
         <span class="sb-tip">历史对话</span>
@@ -134,6 +137,34 @@
     const pageId = getPageId();
     const activeView = getActiveView(pageId);
     const kb = getTopbarKb(pageId);
+
+    if(pageId === 'ai-qbank'){
+      topbar.innerHTML = `
+        <div class="tb-spacer"></div>
+        <button class="tb-search" onclick="toggleTopSearch(event)" aria-expanded="false">
+          <i data-lucide="search"></i>
+          <span>搜索题目、文件…</span>
+        </button>
+        <button class="tb-btn" onclick="showToast('（演示）打开通知中心')" title="通知">
+          <i data-lucide="bell"></i>
+        </button>
+      `;
+      return;
+    }
+
+    if(pageId === 'chat-history'){
+      topbar.innerHTML = `
+        <div class="tb-spacer"></div>
+        <button class="tb-search" onclick="toggleTopSearch(event)" aria-expanded="false">
+          <i data-lucide="search"></i>
+          <span>搜索对话、文件…</span>
+        </button>
+        <button class="tb-btn" onclick="showToast('（演示）打开通知中心')" title="通知">
+          <i data-lucide="bell"></i>
+        </button>
+      `;
+      return;
+    }
 
     let buttons;
     if(pageId === 'file-preview'){

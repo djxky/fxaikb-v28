@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>飞象 AI · AI 题库</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="v28.css?v=20260512be" />
+<style>
+  .qbk-page{
+    max-width:1200px;
+    margin:0 auto;
+    padding:20px 22px 96px;
+  }
+  .qbk-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:14px;
+    padding-bottom:14px;
+    border-bottom:1px solid #ECE9E2;
+  }
+  .qbk-h1{
+    font-size:26px;
+    font-weight:700;
+    color:#1A1A1A;
+    letter-spacing:-.012em;
+  }
+  .qbk-h1-meta{
+    font-size:13px;
+    color:#9A968F;
+    font-weight:400;
+    margin-left:6px;
+  }
+  .qbk-fsearch{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#FFFFFF;
+    border:1px solid #D4CFC8;
+    border-radius:7px;
+    padding:7px 12px;
+    min-width:320px;
+  }
+  .qbk-fsearch [data-lucide]{ width:14px;height:14px;color:#9A968F; }
+  .qbk-fsearch input{
+    border:none;
+    outline:none;
+    font-size:12.5px;
+    color:#1A1A1A;
+    background:transparent;
+    width:100%;
+    font-family:inherit;
+  }
+  .qbk-filter{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    margin-bottom:14px;
+    background:#FAFAF8;
+    border:1px solid #ECE9E2;
+    border-radius:9px;
+  }
+  .qbk-filter-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .qbk-flabel{
+    font-size:11.5px;
+    color:#9A968F;
+    margin-right:2px;
+    white-space:nowrap;
+  }
+  .qbk-select{
+    appearance:none;
+    -webkit-appearance:none;
+    border:1px solid #D8D3C9;
+    border-radius:6px;
+    background:#fff;
+    color:#3A3A3A;
+    font-size:12px;
+    padding:5px 28px 5px 10px;
+    min-width:116px;
+    line-height:1.2;
+    cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='%239A968F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 8px center;
+  }
+  .qbk-select:focus{
+    border-color:#A87E2C;
+    outline:none;
+  }
+
+  .qbk-body{
+    display:grid;
+    grid-template-columns:200px 1fr;
+    gap:18px;
+    padding-bottom:72px;
+  }
+  .qbk-side{
+    border-right:1px solid #ECE9E2;
+    padding-right:14px;
+    max-height:calc(100vh - 280px);
+    overflow-y:auto;
+  }
+  .qbk-side-tabs{
+    display:flex;
+    gap:2px;
+    padding:2px;
+    background:#F0EDE7;
+    border-radius:7px;
+    margin-bottom:12px;
+  }
+  .qbk-side-tab{
+    flex:1;
+    text-align:center;
+    padding:5px 8px;
+    border-radius:5px;
+    font-size:12px;
+    color:#7A766F;
+    cursor:pointer;
+    font-weight:500;
+  }
+  .qbk-side-tab.active{ background:#FFFFFF;color:#1A1A1A;box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .qbk-side-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 8px;
+    border-radius:5px;
+    font-size:12px;
+    color:#4A4642;
+    cursor:pointer;
+    line-height:1.5;
+  }
+  .qbk-side-row:hover{ background:rgba(0,0,0,.04); }
+  .qbk-side-row.active{ background:rgba(201,167,110,.14);color:#1A1A1A;font-weight:600; }
+  .qbk-side-row span:first-child{
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .qbk-side-n{ font-size:10.5px;color:#9A968F;font-variant-numeric:tabular-nums; }
+  .qbk-side-tip{
+    margin-top:18px;
+    padding:8px 10px;
+    font-size:11px;
+    color:#A87E2C;
+    background:#FBF7EE;
+    border:1px solid #F0E8D2;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    line-height:1.5;
+  }
+  .qbk-side-tip [data-lucide]{ width:11px;height:11px;flex-shrink:0; }
+
+  .qbk-list{ display:flex;flex-direction:column;gap:10px;min-width:0; }
+  .qbk-list-meta{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-size:12px;
+    color:#9A968F;
+    padding:0 2px 4px;
+  }
+  .qbk-list-meta > span:first-child{ flex:1; }
+  .qbk-list-meta b{ color:#3A3A3A;font-weight:600; }
+
+  .qitem{
+    background:#FFFFFF;
+    border:1px solid #ECE9E2;
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    transition:border-color .12s, box-shadow .12s;
+  }
+  .qitem:hover{ border-color:#D4CFC8;box-shadow:0 1px 4px rgba(0,0,0,.04); }
+  .qitem-src-line{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:11.5px;
+    color:#7A766F;
+    padding:3px 9px;
+    background:#FAFAF8;
+    border:1px solid #ECE9E2;
+    border-radius:5px;
+    align-self:flex-start;
+    line-height:1.5;
+  }
+  .qitem-src-line [data-lucide]{ width:12px;height:12px;color:#9A968F; }
+  .qitem-src-line b{ color:#3A3A3A;font-weight:500; }
+  .qitem-head{ display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
+  .qitem-tag{
+    font-size:11px;
+    padding:1.5px 7px;
+    border-radius:4px;
+    background:#F0EDE7;
+    color:#5A5550;
+    letter-spacing:.02em;
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+  }
+  .qitem-tag.t-type{ background:#EEEAE0;color:#5A5550;font-weight:500; }
+  .qitem-tag.t-kp{ background:#F1EBDC;color:#7A5615; }
+  .qitem-tag.diff-mid{ background:#F2EDE0;color:#7A5615;font-weight:500; }
+  .qitem-tag.diff-hard{ background:#F5E5E5;color:#8A3A3A;font-weight:500; }
+  .qitem-stem{ font-size:13.5px;line-height:1.75;color:#1A1A1A; }
+  .qitem-opts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4px 18px;
+    padding:2px 0;
+  }
+  .qopt{ font-size:12.5px;color:#3A3A3A;line-height:1.7; }
+  .qitem-foot{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding-top:8px;
+    border-top:1px dashed #ECE9E2;
+  }
+  .qitem-op{
+    font-size:11.5px;
+    padding:5px 10px;
+    border-radius:6px;
+    color:#7A766F;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  .qitem-op [data-lucide]{ width:13px;height:13px; }
+  .qitem-add{
+    margin-left:auto;
+    height:30px;
+    padding:0 14px;
+    border-radius:6px;
+    font-size:12.5px;
+    font-weight:500;
+    background:#1A1A1A;
+    color:#FAFAF8;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+  .qitem-add [data-lucide]{ width:13px;height:13px; }
+
+  .qbk-basket{
+    position:fixed;
+    left:calc(240px + 18px);
+    right:18px;
+    bottom:16px;
+    height:54px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:0 14px 0 10px;
+    background:rgba(250,250,248,.92);
+    border:1px solid #E0DCD2;
+    border-radius:12px;
+    box-shadow:0 10px 36px rgba(40,32,16,.10), 0 2px 8px rgba(40,32,16,.05);
+    z-index:60;
+    backdrop-filter:blur(14px) saturate(1.2);
+  }
+  .qbk-basket-toggle{
+    width:30px;
+    height:30px;
+    border-radius:7px;
+    display:grid;
+    place-items:center;
+    color:#7A766F;
+  }
+  .qbk-basket-toggle [data-lucide]{ width:14px;height:14px; }
+  .qbk-basket-info{
+    font-size:13px;
+    color:#5A5550;
+    font-weight:500;
+  }
+  .qbk-basket-info b{
+    color:#1A1A1A;
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    margin-left:4px;
+    font-size:15px;
+  }
+  .qbk-basket-ops{
+    margin-left:auto;
+    display:flex;
+    gap:6px;
+    align-items:center;
+  }
+  .qbk-basket-btn{
+    height:32px;
+    padding:0 14px;
+    border-radius:7px;
+    font-size:12.5px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    border:1px solid transparent;
+    font-weight:500;
+  }
+  .qbk-basket-btn.ghost{
+    background:transparent;
+    border-color:#D8D3C9;
+    color:#5A5550;
+  }
+  .qbk-basket-btn.primary{
+    background:#1A1A1A;
+    color:#FAFAF8;
+  }
+</style>
+</head>
+<body data-page="ai-qbank">
+
+<div class="app" id="app" data-view="wiki" data-chat="closed">
+  <aside class="sidebar-left" id="v28-sidebar"></aside>
+
+  <main class="workspace">
+    <header class="topbar" id="v28-topbar"></header>
+
+    <div class="workspace-scroll">
+      <section class="qbk-page">
+        <div class="qbk-head">
+          <h1 class="qbk-h1">AI 题库 <span class="qbk-h1-meta">73 题 · 与「飞象作业星 · 我的资源」共用</span></h1>
+          <div class="qbk-fsearch">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="搜题干 / 知识点 / 来源…" />
+          </div>
+        </div>
+
+        <div class="qbk-filter">
+          <div class="qbk-filter-item">
+            <span class="qbk-flabel">题型</span>
+            <select class="qbk-select">
+              <option>全部</option>
+              <option>选择题</option>
+              <option>填空题</option>
+              <option>解答题</option>
+              <option>应用题</option>
+            </select>
+          </div>
+          <div class="qbk-filter-item">
+            <span class="qbk-flabel">难度</span>
+            <select class="qbk-select">
+              <option>全部</option>
+              <option>易</option>
+              <option>中</option>
+              <option>难</option>
+            </select>
+          </div>
+          <div class="qbk-filter-item">
+            <span class="qbk-flabel">知识库</span>
+            <select class="qbk-select">
+              <option>初中数学教研组</option>
+              <option>北京 101 中学</option>
+              <option>初二数学备课组</option>
+              <option>初三数学备课组</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="qbk-body">
+          <aside class="qbk-side">
+            <div class="qbk-side-tabs">
+              <span class="qbk-side-tab active">知识点</span>
+              <span class="qbk-side-tab">教材章节</span>
+            </div>
+            <div class="qbk-side-row active"><span>二次函数</span><span class="qbk-side-n">12</span></div>
+            <div class="qbk-side-row"><span>一元二次方程</span><span class="qbk-side-n">9</span></div>
+            <div class="qbk-side-row"><span>全等三角形</span><span class="qbk-side-n">8</span></div>
+            <div class="qbk-side-row"><span>函数图像</span><span class="qbk-side-n">6</span></div>
+            <div class="qbk-side-row"><span>勾股定理</span><span class="qbk-side-n">5</span></div>
+            <div class="qbk-side-row"><span>分类讨论</span><span class="qbk-side-n">3</span></div>
+            <div class="qbk-side-row"><span>数形结合</span><span class="qbk-side-n">3</span></div>
+            <div class="qbk-side-tip"><i data-lucide="sparkles"></i>知识点由 AI 自动打标</div>
+          </aside>
+
+          <main class="qbk-list">
+            <div class="qbk-list-meta">
+              <span>当前：<b>数学 › 二次函数</b> · 共 12 题</span>
+            </div>
+
+            <article class="qitem">
+              <div class="qitem-src-line"><i data-lucide="file-text"></i>来自 <b>初中数学教研组 · 2024 杭州中考真题.pdf</b> · 第 17 题 · 引用 2</div>
+              <div class="qitem-head">
+                <span class="qitem-tag t-type">选择题</span>
+                <span class="qitem-tag diff-mid">中等</span>
+                <span class="qitem-tag t-kp">二次函数</span>
+              </div>
+              <div class="qitem-stem">如图，二次函数 y = x² − 2x − 3 的图像与 x 轴的交点坐标是（　　）</div>
+              <div class="qitem-opts">
+                <span class="qopt">A. (−1, 0)（3, 0）</span>
+                <span class="qopt">B. (1, 0)（−3, 0）</span>
+                <span class="qopt">C. (−1, 0)（−3, 0）</span>
+                <span class="qopt">D. (1, 0)（3, 0）</span>
+              </div>
+              <div class="qitem-foot">
+                <span class="qitem-op"><i data-lucide="alert-circle"></i>纠错</span>
+                <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
+                <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
+                <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
+                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+              </div>
+            </article>
+
+            <article class="qitem">
+              <div class="qitem-src-line"><i data-lucide="presentation"></i>来自 <b>初中数学教研组 · 二次函数图像与性质·导入课件.pptx</b> · 第 9 张</div>
+              <div class="qitem-head">
+                <span class="qitem-tag t-type">解答题</span>
+                <span class="qitem-tag diff-hard">难</span>
+                <span class="qitem-tag t-kp">待定系数法</span>
+              </div>
+              <div class="qitem-stem">已知抛物线 y = ax² + bx + c 过点 (1, 0)、(3, 0)，顶点纵坐标为 −1，求 a、b、c 的值。</div>
+              <div class="qitem-foot">
+                <span class="qitem-op"><i data-lucide="alert-circle"></i>纠错</span>
+                <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
+                <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
+                <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
+                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+              </div>
+            </article>
+
+            <article class="qitem">
+              <div class="qitem-src-line"><i data-lucide="presentation"></i>来自 <b>初中数学教研组 · 二次函数图像与性质·导入课件.pptx</b> · 第 11 张</div>
+              <div class="qitem-head">
+                <span class="qitem-tag t-type">应用题</span>
+                <span class="qitem-tag diff-mid">中等</span>
+                <span class="qitem-tag t-kp">顶点坐标</span>
+                <span class="qitem-tag t-kp">实际情境</span>
+              </div>
+              <div class="qitem-stem">一球从高台抛出，忽略空气阻力，其运动轨迹满足 h = −5t² + 20t + 3（h 单位：米，t 单位：秒），求球达到最高点的时间及高度。</div>
+              <div class="qitem-foot">
+                <span class="qitem-op"><i data-lucide="alert-circle"></i>纠错</span>
+                <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
+                <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
+                <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
+                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+              </div>
+            </article>
+          </main>
+        </div>
+
+        <div class="qbk-basket">
+          <button class="qbk-basket-toggle"><i data-lucide="chevron-right"></i></button>
+          <div class="qbk-basket-info">已选题目: <b>0</b></div>
+          <div class="qbk-basket-ops">
+            <button class="qbk-basket-btn ghost"><i data-lucide="eye"></i>查看题目篮</button>
+            <button class="qbk-basket-btn ghost"><i data-lucide="download"></i>下载</button>
+            <button class="qbk-basket-btn primary"><i data-lucide="file-stack"></i>去组卷</button>
+            <button class="qbk-basket-btn primary"><i data-lucide="check-square"></i>去组题</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="sidebar-right"></aside>
+</div>
+
+<div id="toast"></div>
+
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb',
+    pageKey: '05-ai-qbank.html'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
+</body>
+</html>

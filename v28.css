@@ -194,6 +194,12 @@ body[data-page="wiki-entry"] .app[data-view="graph"] .ebc-action-sep{
   display:none;
 }
 
+/* 文件夹视图不提供 AI 对话入口：隐藏对话流与底部输入栏 */
+body[data-page="wiki-entry"] .app[data-view="folder"] .chat-stream,
+body[data-page="wiki-entry"] .app[data-view="folder"] .bottom-bar{
+  display:none !important;
+}
+
 /* action group 之间的细分隔（查证类 vs 导出类） */
 .ebc-action-sep{
   display:inline-block;
