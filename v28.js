@@ -141,7 +141,13 @@ function openChat(mode = 'new', initialText = ''){
   const inFolderView = pageId === 'wiki-entry' && app?.dataset?.view === 'folder';
 
   if(inFolderView){
-    showToast('文件夹视图不支持 AI 对话，请先打开 Wiki 词条或文件');
+    if(mode === 'history'){
+      window.location.href = '06-chat-history.html';
+      return;
+    }
+    const targetMode = mode === 'resume' ? 'resume' : 'new';
+    const initial = initialText ? '&initial=' + encodeURIComponent(initialText) : '';
+    window.location.href = `02-wiki-home.html?chat=${targetMode}${initial}`;
     return;
   }
 
@@ -927,10 +933,19 @@ document.addEventListener('DOMContentLoaded', () => {
     app.dataset.left = 'collapsed';
   }
 
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('imported') === '1'){
+    showToast('（演示）导入完成，资料已更新到当前知识库', 2600);
+    params.delete('imported');
+    const query = params.toString();
+    const base = window.location.pathname.split('/').pop() || '02-wiki-home.html';
+    const cleanUrl = query ? `${base}?${query}` : base;
+    window.history.replaceState({}, '', cleanUrl);
+  }
+
   /* 跨页对话路由：从历史页跳回工作台后再进入对话态 */
   const pageId = document.body.dataset.page || '';
   if(pageId === 'wiki-home' || pageId === 'personal-home'){
-    const params = new URLSearchParams(window.location.search);
     const chatMode = params.get('chat');
     const initial = params.get('initial') || '';
     if(chatMode === 'resume'){

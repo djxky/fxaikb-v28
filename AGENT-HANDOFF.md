@@ -28,7 +28,7 @@
 
 - **路径**：`demo/v28-wiki-first/`
 - **性质**：原型 demo（无后端、纯静态 HTML/CSS/JS），用于跟老板演示产品方向
-- **当前状态**：持续迭代中；已新增 `AI 题库` 独立展示页、`历史对话` 列表页，均已接入左栏入口；`v28-wiki-first` 全部 HTML 页面已接入 pin-comments 多人评论
+- **当前状态**：持续迭代中；已新增 `AI 题库` 独立展示页、`历史对话` 列表页、`上传导入流程` 页面，均已接入真实入口；`v28-wiki-first` 全部 HTML 页面已接入 pin-comments 多人评论
 - **核心定位**：AI 替教研组维护的「活 Wiki」——区别于传统云盘 / ima / Notion
 
 ---
@@ -60,7 +60,9 @@
 20. **历史对话的“新对话/恢复”走跨页路由**：在 `chat-history` 页点击后先跳 `02-wiki-home.html?chat=new|resume`，再由 `v28.js` 在工作台页落地对话态（不要在历史页内直接切 `data-chat`）
 21. **pin-comments 全页覆盖**：`index/02-personal-home/02-wiki-home/03-wiki-entry/04-file-preview/05-ai-qbank/06-chat-history` 均注入 `window.PIN_COMMENTS + supabase-js + ./shared/pin-comments.js`，`projectKey` 统一 `fxaikb`
 22. **AI 题库题卡标签精简**：不展示「AI 精选」和「x 分钟」标签，仅保留题型/难度/知识点等必要标签
-23. **文件夹视图禁止 AI 对话入口**：在 `wiki-entry` 的 `data-view="folder"` 下，不展示对话流和底部输入栏；若触发 `openChat()`，只提示“请先打开 Wiki 词条或文件”
+23. **文件夹视图不展示页内 AI 对话，但保留侧栏可点**：在 `wiki-entry + data-view="folder"` 下隐藏页内 `chat-stream/bottom-bar`；侧栏「新对话/历史对话」仍可点击，并通过跨页路由跳到工作台/历史页
+24. **上传入口统一走 onboarding 流程**：`02-personal-home`、`02-wiki-home`、`03-wiki-entry?view=folder(v28-folder.js)` 的上传按钮统一跳 `01-upload-onboarding.html?from=personal|team|folder`
+25. **上传完成必须回原入口页并给一次性提示**：onboarding 完成后带 `?imported=1` 回跳来源页；`v28.js` 在 `DOMContentLoaded` 读参后 toast 提示并 `history.replaceState` 清理参数
 
 ---
 
@@ -90,6 +92,7 @@ demo 的关键边界，改之前要记得这些约束：
 - **04 的 `data-view` 不能设为 `"folder"`**：会触发 `.app[data-view="folder"] .workspace-scroll{display:none}` 把主内容隐掉；只能用 `"wiki"` + hardcode `vs-btn.active`
 - **所有文件点击都跳同一个 `04-file-preview.html`**：演示性兜底，避免老板乱点掉进死链
 - **`05-ai-qbank.html` 当前是静态展示态**：搜索、筛选、收藏、添加等按钮默认只承载演示视觉，不承诺真实数据联动
+- **上传流程是前端演示态**：`01-upload-onboarding.html` 的扫描数、进度和步骤是 mock 数据；仅承载“看起来完整”的导入过程，不接真实文件系统
 
 ---
 
@@ -98,6 +101,7 @@ demo 的关键边界，改之前要记得这些约束：
 ```
 demo/v28-wiki-first/
 ├── index.html                    # 3 张大场景卡入口
+├── 01-upload-onboarding.html      # 上传导入流程（扫描预览 → 导入进度 → 完成回跳）
 ├── 02-personal-home.html         # 个人 KB · 新用户场景（demo 数据 + 一键清空）
 ├── 02-wiki-home.html             # 团队 KB · Wiki 首页（演示主战场）
 ├── 03-wiki-entry.html            # Wiki 词条页 + 文件夹视图(?view=folder) + 知识图谱(?view=graph)
@@ -141,7 +145,8 @@ demo/v28-wiki-first/
 - **侧栏高亮互斥规则**：`ai-qbank` 和 `chat-history` 属于“模块页”，进入这两页时只高亮模块入口，不再同时高亮任一知识库项（避免双选中态）
 - **历史对话页结构必须对齐 v28 壳**：`06-chat-history.html` 使用 `.app + .sidebar-left + .workspace + .topbar + .workspace-scroll + .sidebar-right + #toast`，禁止引入并行壳容器（如 `#toast-container`）
 - **历史对话跨页对话链路**：`openChat()` 在 `chat-history` 场景下不做页内聊天态切换，而是写 query 参数后跳工作台页，工作台页 `DOMContentLoaded` 读取 `chat` 参数执行 `openChat('new'|'resume')`
-- **文件夹视图对话兜底**：`v28.css` 强制隐藏 `.chat-stream/.bottom-bar`（`wiki-entry + view=folder`），`v28.js openChat()` 也会在该场景直接拦截并 toast，防止通过快捷入口误入对话态
+- **文件夹视图对话兜底**：`v28.css` 强制隐藏 `.chat-stream/.bottom-bar`（`wiki-entry + view=folder`）；`v28.js openChat()` 在该场景不做页内切换，而是跨页跳转（`history -> 06-chat-history.html`，`new/resume/replay -> 02-wiki-home.html?chat=...`）
+- **上传流程回跳约定**：`01-upload-onboarding.html` 通过 `from` 参数决定回跳页（`personal` / `team` / `folder`），完成时补 `imported=1`；`v28.js` 统一消费该参数并给提示
 - **Wiki / 文件二级栏统一**：4 个 Wiki 相关页面都有通栏顶部条 + 下载 + 分享；Wiki 详情右栏按钮叫「整理依据」且默认收起；文件右栏按钮叫「AI 解读」且默认展开
 - 02 / 03 / 04 在 topbar 下面有独立 `entry-bcbar`（面包屑 + 下载/分享；03/04 额外有右栏入口）
 - **cache buster 当前版本**：`?v=20260512be`（改 CSS/JS 后递增字母）
