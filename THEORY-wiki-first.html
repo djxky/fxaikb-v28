@@ -78,6 +78,26 @@
     color: var(--ink-4);
   }
   .head .meta b { color: var(--ink-2); font-weight: 600; }
+  .head .demo-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    background: var(--bg-card);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all .18s ease;
+  }
+  .head .demo-back:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .head .meta { align-items: center; }
 
   /* ── 段落骨架 ── */
   section { margin-bottom: 28px; }
@@ -370,6 +390,7 @@
       <span>v28 Wiki First 配套文档</span>
       <span>·</span>
       <span>2026-05</span>
+      <a class="demo-back" href="index.html">← 回到 demo 入口</a>
     </div>
   </header>
 
@@ -602,7 +623,7 @@
         </tr>
         <tr>
           <td>Schema 沉淀</td>
-          <td>对话内已加入"✨ 我记住了"提示，并可查看沉淀规则面板</td>
+          <td>底部入口升级为「飞象怎么工作 + 已学到的 N 条」抽屉，AI 默默记住，老师 review 时点开</td>
           <td class="ok">已实现</td>
           <td>以人话规则展示，不暴露 schema 文件</td>
         </tr>
@@ -610,33 +631,43 @@
     </table>
   </section>
 
-  <!-- ════════ 7. 缺口与下一步 ════════ -->
+  <!-- ════════ 7. 设计决策 · 实现总结 ════════ -->
   <section>
-    <h2>七 · 下一步要补的一个缺口（拆两步做）</h2>
+    <h2>七 · 设计决策 · 实现总结</h2>
+
+    <!-- ★ 价值判断 · 飞象做产品的"根" -->
+    <div style="background: var(--good-soft); border: 1px solid #a7f3d0; border-radius: 10px; padding: 16px 18px; margin-bottom: 14px;">
+      <div style="font-size: 11px; letter-spacing: 0.1em; color: var(--good); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">
+        价值判断 · 飞象做产品的"根"
+      </div>
+      <p style="font-size: 16px; color: var(--ink-1); margin: 0 0 10px; font-weight: 600; line-height: 1.7; letter-spacing: -0.005em;">
+        用户不在意过程，只在意结果。<br>
+        AI 记住了能生成更好的内容服务用户，就是最好的功能。
+      </p>
+      <p style="font-size: 12.5px; color: var(--ink-3); margin: 0; line-height: 1.7;">
+        <b>用法</b>：每个功能都先问一句"这是过程还是结果？"<br>
+        · 过程性（"AI 在思考"、"AI 学到了"、"AI 正在归类"）→ default <b>不做</b><br>
+        · 结果性（更好的题、更准的学情、更对的归类、可被老师调整的偏好）→ 专注<b>做对</b>
+      </p>
+      <p style="font-size: 11.5px; color: var(--ink-4); margin: 8px 0 0; font-style: italic;">
+        边界：本判断仅适用于"老师作为创作者"的飞象主场景。医疗诊断、法律文书、金融决策等"过程必须透明"的产品不适用。
+      </p>
+    </div>
 
     <p class="muted" style="font-size: 12px; margin-bottom: 12px;">
-      四条不做的原则（避免过度设计）：<br>
+      由此推导出五条"不做"的原则（避免过度设计）：<br>
       ① <b>不做 wiki 编辑器</b> · 纠错走对话，加编辑器会退化成 Notion+AI<br>
       ② <b>不做 wiki 段落 hover 按钮</b> · 底部对话框已经够用，YAGNI<br>
       ③ <b>不做"AI 学到了"独立页面</b> · 复用现有底部入口，避免老师"又一件事要管"<br>
-      ④ <b>不展示底层 schema</b>（JSON/markdown）· 那是 AI 读的，不是老师读的
+      ④ <b>不展示底层 schema</b>（JSON/markdown）· 那是 AI 读的，不是老师读的<br>
+      ⑤ <b>不做对话流"我记住了"瞬时提示</b> · AI 默默记住即可，老师想 review 时点开抽屉看清单<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--ink-4);">（曾考虑过，反复迭代后判定：每次对话都浮提示是噪音；抽屉式入口已能完整满足"被看见"的需求）</span>
     </p>
 
-    <div class="gap-box">
-      <h3>缺口 2-A · 对话流里加"✨ 我记住了"轻提示（沉淀的瞬间被看见）</h3>
-      <ul>
-        <li>每当 AI 从对话里抽出一条规则沉淀进 schema，对话流里多浮一行：<br>
-          ✨ <b>我记住了 · 以后"含参 + 二次函数"会自动归到综合题</b>
-        </li>
-        <li>带两个轻按钮：<span class="file">[查看所有规则]</span> <span class="file">[这条不对]</span></li>
-        <li><b>解决的问题</b>：让老师在沉淀发生的瞬间就感受到"AI 在学"，不用主动找</li>
-      </ul>
-    </div>
-
-    <div class="gap-box" style="margin-top: 10px;">
-      <h3>缺口 2-B · 升级底部"了解 AI 整理逻辑"入口（主动 review 时被看见）</h3>
-      <p style="font-size: 13px; color: var(--ink-3); margin: 4px 0 8px;">
-        现状：<span class="file">02-personal-home.html</span> 底部已有「了解 AI 整理逻辑 →」链接，但只是静态产品说明。把它升级成两层内容：
+    <div class="gap-box" style="background: var(--good-soft); border-color: #a7f3d0;">
+      <h3 style="color: var(--good);">已落地 · 让 schema 沉淀"被看见"的方式</h3>
+      <p style="font-size: 13px; color: var(--ink-2); margin: 4px 0 8px;">
+        在 <span class="file">02-personal-home.html</span> 底部，把原"了解 AI 整理逻辑 →"链接升级成两层内容的右侧抽屉：
       </p>
       <ul>
         <li><b>① 飞象的整理逻辑</b>（产品说明，所有人一样）· 三层架构、可追溯、出处引用 …</li>
@@ -644,16 +675,16 @@
           每条带：人话规则 + 学到的时间 / 来源对话 + <span class="file">[改一下]</span> <span class="file">[关掉]</span>
         </li>
         <li><b>分层显示</b>：老师个人规则（可改可关）+ 教研组共识（可看协商改）；学校层硬规则不展示</li>
-        <li><b>解决的问题</b>：老师想 review "AI 学了什么" 时找得到，且和"产品说明"共用同一个入口，不增加心智负担</li>
+        <li>老师想 review "AI 学了什么" 时找得到，平时不打扰；这是"飞象越用越懂你"的可视化证据链</li>
       </ul>
     </div>
 
-    <div class="gap-box" style="margin-top: 10px; background: var(--good-soft); border-color: #a7f3d0;">
-      <h3 style="color: var(--good);">两者关系 · 被动感知 + 主动 review</h3>
+    <div class="gap-box" style="margin-top: 10px;">
+      <h3>Demo 演示参数（给老板/团队看效果用）</h3>
       <ul>
-        <li><b>2-A（对话流提示）= 被动感知</b> · 不用主动找就看到，证明"AI 在变懂你"</li>
-        <li><b>2-B（入口升级）= 主动 review</b> · 想看清单 / 想关某条规则时找得到</li>
-        <li>两者一起，构成"飞象越用越懂你"的可视化证据链——对续费 / 口碑 / 销售叙事至关重要</li>
+        <li><span class="file">02-personal-home.html</span> · 默认 wiki 主屏，演示整体</li>
+        <li><span class="file">02-personal-home.html?demo=chat</span> · 直接进对话视图，看样例对话</li>
+        <li><span class="file">02-personal-home.html?demo=panel</span> · 直接弹出"飞象怎么工作 + 已学到 23 条"抽屉</li>
       </ul>
     </div>
   </section>

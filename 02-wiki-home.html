@@ -6,6 +6,95 @@
 <title>飞象 AI · 工作台</title>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link rel="stylesheet" href="v28.css?v=20260512be" />
+<style>
+  /* ────── 抽屉 · 飞象怎么工作 + 已学到的 N 条 ────── */
+  .mem-btn{
+    height:24px; padding:0 10px;
+    border-radius:6px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text-2);
+    font-size:11.5px; line-height:22px;
+    cursor:pointer; transition:all .15s var(--ease);
+  }
+  .mem-btn:hover{
+    border-color:var(--gold-light);
+    color:var(--gold-deep);
+    background:var(--surface-2);
+  }
+  .learned-overlay{
+    position:fixed; inset:0;
+    background:rgba(23, 19, 12, .24);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s var(--ease);
+    z-index:115;
+  }
+  .learned-panel{
+    position:fixed; top:0; right:0; bottom:0;
+    width:min(460px, calc(100vw - 20px));
+    background:var(--surface);
+    border-left:1px solid var(--border);
+    box-shadow:-12px 0 36px rgba(30,24,14,.12);
+    transform:translateX(102%);
+    transition:transform .22s var(--ease);
+    z-index:116; display:flex; flex-direction:column;
+  }
+  body[data-learned-panel="open"] .learned-overlay{ opacity:1; pointer-events:auto; }
+  body[data-learned-panel="open"] .learned-panel{ transform:translateX(0); }
+  .learned-head{
+    height:54px; padding:0 14px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:8px; flex-shrink:0;
+  }
+  .learned-title{ font-size:14px; font-weight:700; color:var(--text); }
+  .learned-close{
+    margin-left:auto; width:28px; height:28px; border-radius:8px;
+    display:grid; place-items:center; color:var(--text-3);
+    transition:all .15s; cursor:pointer; border:none; background:transparent;
+  }
+  .learned-close:hover{ background:var(--surface-2); color:var(--text-2); }
+  .learned-close [data-lucide]{ width:14px; height:14px; }
+  .learned-tabs-wrap{ padding:10px 12px 0; border-bottom:1px solid var(--border); }
+  .learned-panel .canvas-tabs{ gap:6px; width:100%; display:flex; }
+  .learned-panel .cv-tab{ flex:1; justify-content:center; }
+  .learned-body{ padding:12px; overflow:auto; min-height:0; }
+  .learned-pane{ display:none; }
+  .learned-pane.active{ display:block; }
+  .learned-step{
+    padding:10px 11px; background:var(--surface-2);
+    border:1px solid var(--border); border-radius:10px;
+    margin-bottom:8px; font-size:12.8px; line-height:1.65; color:var(--text-2);
+  }
+  .learned-step b{ color:var(--text); }
+  .learned-groups{ display:flex; gap:7px; margin-bottom:10px; }
+  .learned-chip{
+    height:28px; padding:0 11px; border-radius:999px;
+    border:1px solid var(--border); background:var(--surface);
+    color:var(--text-3); font-size:12px; cursor:pointer;
+    transition:all .15s;
+  }
+  .learned-chip.active{
+    border-color:rgba(168,126,44,.36);
+    background:var(--gold-bg); color:var(--gold-deep); font-weight:600;
+  }
+  .learned-rule{
+    border:1px solid var(--border); background:var(--surface-2);
+    border-radius:10px; padding:10px 11px; margin-bottom:8px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .learned-rule:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(30,24,14,.09); }
+  .learned-rule-main{
+    display:flex; align-items:flex-start; gap:8px;
+    font-size:12.8px; line-height:1.55; color:var(--text-2);
+  }
+  .learned-rule-main [data-lucide]{
+    width:14px; height:14px; color:var(--gold);
+    margin-top:2px; flex-shrink:0;
+  }
+  .learned-rule-meta{
+    margin-top:6px; display:flex; align-items:center; gap:8px;
+    font-size:11.5px; color:var(--text-4);
+  }
+  .learned-rule-actions{ margin-left:auto; display:flex; gap:6px; }
+</style>
 </head>
 <body data-page="wiki-home">
 
@@ -307,7 +396,7 @@
           这 42 个知识页都是 <b>AI 基于教研组共建库 + 学校公共库整理</b> 生成的——
           每段内容都能追溯到原文件，可以一键跳回原文第几页。组里任何老师上传新资料，
           AI 会自动并入对应 Wiki，下次打开就是更新后的版本。
-          <a onclick="showToast('（演示）打开「AI 如何整理你们的资料」说明')">了解 AI 整理逻辑 →</a>
+          <a onclick="openLearnedPanel('learned')">飞象怎么工作 + 已学到你们组的 18 条 →</a>
         </div>
 
       </article>
@@ -865,10 +954,156 @@
 
 </div>
 
+<div class="learned-overlay" id="learned-overlay" onclick="closeLearnedPanel()"></div>
+<aside class="learned-panel" id="learned-panel" aria-hidden="true">
+  <div class="learned-head">
+    <h3 class="learned-title">飞象怎么工作 + 已学到你们组的 18 条</h3>
+    <button class="learned-close" onclick="closeLearnedPanel()" title="关闭">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+  <div class="learned-tabs-wrap">
+    <div class="canvas-tabs">
+      <button class="cv-tab" data-learned-tab="work" onclick="switchLearnedTab('work')">
+        <i data-lucide="workflow"></i>
+        飞象怎么工作
+      </button>
+      <button class="cv-tab active" data-learned-tab="learned" onclick="switchLearnedTab('learned')">
+        <i data-lucide="sparkles"></i>
+        飞象学到了你们组的 18 条
+      </button>
+    </div>
+  </div>
+  <div class="learned-body">
+    <section class="learned-pane" data-pane="work">
+      <div class="learned-step"><b>1.</b> 你们组上传的资料 → AI 整理 → Wiki（每段都可追溯到原文出处）</div>
+      <div class="learned-step"><b>2.</b> 组里 9 位老师跟飞象对话越多 → AI 越懂教研组的偏好</div>
+      <div class="learned-step"><b>3.</b> 任何老师改 / 删资料 → AI 重新整理 → 全组拿到的永远是最新版</div>
+    </section>
+    <section class="learned-pane active" data-pane="learned">
+      <div class="learned-groups">
+        <button class="learned-chip active" data-group="team" onclick="switchLearnedGroup('team')">教研组共识（12 条）</button>
+        <button class="learned-chip" data-group="school" onclick="switchLearnedGroup('school')">学校公共标准（6 条）</button>
+      </div>
+
+      <div class="learned-rule" data-rule-group="team">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>错题归因模板使用王老师 v2 版</span></div>
+        <div class="learned-rule-meta">
+          <span>5/3 · 王老师确认</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="team">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>中考压轴题统一命名"函数综合"</span></div>
+        <div class="learned-rule-meta">
+          <span>4/20 · 教研组共建</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="team">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>公开课课件优先选图像导入风格</span></div>
+        <div class="learned-rule-meta">
+          <span>4/15 · 多次对话累积</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="team">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>新内容自动并入对应 Wiki，不打扰主路径</span></div>
+        <div class="learned-rule-meta">
+          <span>5/1 · 默认设置</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="learned-rule" data-rule-group="school" style="display:none;">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>年级试卷难度梯度统一 4:4:2 分配 A/B/C</span></div>
+        <div class="learned-rule-meta">
+          <span>4/8 · 学校教研处</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）这是学校公共标准，不可关闭')">查看</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="school" style="display:none;">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>教案模板使用 2024 修订版</span></div>
+        <div class="learned-rule-meta">
+          <span>3/22 · 学校教研处</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）这是学校公共标准，不可关闭')">查看</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</aside>
+
 <div id="toast"></div>
 
 <script src="v28-shell.js?v=20260512be"></script>
 <script src="v28.js?v=20260512be"></script>
+<script>
+  function switchLearnedTab(tab){
+    document.querySelectorAll('[data-learned-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.learnedTab === tab);
+    });
+    document.querySelectorAll('.learned-pane').forEach(pane => {
+      pane.classList.toggle('active', pane.dataset.pane === tab);
+    });
+  }
+
+  function switchLearnedGroup(group){
+    document.querySelectorAll('.learned-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.group === group);
+    });
+    document.querySelectorAll('[data-rule-group]').forEach(row => {
+      row.style.display = row.dataset.ruleGroup === group ? '' : 'none';
+    });
+  }
+
+  function openLearnedPanel(defaultTab = 'learned'){
+    document.body.dataset.learnedPanel = 'open';
+    const panel = document.getElementById('learned-panel');
+    if(panel) panel.setAttribute('aria-hidden', 'false');
+    switchLearnedTab(defaultTab);
+    if(defaultTab === 'learned') switchLearnedGroup('team');
+  }
+
+  function closeLearnedPanel(){
+    delete document.body.dataset.learnedPanel;
+    const panel = document.getElementById('learned-panel');
+    if(panel) panel.setAttribute('aria-hidden', 'true');
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if(event.key === 'Escape' && document.body.dataset.learnedPanel === 'open'){
+      closeLearnedPanel();
+    }
+  });
+
+  /* Demo 演示参数 · ?demo=panel 自动展开抽屉 */
+  (function initDemoMode(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('demo') !== 'panel') return;
+    const ready = () => openLearnedPanel('learned');
+    if(document.readyState === 'complete'){
+      setTimeout(ready, 200);
+    } else {
+      window.addEventListener('load', () => setTimeout(ready, 200));
+    }
+  })();
+</script>
 
 <!-- pin-comments: 多人评论 -->
 <script>

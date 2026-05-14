@@ -74,15 +74,6 @@
     gap:12px;
     min-height:0;
   }
-  .sheet-header{
-    display:flex;align-items:center;gap:10px;
-  }
-  .sheet-title{
-    font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.01em;
-  }
-  .sheet-sub{
-    font-size:12px;color:var(--text-3);
-  }
   .sheet-actions{
     margin-left:auto;display:flex;gap:8px;align-items:center;
   }
@@ -204,11 +195,6 @@
           </div>
         </div>
         <div class="sheet-main">
-          <div class="sheet-header">
-            <h1 class="sheet-title">2026.05.14 题单</h1>
-            <span class="sheet-sub" id="sheet-mode-note">当前共 5 题，可继续调整顺序与内容</span>
-          </div>
-
           <div class="sheet-work">
             <aside class="sheet-panel sheet-left">
               <h3>题目排序</h3>
@@ -270,10 +256,8 @@
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode');
     const modeNav = document.getElementById('sheet-nav-mode');
-    const modeNote = document.getElementById('sheet-mode-note');
     if(mode === 'basket'){
       if(modeNav) modeNav.textContent = '题目篮';
-      if(modeNote) modeNote.textContent = '题目篮中的题可直接编辑后保存成题单';
     }
 
     const questionMeta = {

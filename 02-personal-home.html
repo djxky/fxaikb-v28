@@ -7,38 +7,6 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <link rel="stylesheet" href="v28.css?v=20260512be" />
 <style>
-  .mem-toast{
-    margin:10px 0 4px 44px;
-    border-left:2px solid var(--gold);
-    background:var(--gold-bg);
-    border-radius:8px;
-    padding:10px 12px;
-    display:none;
-    align-items:flex-start;
-    gap:9px;
-  }
-  .mem-toast.show{
-    display:flex;
-  }
-  .mem-toast [data-lucide]{
-    width:14px;height:14px;
-    color:var(--gold-deep);
-    margin-top:1px;
-    flex-shrink:0;
-  }
-  .mem-main{ min-width:0; }
-  .mem-text{
-    display:block;
-    font-size:12.8px;
-    line-height:1.6;
-    color:var(--text-2);
-  }
-  .mem-actions{
-    margin-top:7px;
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
-  }
   .mem-btn{
     height:26px;
     padding:0 10px;
@@ -613,17 +581,6 @@
             <p id="chat-ai-text"></p>
           </div>
         </div>
-
-        <div class="mem-toast" id="mem-toast-row">
-          <i data-lucide="sparkles"></i>
-          <div class="mem-main">
-            <span class="mem-text">✨ 我记住了 · 以后"含参 + 二次函数"的题，会自动归到「中考压轴 · 函数综合」分类下</span>
-            <div class="mem-actions">
-              <button class="mem-btn" onclick="openLearnedPanel('learned')">[查看所有规则]</button>
-              <button class="mem-btn" onclick="showToast('（演示）已撤销这条规则')">[这条不对]</button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- 中间底部输入 -->
@@ -975,6 +932,31 @@
       closeLearnedPanel();
     }
   });
+
+  /* ──────────────────────────────────────────────
+     Demo 演示参数 · 一键展示效果
+     ?demo=chat  → 自动进对话视图（看样例对话）
+     ?demo=panel → 自动打开"飞象怎么工作 + 已学到的 N 条"抽屉
+     ────────────────────────────────────────────── */
+  (function initDemoMode(){
+    const params = new URLSearchParams(window.location.search);
+    const demo = params.get('demo');
+    if(!demo) return;
+
+    const ready = () => {
+      if(demo === 'chat' && typeof openChat === 'function'){
+        openChat('resume');
+      } else if(demo === 'panel'){
+        openLearnedPanel('learned');
+      }
+    };
+
+    if(document.readyState === 'complete'){
+      setTimeout(ready, 200);
+    } else {
+      window.addEventListener('load', () => setTimeout(ready, 200));
+    }
+  })();
 </script>
 
 <!-- pin-comments: 多人评论 -->
