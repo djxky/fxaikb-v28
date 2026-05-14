@@ -410,7 +410,7 @@
                 <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
                 <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
                 <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
-                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+                <button class="qitem-add" data-add-question><i data-lucide="plus"></i>添加</button>
               </div>
             </article>
 
@@ -427,7 +427,7 @@
                 <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
                 <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
                 <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
-                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+                <button class="qitem-add" data-add-question><i data-lucide="plus"></i>添加</button>
               </div>
             </article>
 
@@ -445,7 +445,7 @@
                 <span class="qitem-op"><i data-lucide="heart"></i>收藏</span>
                 <span class="qitem-op"><i data-lucide="book-open"></i>解析</span>
                 <span class="qitem-op"><i data-lucide="copy"></i>相似题</span>
-                <button class="qitem-add"><i data-lucide="plus"></i>添加</button>
+                <button class="qitem-add" data-add-question><i data-lucide="plus"></i>添加</button>
               </div>
             </article>
           </main>
@@ -453,12 +453,10 @@
 
         <div class="qbk-basket">
           <button class="qbk-basket-toggle"><i data-lucide="chevron-right"></i></button>
-          <div class="qbk-basket-info">已选题目: <b>0</b></div>
+          <div class="qbk-basket-info">已选题目: <b id="qbk-selected-count">0</b></div>
           <div class="qbk-basket-ops">
-            <button class="qbk-basket-btn ghost"><i data-lucide="eye"></i>查看题目篮</button>
-            <button class="qbk-basket-btn ghost"><i data-lucide="download"></i>下载</button>
-            <button class="qbk-basket-btn primary"><i data-lucide="file-stack"></i>去组卷</button>
-            <button class="qbk-basket-btn primary"><i data-lucide="check-square"></i>去组题</button>
+            <button class="qbk-basket-btn ghost" id="qbk-view-basket"><i data-lucide="eye"></i>查看题目篮</button>
+            <button class="qbk-basket-btn primary" id="qbk-go-compose"><i data-lucide="check-square"></i>去组题</button>
           </div>
         </div>
       </section>
@@ -472,6 +470,36 @@
 
 <script src="v28-shell.js?v=20260512be"></script>
 <script src="v28.js?v=20260512be"></script>
+<script>
+  (function(){
+    let selectedCount = 0;
+    const countEl = document.getElementById('qbk-selected-count');
+    const addButtons = document.querySelectorAll('[data-add-question]');
+    const syncCount = () => { if(countEl) countEl.textContent = String(selectedCount); };
+
+    addButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedCount += 1;
+        syncCount();
+        showToast('已加入题目篮');
+      });
+    });
+
+    const viewBasketBtn = document.getElementById('qbk-view-basket');
+    if(viewBasketBtn){
+      viewBasketBtn.addEventListener('click', () => {
+        window.location.href = '07-compose-sheet.html?mode=basket';
+      });
+    }
+
+    const goComposeBtn = document.getElementById('qbk-go-compose');
+    if(goComposeBtn){
+      goComposeBtn.addEventListener('click', () => {
+        window.location.href = '07-compose-sheet.html';
+      });
+    }
+  })();
+</script>
 
 <!-- pin-comments: 多人评论 -->
 <script>

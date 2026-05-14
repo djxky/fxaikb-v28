@@ -6,6 +6,205 @@
 <title>飞象 AI · 我的知识库</title>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link rel="stylesheet" href="v28.css?v=20260512be" />
+<style>
+  .mem-toast{
+    margin:10px 0 4px 44px;
+    border-left:2px solid var(--gold);
+    background:var(--gold-bg);
+    border-radius:8px;
+    padding:10px 12px;
+    display:none;
+    align-items:flex-start;
+    gap:9px;
+  }
+  .mem-toast.show{
+    display:flex;
+  }
+  .mem-toast [data-lucide]{
+    width:14px;height:14px;
+    color:var(--gold-deep);
+    margin-top:1px;
+    flex-shrink:0;
+  }
+  .mem-main{ min-width:0; }
+  .mem-text{
+    display:block;
+    font-size:12.8px;
+    line-height:1.6;
+    color:var(--text-2);
+  }
+  .mem-actions{
+    margin-top:7px;
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .mem-btn{
+    height:26px;
+    padding:0 10px;
+    border-radius:6px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-3);
+    font-size:12px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .mem-btn:hover{
+    border-color:var(--gold-light);
+    color:var(--gold-deep);
+    background:var(--surface-2);
+  }
+
+  .learned-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(23, 19, 12, .24);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s var(--ease);
+    z-index:115;
+  }
+  .learned-panel{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    width:min(460px, calc(100vw - 20px));
+    background:var(--surface);
+    border-left:1px solid var(--border);
+    box-shadow:-12px 0 36px rgba(30,24,14,.12);
+    transform:translateX(102%);
+    transition:transform .22s var(--ease);
+    z-index:116;
+    display:flex;
+    flex-direction:column;
+  }
+  body[data-learned-panel="open"] .learned-overlay{
+    opacity:1;
+    pointer-events:auto;
+  }
+  body[data-learned-panel="open"] .learned-panel{
+    transform:translateX(0);
+  }
+  .learned-head{
+    height:54px;
+    padding:0 14px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .learned-title{
+    font-size:14px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .learned-close{
+    margin-left:auto;
+    width:28px;height:28px;border-radius:8px;
+    display:grid;place-items:center;
+    color:var(--text-3);
+    transition:all .15s;
+    cursor:pointer;
+  }
+  .learned-close:hover{
+    background:var(--surface-3);
+    color:var(--text-2);
+  }
+  .learned-close [data-lucide]{ width:14px;height:14px; }
+  .learned-tabs-wrap{
+    padding:10px 12px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .learned-panel .canvas-tabs{
+    gap:6px;
+    width:100%;
+  }
+  .learned-panel .cv-tab{
+    flex:1;
+    justify-content:center;
+  }
+  .learned-body{
+    padding:12px;
+    overflow:auto;
+    min-height:0;
+  }
+  .learned-pane{ display:none; }
+  .learned-pane.active{ display:block; }
+  .learned-step{
+    padding:10px 11px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:8px;
+    font-size:12.8px;
+    line-height:1.65;
+    color:var(--text-2);
+  }
+  .learned-step b{ color:var(--text); }
+  .learned-groups{
+    display:flex;
+    gap:7px;
+    margin-bottom:10px;
+  }
+  .learned-chip{
+    height:28px;
+    padding:0 11px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-3);
+    font-size:12px;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .learned-chip.active{
+    border-color:rgba(168,126,44,.36);
+    background:var(--gold-bg);
+    color:var(--gold-deep);
+    font-weight:600;
+  }
+  .learned-rule{
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:10px 11px;
+    margin-bottom:8px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .learned-rule:hover{
+    transform:translateY(-1px);
+    box-shadow:0 6px 18px rgba(30,24,14,.09);
+  }
+  .learned-rule-main{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    font-size:12.8px;
+    line-height:1.55;
+    color:var(--text-2);
+  }
+  .learned-rule-main [data-lucide]{
+    width:14px;height:14px;
+    color:var(--gold);
+    margin-top:2px;
+    flex-shrink:0;
+  }
+  .learned-rule-meta{
+    margin-top:6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11.5px;
+    color:var(--text-4);
+  }
+  .learned-rule-actions{
+    margin-left:auto;
+    display:flex;
+    gap:6px;
+  }
+</style>
 </head>
 <body data-page="personal-home">
 
@@ -66,7 +265,7 @@
               </p>
             </div>
             <div class="wiki-hero-actions">
-              <button class="hero-upload-btn" onclick="showToast('（演示）选择本地文件上传…')">
+              <button class="hero-upload-btn" onclick="window.location.href='01-upload-onboarding.html?from=personal'">
                 <i data-lucide="upload"></i>
                 上传资料
               </button>
@@ -307,7 +506,7 @@
           以上 16 个 Wiki 都是 <b>AI 基于你上传的 87 份资料</b> 自动整理生成的——
           每段内容都能追溯到原文件，可以一键跳回原文第几页。你新传资料、删资料，
           AI 都会重新整理 Wiki，下次打开就是最新版本。
-          <a onclick="showToast('（演示）了解 AI 整理逻辑')">了解 AI 整理逻辑 →</a>
+          <a onclick="openLearnedPanel('work')">飞象怎么工作 + 已学到你的 23 条 →</a>
         </div>
 
       </article>
@@ -414,6 +613,17 @@
             <p id="chat-ai-text"></p>
           </div>
         </div>
+
+        <div class="mem-toast" id="mem-toast-row">
+          <i data-lucide="sparkles"></i>
+          <div class="mem-main">
+            <span class="mem-text">✨ 我记住了 · 以后"含参 + 二次函数"的题，会自动归到「中考压轴 · 函数综合」分类下</span>
+            <div class="mem-actions">
+              <button class="mem-btn" onclick="openLearnedPanel('learned')">[查看所有规则]</button>
+              <button class="mem-btn" onclick="showToast('（演示）已撤销这条规则')">[这条不对]</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 中间底部输入 -->
@@ -439,18 +649,6 @@
 
     <!-- ════════════ 底部 Command Bar ════════════ -->
     <div class="bottom-bar" id="bottom-bar">
-
-      <!-- 上次对话回溯标签 -->
-      <div class="bb-resume-row" id="bb-resume-row">
-        <button class="bb-resume" onclick="resumeLastChat()">
-          <i data-lucide="message-square-text"></i>
-          <span class="resume-label">上次跟飞象聊到</span>
-          <span class="resume-name">围绕《二次函数》出 5 道分层练习</span>
-          <span class="resume-close" onclick="event.stopPropagation();hideResume()" title="不再提示">
-            <i data-lucide="x"></i>
-          </span>
-        </button>
-      </div>
 
       <div class="bb-wrap">
         <!-- 工具 chips（默认收起，聚焦展开） -->
@@ -638,10 +836,146 @@
 
 </div>
 
+<div class="learned-overlay" id="learned-overlay" onclick="closeLearnedPanel()"></div>
+<aside class="learned-panel" id="learned-panel" aria-hidden="true">
+  <div class="learned-head">
+    <h3 class="learned-title">飞象怎么工作 + 已学到你的 23 条</h3>
+    <button class="learned-close" onclick="closeLearnedPanel()" title="关闭">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+  <div class="learned-tabs-wrap">
+    <div class="canvas-tabs">
+      <button class="cv-tab" data-learned-tab="work" onclick="switchLearnedTab('work')">
+        <i data-lucide="workflow"></i>
+        飞象怎么工作
+      </button>
+      <button class="cv-tab active" data-learned-tab="learned" onclick="switchLearnedTab('learned')">
+        <i data-lucide="sparkles"></i>
+        飞象学到了你的 23 条
+      </button>
+    </div>
+  </div>
+  <div class="learned-body">
+    <section class="learned-pane" data-pane="work">
+      <div class="learned-step"><b>1.</b> 你上传的资料 → AI 整理 → Wiki（每段都可追溯到原文出处）</div>
+      <div class="learned-step"><b>2.</b> 你和飞象对话越多 → AI 越懂你的偏好和习惯</div>
+      <div class="learned-step"><b>3.</b> 你删/改资料 → AI 重新整理 → 永远是最新版本</div>
+    </section>
+    <section class="learned-pane active" data-pane="learned">
+      <div class="learned-groups">
+        <button class="learned-chip active" data-group="personal" onclick="switchLearnedGroup('personal')">个人偏好（17 条）</button>
+        <button class="learned-chip" data-group="team" onclick="switchLearnedGroup('team')">教研组共识（6 条）</button>
+      </div>
+
+      <div class="learned-rule" data-rule-group="personal">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>含参 + 二次函数 → 中考压轴 · 函数综合</span></div>
+        <div class="learned-rule-meta">
+          <span>5/12 · 在《圆与三角形综合》对话中学到</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="personal">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>出题难度梯度按 3:5:2 分配 A/B/C</span></div>
+        <div class="learned-rule-meta">
+          <span>5/8 · 你的批注</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="personal">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>学情分析优先看八(3)班</span></div>
+        <div class="learned-rule-meta">
+          <span>5/5 · 多次对话累积</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="personal">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>课件喜欢图像法导入而非定义法</span></div>
+        <div class="learned-rule-meta">
+          <span>4/28 · 在《二次函数核心考点》对话中学到</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="learned-rule" data-rule-group="team" style="display:none;">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>错题归因模板使用王老师 v2 版</span></div>
+        <div class="learned-rule-meta">
+          <span>5/3 · 教研组共建</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+      <div class="learned-rule" data-rule-group="team" style="display:none;">
+        <div class="learned-rule-main"><i data-lucide="sparkles"></i><span>中考压轴题统一命名"函数综合"</span></div>
+        <div class="learned-rule-meta">
+          <span>4/20 · 教研组共建</span>
+          <div class="learned-rule-actions">
+            <button class="mem-btn" onclick="showToast('（演示）编辑这条规则')">改一下</button>
+            <button class="mem-btn" onclick="showToast('（演示）已关闭这条规则')">关掉</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</aside>
+
 <div id="toast"></div>
 
 <script src="v28-shell.js?v=20260512be"></script>
 <script src="v28.js?v=20260512be"></script>
+<script>
+  function switchLearnedTab(tab){
+    document.querySelectorAll('[data-learned-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.learnedTab === tab);
+    });
+    document.querySelectorAll('.learned-pane').forEach(pane => {
+      pane.classList.toggle('active', pane.dataset.pane === tab);
+    });
+  }
+
+  function switchLearnedGroup(group){
+    document.querySelectorAll('.learned-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.group === group);
+    });
+    document.querySelectorAll('[data-rule-group]').forEach(row => {
+      row.style.display = row.dataset.ruleGroup === group ? '' : 'none';
+    });
+  }
+
+  function openLearnedPanel(defaultTab = 'learned'){
+    document.body.dataset.learnedPanel = 'open';
+    const panel = document.getElementById('learned-panel');
+    if(panel) panel.setAttribute('aria-hidden', 'false');
+    switchLearnedTab(defaultTab);
+    if(defaultTab === 'learned') switchLearnedGroup('personal');
+  }
+
+  function closeLearnedPanel(){
+    delete document.body.dataset.learnedPanel;
+    const panel = document.getElementById('learned-panel');
+    if(panel) panel.setAttribute('aria-hidden', 'true');
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if(event.key === 'Escape' && document.body.dataset.learnedPanel === 'open'){
+      closeLearnedPanel();
+    }
+  });
+</script>
 
 <!-- pin-comments: 多人评论 -->
 <script>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>飞象 Wiki First · 一页纸说明书</title>
+<style>
+  :root {
+    --ink-1: #0f172a;
+    --ink-2: #1e293b;
+    --ink-3: #475569;
+    --ink-4: #64748b;
+    --ink-5: #94a3b8;
+    --line: #e2e8f0;
+    --line-2: #cbd5e1;
+    --bg: #f8fafc;
+    --bg-card: #ffffff;
+    --accent: #2563eb;
+    --accent-soft: #eff6ff;
+    --warn: #d97706;
+    --warn-soft: #fffbeb;
+    --good: #059669;
+    --good-soft: #ecfdf5;
+    --raw: #ea580c;
+    --wiki: #2563eb;
+    --schema: #7c3aed;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink-1);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 48px 60px;
+  }
+
+  /* ── 顶部 ── */
+  .head {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+  .head .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .head h1 {
+    font-size: 28px;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .head h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .head .lead {
+    font-size: 15px;
+    color: var(--ink-2);
+    max-width: 760px;
+    margin: 8px 0 0;
+  }
+  .head .meta {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-4);
+  }
+  .head .meta b { color: var(--ink-2); font-weight: 600; }
+
+  /* ── 段落骨架 ── */
+  section { margin-bottom: 28px; }
+  h2 {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--ink-4);
+    text-transform: uppercase;
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 0 0 6px;
+    color: var(--ink-1);
+    font-weight: 600;
+  }
+  p { margin: 0 0 10px; color: var(--ink-2); }
+  .muted { color: var(--ink-4); }
+
+  /* ── 引言金句 ── */
+  .quote {
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    color: var(--ink-1);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .quote .src {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--ink-4);
+  }
+  .quote .src a { color: var(--ink-3); text-decoration: underline; }
+
+  /* ── 三层架构 ── */
+  .three-layer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .layer {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    position: relative;
+  }
+  .layer .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .layer.raw    .tag { background: #fff7ed; color: var(--raw); }
+  .layer.wiki   .tag { background: var(--accent-soft); color: var(--wiki); }
+  .layer.schema .tag { background: #f5f3ff; color: var(--schema); }
+  .layer h3 { margin-bottom: 8px; }
+  .layer p { font-size: 13px; color: var(--ink-3); margin: 0 0 8px; }
+  .layer ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-3); }
+  .layer ul li { margin-bottom: 3px; }
+  .layer .who {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 12px;
+    color: var(--ink-4);
+  }
+  .layer .who b { color: var(--ink-2); font-weight: 600; }
+
+  /* ── 三角色 ── */
+  .role-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .role-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: #f1f5f9;
+    color: var(--ink-3);
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .role-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink-2);
+  }
+  .role-table tr:last-child td { border-bottom: none; }
+  .role-table .role { font-weight: 600; color: var(--ink-1); }
+  .role-table .pct {
+    display: inline-block;
+    font-size: 11px;
+    background: #f1f5f9;
+    color: var(--ink-4);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+  }
+
+  /* ── 老师 4 件事 ── */
+  .four-things {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .thing {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .thing .num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .thing h4 {
+    font-size: 14px;
+    margin: 0 0 4px;
+    color: var(--ink-1);
+  }
+  .thing .freq {
+    font-size: 11px;
+    color: var(--ink-5);
+    margin-bottom: 6px;
+  }
+  .thing p {
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .thing.key {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .thing.key .num { background: var(--accent); }
+
+  /* ── 关键原则 ── */
+  .principle {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .principle .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .principle .row:last-child { margin-bottom: 0; }
+  .principle .col h4 {
+    font-size: 12px;
+    margin: 0 0 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .principle .col.bad h4 { color: #b91c1c; }
+  .principle .col.good h4 { color: var(--good); }
+  .principle .col p {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .principle .col.bad {
+    background: #fef2f2;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .principle .col.good {
+    background: var(--good-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  /* ── 实现对照表 ── */
+  .map-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .map-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: #f1f5f9;
+    color: var(--ink-3);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .map-table td {
+    padding: 11px 14px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+  }
+  .map-table .ok { color: var(--good); font-weight: 600; }
+  .map-table .gap { color: var(--warn); font-weight: 600; }
+  .map-table .file {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    color: var(--ink-3);
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── 缺口提示 ── */
+  .gap-box {
+    background: var(--warn-soft);
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .gap-box h3 {
+    color: var(--warn);
+    font-size: 14px;
+    margin: 0 0 8px;
+  }
+  .gap-box ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .gap-box li { margin-bottom: 4px; }
+
+  /* ── footer ── */
+  .foot {
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-4);
+    line-height: 1.7;
+  }
+  .foot a { color: var(--ink-3); text-decoration: underline; }
+  .foot a:hover { color: var(--accent); }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 20px; }
+  }
+  @media (max-width: 820px) {
+    .three-layer, .four-things { grid-template-columns: 1fr; }
+    .principle .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ════════ 顶部 ════════ -->
+  <header class="head">
+    <div class="eyebrow">飞象 AI · 产品哲学 · 一页纸说明书</div>
+    <h1>Wiki First：让知识在组织里<em>复利增长</em></h1>
+    <p class="lead">
+      这套设计不是凭感觉来的。它直接对应 Andrej Karpathy 2026 年 4 月发布的
+      <b>LLM Wiki</b> 模式——一个让 AI 不再每次"重新发现"知识、而是持续编译并维护一个会"长大"的知识库的工程范式。本页用一页纸把这套理论 + 我们如何在飞象里落地讲清楚。
+    </p>
+    <div class="meta">
+      <span>受众 · <b>对内对齐 / 对老板讲清楚</b></span>
+      <span>·</span>
+      <span>v28 Wiki First 配套文档</span>
+      <span>·</span>
+      <span>2026-05</span>
+    </div>
+  </header>
+
+  <!-- ════════ 1. 核心叙事 ════════ -->
+  <section>
+    <h2>一 · 核心叙事 · 我们和"普通 RAG 知识库"的根本差别</h2>
+    <div class="quote">
+      传统 RAG 知识库每次提问都让 AI<b>从碎片里重新拼答案</b>，知识不积累；
+      Wiki First 让 AI <b>持续编译并维护</b>一份不断生长的知识资产——
+      矛盾已经被标过、交叉引用已经在那里、综合判断已经反映你看过的一切。
+      <div class="src">
+        Karpathy: <i>"The wiki is a persistent, compounding artifact."</i>
+        （这是一个持续累积、不断增值的资产）
+      </div>
+    </div>
+    <p style="margin-top: 14px;">
+      给老板的一句话翻译：<b>飞象不是又一个"AI 知识库"。它是让你的教学经验、班级学情、教研沉淀，第一次像复利一样持续增长的资产。</b>
+    </p>
+  </section>
+
+  <!-- ════════ 2. 三层架构 ════════ -->
+  <section>
+    <h2>二 · 三层架构 · 这是飞象的产品骨架</h2>
+    <div class="three-layer">
+      <div class="layer raw">
+        <span class="tag">RAW · 原料</span>
+        <h3>原始资料</h3>
+        <p>老师上传的真相之源。课件、试卷、答疑、教研纪要、错题、笔记…</p>
+        <ul>
+          <li>不可改动</li>
+          <li>所有结论可追溯到这一层</li>
+          <li>越喂越多 → 越用越懂</li>
+        </ul>
+        <div class="who">谁动它：<b>老师上传</b> · AI 只读不改</div>
+      </div>
+      <div class="layer wiki">
+        <span class="tag">WIKI · 成品</span>
+        <h3>AI 整理的知识页</h3>
+        <p>互相链接的笔记。考点页、专题页、班级学情画像、教学方法笔记…</p>
+        <ul>
+          <li>AI 读完原料后自动生成</li>
+          <li>新原料进来，AI 横扫更新所有相关页</li>
+          <li>每段都带原文出处</li>
+        </ul>
+        <div class="who">谁动它：<b>AI 写</b> · 老师审核 / 纠错</div>
+      </div>
+      <div class="layer schema">
+        <span class="tag">SCHEMA · 规则</span>
+        <h3>AI 工作的"作业指导书"</h3>
+        <p>这位老师的教学风格、出题偏好、归类习惯、易错点关注…</p>
+        <ul>
+          <li>从老师的纠错和反馈中<b>自动沉淀</b></li>
+          <li>下次 AI 自动按规则做事</li>
+          <li>越用 AI 越像"专属助教"</li>
+        </ul>
+        <div class="who">谁动它：<b>老师"教"AI</b> · 不写文件</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 3. 三种角色 ════════ -->
+  <section>
+    <h2>三 · 三种角色 · 不同的人看到不同的飞象</h2>
+    <table class="role-table">
+      <thead>
+        <tr>
+          <th style="width: 18%;">角色</th>
+          <th style="width: 24%;">主屏</th>
+          <th style="width: 30%;">他们碰哪些层</th>
+          <th style="width: 28%;">不该看到的东西</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="role">学生</span><span class="pct">消费者</span></td>
+          <td>Chat 提问 + 答案带出处</td>
+          <td>问 AI → 看 wiki 页（追溯）</td>
+          <td>原料库目录 / schema / 编辑入口</td>
+        </tr>
+        <tr>
+          <td><span class="role">老师</span><span class="pct">创作者 · 核心</span></td>
+          <td>Wiki 主屏 + 上传入口</td>
+          <td><b>三层全碰</b>：喂 raw、审 wiki、教 schema</td>
+          <td>裸 markdown 配置文件 / 跨班级权限</td>
+        </tr>
+        <tr>
+          <td><span class="role">学校管理员</span><span class="pct">管理者</span></td>
+          <td>后台 · 健康度 / 配置</td>
+          <td>schema 的硬规则层（权限、合规、审核）</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top: 8px; font-size: 12px;">
+      飞象的核心用户是<b>老师</b>——这也是为什么 Wiki First 这一版默认进的是 <span class="file">02-personal-home.html</span>（个人 Wiki 主页 + 上传入口），而不是聊天框。学生场景另起一条产品线，看到的是 Chat 主屏。
+    </p>
+  </section>
+
+  <!-- ════════ 4. 老师的 4 件事 ════════ -->
+  <section>
+    <h2>四 · 老师每天做的 4 件事</h2>
+    <div class="four-things">
+      <div class="thing">
+        <div class="num">1</div>
+        <h4>喂原料</h4>
+        <div class="freq">每天 · 最高频</div>
+        <p>把课件、试卷、答疑、错题扔进飞象。拖拽 / 复制 / 语音 / 一键导入飞书。</p>
+      </div>
+      <div class="thing">
+        <div class="num">2</div>
+        <h4>审 Wiki</h4>
+        <div class="freq">每天 · 中频</div>
+        <p>翻 AI 整理的知识页。看 AI 把哪些资料归到了哪、有没有错。</p>
+      </div>
+      <div class="thing">
+        <div class="num">3</div>
+        <h4>改 Wiki</h4>
+        <div class="freq">每周 · 中频</div>
+        <p>就地纠正："这道题应该归到二次函数综合，不是基础题。" AI 立刻改。</p>
+      </div>
+      <div class="thing key">
+        <div class="num">4</div>
+        <h4>教 AI</h4>
+        <div class="freq">每周 · 最关键</div>
+        <p>AI 反问："以后含参的都这样归吗？"老师答"对"——规则就此沉淀进 schema。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top: 10px; font-size: 12px;">
+      第 4 件事是飞象与众不同的地方。它把"AI 学会一位老师"这件事，从一次性的训练，变成了每天点滴沉淀。
+    </p>
+  </section>
+
+  <!-- ════════ 5. 关键原则 ════════ -->
+  <section>
+    <h2>五 · 关键原则 · Schema 永远不让老师"写文件"</h2>
+    <div class="principle">
+      <div class="row">
+        <div class="col bad">
+          <h4>错误做法</h4>
+          <p>给老师一个 <span class="file">CLAUDE.md</span> 文件，让她填规则。</p>
+        </div>
+        <div class="col good">
+          <h4>飞象做法</h4>
+          <p>老师在工作中纠错 → AI 反问 → 老师确认 → AI 自动沉淀规则。</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col bad">
+          <h4>错误心智</h4>
+          <p>"老师要管理 schema"——又多一件事要做。</p>
+        </div>
+        <div class="col good">
+          <h4>飞象心智</h4>
+          <p>"老师在教 AI"——像带新助教，越教越懂你。</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col bad">
+          <h4>错误呈现</h4>
+          <p>schema 是一个 markdown 文件，永远藏起来或永远露出来。</p>
+        </div>
+        <div class="col good">
+          <h4>飞象呈现</h4>
+          <p>schema 呈现为「<b>AI 已经学会的 N 条规则</b>」——可看、可调、可关掉，但不写。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ 6. 现在 demo 怎么对应 ════════ -->
+  <section>
+    <h2>六 · v28 demo 与理论的对照</h2>
+    <table class="map-table">
+      <thead>
+        <tr>
+          <th style="width: 22%;">理论概念</th>
+          <th style="width: 38%;">v28 demo 体现</th>
+          <th style="width: 12%;">状态</th>
+          <th style="width: 28%;">备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Raw（原料）</td>
+          <td>Hero "87 份资料" + 上传按钮 → <span class="file">01-upload-onboarding</span></td>
+          <td class="ok">已实现</td>
+          <td>入口清晰</td>
+        </tr>
+        <tr>
+          <td>Wiki（成品）</td>
+          <td>"16 个 Wiki 页" + 按主题浏览 + Canvas Wiki 详情</td>
+          <td class="ok">已实现</td>
+          <td>是默认主屏</td>
+        </tr>
+        <tr>
+          <td>Ingest（吃进）</td>
+          <td><span class="file">01-upload-onboarding.html</span> → 扫描 → 4 阶段进度</td>
+          <td class="ok">已实现</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Lint（体检 / 周报）</td>
+          <td>"飞象 AI 整理纪要"卡片：本周新增 / 更新 / 主题分布 / 高频引用</td>
+          <td class="ok">已实现</td>
+          <td>比 Karpathy 原文更产品化</td>
+        </tr>
+        <tr>
+          <td>Index（目录）</td>
+          <td>"按主题浏览" + 引用次数</td>
+          <td class="ok">已实现</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>出处溯源</td>
+          <td>Wiki 段落带 <span class="file">[导入课件.pptx P3]</span> 引用</td>
+          <td class="ok">已实现</td>
+          <td>信任感的关键</td>
+        </tr>
+        <tr>
+          <td>Query（提问）</td>
+          <td>底部 command bar + chat-stream</td>
+          <td class="ok">已实现</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>审 / 改 Wiki</td>
+          <td>底部 command bar 已存在，老师对话即可纠错</td>
+          <td class="ok">已实现</td>
+          <td>原则：<b>不做编辑器</b>，纠错走对话</td>
+        </tr>
+        <tr>
+          <td>Schema 沉淀</td>
+          <td>对话内已加入"✨ 我记住了"提示，并可查看沉淀规则面板</td>
+          <td class="ok">已实现</td>
+          <td>以人话规则展示，不暴露 schema 文件</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ════════ 7. 缺口与下一步 ════════ -->
+  <section>
+    <h2>七 · 下一步要补的一个缺口（拆两步做）</h2>
+
+    <p class="muted" style="font-size: 12px; margin-bottom: 12px;">
+      四条不做的原则（避免过度设计）：<br>
+      ① <b>不做 wiki 编辑器</b> · 纠错走对话，加编辑器会退化成 Notion+AI<br>
+      ② <b>不做 wiki 段落 hover 按钮</b> · 底部对话框已经够用，YAGNI<br>
+      ③ <b>不做"AI 学到了"独立页面</b> · 复用现有底部入口，避免老师"又一件事要管"<br>
+      ④ <b>不展示底层 schema</b>（JSON/markdown）· 那是 AI 读的，不是老师读的
+    </p>
+
+    <div class="gap-box">
+      <h3>缺口 2-A · 对话流里加"✨ 我记住了"轻提示（沉淀的瞬间被看见）</h3>
+      <ul>
+        <li>每当 AI 从对话里抽出一条规则沉淀进 schema，对话流里多浮一行：<br>
+          ✨ <b>我记住了 · 以后"含参 + 二次函数"会自动归到综合题</b>
+        </li>
+        <li>带两个轻按钮：<span class="file">[查看所有规则]</span> <span class="file">[这条不对]</span></li>
+        <li><b>解决的问题</b>：让老师在沉淀发生的瞬间就感受到"AI 在学"，不用主动找</li>
+      </ul>
+    </div>
+
+    <div class="gap-box" style="margin-top: 10px;">
+      <h3>缺口 2-B · 升级底部"了解 AI 整理逻辑"入口（主动 review 时被看见）</h3>
+      <p style="font-size: 13px; color: var(--ink-3); margin: 4px 0 8px;">
+        现状：<span class="file">02-personal-home.html</span> 底部已有「了解 AI 整理逻辑 →」链接，但只是静态产品说明。把它升级成两层内容：
+      </p>
+      <ul>
+        <li><b>① 飞象的整理逻辑</b>（产品说明，所有人一样）· 三层架构、可追溯、出处引用 …</li>
+        <li><b>② 飞象学到了你的 N 条规则</b>（每个老师专属、动态累积）<br>
+          每条带：人话规则 + 学到的时间 / 来源对话 + <span class="file">[改一下]</span> <span class="file">[关掉]</span>
+        </li>
+        <li><b>分层显示</b>：老师个人规则（可改可关）+ 教研组共识（可看协商改）；学校层硬规则不展示</li>
+        <li><b>解决的问题</b>：老师想 review "AI 学了什么" 时找得到，且和"产品说明"共用同一个入口，不增加心智负担</li>
+      </ul>
+    </div>
+
+    <div class="gap-box" style="margin-top: 10px; background: var(--good-soft); border-color: #a7f3d0;">
+      <h3 style="color: var(--good);">两者关系 · 被动感知 + 主动 review</h3>
+      <ul>
+        <li><b>2-A（对话流提示）= 被动感知</b> · 不用主动找就看到，证明"AI 在变懂你"</li>
+        <li><b>2-B（入口升级）= 主动 review</b> · 想看清单 / 想关某条规则时找得到</li>
+        <li>两者一起，构成"飞象越用越懂你"的可视化证据链——对续费 / 口碑 / 销售叙事至关重要</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════════ Footer ════════ -->
+  <footer class="foot">
+    <div>
+      <b>理论来源</b> ·
+      Andrej Karpathy, <i>llm-wiki.md</i>, GitHub Gist, 2026-04-04 ·
+      <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f" target="_blank">原文链接</a>
+    </div>
+    <div>
+      <b>飞象的判断</b> · 这个范式适合"个人创作者 / 中小团队 / 慢变化、人工精选"的场景，
+      正是老师教研工作的形态。企业级所需的权限、审计、版本、合规等，
+      飞象在 schema 的硬规则层和管理后台另行解决。
+    </div>
+    <div style="margin-top: 8px;">
+      <b>相关文档</b> · <span class="file">PRODUCT-VISION.md</span> · <span class="file">PRODUCT-SPEC-v28.md</span> · <span class="file">DESIGN-SYSTEM-v28.md</span>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

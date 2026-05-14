@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>飞象 AI · 编辑题单</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="v28.css?v=20260512be" />
+<style>
+  body[data-page="compose-sheet"] .app{
+    grid-template-columns: 1fr !important;
+  }
+  body[data-page="compose-sheet"] .workspace{
+    min-width:0;
+  }
+  .sheet-page{
+    padding:0 0 20px;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  .sheet-topbar{
+    height:52px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--border);
+    padding:0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .sheet-nav{
+    display:flex;align-items:center;gap:8px;
+    font-size:13.5px;color:var(--text-3);
+    min-width:0;
+  }
+  .sheet-nav b{ color:var(--text);font-weight:700; }
+  .sheet-nav .sep{ color:var(--text-4); }
+  .sheet-nav-link{
+    color:inherit;
+    cursor:pointer;
+    transition:color .15s;
+  }
+  .sheet-nav-link:hover{
+    color:var(--gold-deep);
+  }
+  .sheet-back-btn{
+    width:30px;height:30px;
+    border-radius:7px;
+    border:1px solid #D8D3C9;
+    background:#fff;
+    color:#5A5550;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .sheet-back-btn:hover{
+    background:#F5F1EB;
+    border-color:#CFC9BD;
+    color:#3A3A3A;
+  }
+  .sheet-back-btn [data-lucide]{
+    width:13px;height:13px;
+  }
+  .sheet-main{
+    padding:14px 20px 0;
+    height:calc(100vh - 52px);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-height:0;
+  }
+  .sheet-header{
+    display:flex;align-items:center;gap:10px;
+  }
+  .sheet-title{
+    font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.01em;
+  }
+  .sheet-sub{
+    font-size:12px;color:var(--text-3);
+  }
+  .sheet-actions{
+    margin-left:auto;display:flex;gap:8px;align-items:center;
+  }
+  .sheet-work{
+    min-height:0;flex:1;
+    display:grid;grid-template-columns:220px minmax(0,1fr) 290px;gap:12px;
+  }
+  .sheet-panel{
+    background:var(--surface-2);border:1px solid #ECE9E2;border-radius:10px;min-height:0;
+  }
+  .sheet-left{ padding:12px;display:flex;flex-direction:column; }
+  .sheet-left h3{
+    font-size:12px;color:var(--text-2);font-weight:600;margin-bottom:8px;
+  }
+  .sheet-qnos{
+    display:grid;grid-template-columns:repeat(5, 1fr);gap:8px;
+  }
+  .sheet-qno{
+    width:32px;height:32px;border-radius:50%;
+    border:1px solid #DDD8CF;background:#fff;color:#5A5550;
+    font-size:12px;font-weight:600;
+    cursor:pointer;
+    transition:all .15s;
+    font-family:inherit;
+  }
+  .sheet-qno:hover{
+    border-color:#C7B99D;
+    color:#2F2B26;
+    background:#F8F4EC;
+  }
+  .sheet-qno.active{
+    background:var(--gold-deep);
+    color:#fff;
+    border-color:var(--gold-deep);
+    box-shadow:0 3px 10px rgba(122,93,32,.24);
+  }
+  .sheet-tip{
+    margin-top:auto;font-size:11.5px;color:var(--text-3);line-height:1.6;
+    border-top:1px dashed #E2DDD4;padding-top:10px;
+  }
+  .sheet-mid{
+    min-height:0;overflow:auto;padding:14px;
+    background:#EFF3F4;border-color:#DDE6E5;
+  }
+  .paper{
+    width:min(780px, 100%);
+    min-height:980px;
+    margin:0 auto;
+    background:#fff;border:1px solid #E6E6E6;border-radius:4px;
+    box-shadow:0 6px 22px rgba(30,30,30,.08);
+    padding:36px 42px;
+  }
+  .paper h1{
+    text-align:center;font-size:24px;letter-spacing:.02em;color:#161616;margin-bottom:20px;
+  }
+  .paper .meta{
+    text-align:center;font-size:12px;color:#8A847C;margin-bottom:22px;
+  }
+  .paper .q{
+    font-size:15px;line-height:2;color:#1E1E1E;margin-bottom:16px;
+  }
+  .paper .q b{ display:inline-block;width:22px; }
+  .paper .q.active{
+    background:rgba(201,167,110,.14);
+    margin:0 -12px 16px;
+    padding:6px 12px;
+    border-radius:6px;
+  }
+  .paper .q:hover{
+    background:rgba(201,167,110,.08);
+    margin:0 -12px 16px;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .sheet-right{
+    padding:12px;overflow:auto;
+  }
+  .sheet-card{
+    background:#fff;border:1px solid #ECE9E2;border-radius:8px;padding:10px 11px;
+  }
+  .sheet-card h3{
+    font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;
+  }
+  .sheet-row{
+    display:flex;gap:6px;font-size:12px;line-height:1.7;margin-bottom:5px;
+  }
+  .sheet-row span:first-child{ color:var(--text-3);min-width:48px; }
+  .sheet-row span:last-child{ color:var(--text-2); }
+  .sheet-ans{
+    margin-top:10px;padding-top:10px;border-top:1px dashed #ECE9E2;
+  }
+  .sheet-ans b{ color:var(--text); }
+</style>
+</head>
+<body data-page="compose-sheet">
+
+<div class="app" id="app" data-view="wiki" data-chat="closed">
+  <main class="workspace">
+    <div class="workspace-scroll">
+      <section class="sheet-page">
+        <div class="sheet-topbar">
+          <button class="sheet-back-btn" onclick="goToQbank()" title="返回 AI 题库">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <div class="sheet-nav">
+            <span class="sheet-nav-link" onclick="goToHome()">首页</span>
+            <span class="sep">›</span>
+            <span class="sheet-nav-link" onclick="goToQbank()">AI题库</span>
+            <span class="sep">›</span>
+            <b id="sheet-nav-mode">编辑题单</b>
+          </div>
+          <div class="sheet-actions">
+            <button class="v28-action-btn" onclick="showToast('（演示）查看已删除题目')"><i data-lucide="check-circle-2"></i>已删除题目</button>
+            <button class="v28-action-btn" onclick="showToast('（演示）打开题库继续添加')"><i data-lucide="plus-circle"></i>添加题目</button>
+            <button class="v28-action-btn" onclick="showToast('（演示）查看编辑轨迹')"><i data-lucide="history"></i>活动轨迹</button>
+            <button class="v28-action-btn primary" onclick="showToast('（演示）题单已保存')"><i data-lucide="save"></i>保存</button>
+            <button class="v28-action-btn" onclick="showToast('（演示）导出为 Word / PDF')"><i data-lucide="download"></i>下载</button>
+          </div>
+        </div>
+        <div class="sheet-main">
+          <div class="sheet-header">
+            <h1 class="sheet-title">2026.05.14 题单</h1>
+            <span class="sheet-sub" id="sheet-mode-note">当前共 5 题，可继续调整顺序与内容</span>
+          </div>
+
+          <div class="sheet-work">
+            <aside class="sheet-panel sheet-left">
+              <h3>题目排序</h3>
+              <div class="sheet-qnos" id="sheet-qnos">
+                <button class="sheet-qno" data-q="1">1</button>
+                <button class="sheet-qno active" data-q="2">2</button>
+                <button class="sheet-qno" data-q="3">3</button>
+                <button class="sheet-qno" data-q="4">4</button>
+                <button class="sheet-qno" data-q="5">5</button>
+              </div>
+              <div class="sheet-tip">左侧选择题号后，中央高亮定位该题；右侧显示该题来源、答案与解析。</div>
+            </aside>
+
+            <main class="sheet-panel sheet-mid">
+              <article class="paper" id="sheet-paper">
+                <h1>2026.05.14 题单</h1>
+                <div class="meta">初中数学 · 年级练习 · 组卷人：张老师</div>
+                <div class="q" data-q="1"><b>1.</b> 若 a + 2b = 3，则 2a + 4b 的值为 _________。</div>
+                <div class="q active" data-q="2"><b>2.</b> 如图，将半圆绕直径所在的直线旋转一周，得到的立体图形是（　）</div>
+                <div class="q" data-q="3"><b>3.</b> 一个长方形的周长为 8a + 6b，其中长为 a − 2b，则宽为 _________。</div>
+                <div class="q" data-q="4"><b>4.</b> 如图是 4×3 的正方形网格，选择一空白小正方形，能与阴影部分拼成正方体展开图的方法有（　）</div>
+                <div class="q" data-q="5"><b>5.</b> 我国古代问题：有若干桃，若每堆三颗剩二，若每堆五颗剩二，若每堆七颗剩二……求最小满足条件的桃数。</div>
+              </article>
+            </main>
+
+            <aside class="sheet-panel sheet-right">
+              <div class="sheet-card">
+                <h3>题目信息</h3>
+                <div class="sheet-row"><span>来源</span><span id="info-src">初中数学教研组 · 平面几何练习卷</span></div>
+                <div class="sheet-row"><span>题型</span><span id="info-type">单选题</span></div>
+                <div class="sheet-row"><span>标签</span><span id="info-tags">几何变换 · 旋转体 · 空间想象</span></div>
+                <div class="sheet-row"><span>难度</span><span id="info-diff">中等</span></div>
+                <div class="sheet-ans">
+                  <div class="sheet-row"><span>答案</span><span><b id="info-answer">C</b></span></div>
+                  <div class="sheet-row"><span>解析</span><span id="info-exp">半圆绕直径旋转形成球体，故选 C。</span></div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="v28.js?v=20260512be"></script>
+<script>
+  function goToHome(){
+    window.location.href = '02-wiki-home.html';
+  }
+
+  function goToQbank(){
+    window.location.href = '05-ai-qbank.html';
+  }
+
+  (function(){
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    const modeNav = document.getElementById('sheet-nav-mode');
+    const modeNote = document.getElementById('sheet-mode-note');
+    if(mode === 'basket'){
+      if(modeNav) modeNav.textContent = '题目篮';
+      if(modeNote) modeNote.textContent = '题目篮中的题可直接编辑后保存成题单';
+    }
+
+    const questionMeta = {
+      1: { src:'初中数学教研组 · 代数基础题单', type:'填空题', tags:'代数式 · 运算', diff:'简单', answer:'6', exp:'将已知式整体乘以 2 即可。' },
+      2: { src:'初中数学教研组 · 平面几何练习卷', type:'单选题', tags:'几何变换 · 旋转体 · 空间想象', diff:'中等', answer:'C', exp:'半圆绕直径旋转形成球体，故选 C。' },
+      3: { src:'初中数学教研组 · 代数综合训练', type:'填空题', tags:'周长公式 · 代数变形', diff:'中等', answer:'3a+5b', exp:'由周长公式 2(长+宽)=8a+6b 推得宽=3a+5b。' },
+      4: { src:'初中数学教研组 · 空间图形专题', type:'单选题', tags:'正方体展开图 · 分类讨论', diff:'中等', answer:'B', exp:'逐项排除无法拼接成立的网格后，答案为 B。' },
+      5: { src:'初中数学教研组 · 数论趣题集', type:'解答题', tags:'同余问题 · 中国剩余', diff:'较难', answer:'23', exp:'满足 x ≡ 2 (mod 3,5,7)，最小正整数为 23。' },
+    };
+
+    function setActiveQuestion(id){
+      document.querySelectorAll('.sheet-qno').forEach(btn => btn.classList.toggle('active', btn.dataset.q === String(id)));
+      document.querySelectorAll('.paper .q').forEach(line => line.classList.toggle('active', line.dataset.q === String(id)));
+      const meta = questionMeta[id];
+      if(!meta) return;
+      const set = (selector, value) => {
+        const el = document.getElementById(selector);
+        if(el) el.textContent = value;
+      };
+      set('info-src', meta.src);
+      set('info-type', meta.type);
+      set('info-tags', meta.tags);
+      set('info-diff', meta.diff);
+      set('info-answer', meta.answer);
+      set('info-exp', meta.exp);
+    }
+
+    document.querySelectorAll('.sheet-qno').forEach(btn => {
+      btn.addEventListener('click', () => setActiveQuestion(btn.dataset.q));
+    });
+    document.querySelectorAll('.paper .q').forEach(line => {
+      line.addEventListener('click', () => setActiveQuestion(line.dataset.q));
+    });
+  })();
+</script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb',
+    pageKey: '07-compose-sheet.html'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
+</body>
+</html>

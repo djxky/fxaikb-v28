@@ -63,6 +63,12 @@
 23. **文件夹视图不展示页内 AI 对话，但保留侧栏可点**：在 `wiki-entry + data-view="folder"` 下隐藏页内 `chat-stream/bottom-bar`；侧栏「新对话/历史对话」仍可点击，并通过跨页路由跳到工作台/历史页
 24. **上传入口统一走 onboarding 流程**：`02-personal-home`、`02-wiki-home`、`03-wiki-entry?view=folder(v28-folder.js)` 的上传按钮统一跳 `01-upload-onboarding.html?from=personal|team|folder`
 25. **上传完成必须回原入口页并给一次性提示**：onboarding 完成后带 `?imported=1` 回跳来源页；`v28.js` 在 `DOMContentLoaded` 读参后 toast 提示并 `history.replaceState` 清理参数
+26. **移除“上次对话回溯”提示条**：底部 command bar 不再展示“上次跟飞象聊到…”，续聊统一通过左栏 `历史对话` 进入，降低入口复杂度
+27. **AI 题库能力收敛**：底部主操作仅保留 `查看题目篮` 与 `去组题` 两个动作，移除“下载/去组卷”入口，减少决策负担
+28. **去组题进入独立编辑页**：`05-ai-qbank.html` 点击 `去组题` 跳 `07-compose-sheet.html`；页面结构固定为“左题号 / 中题单正文 / 右题目信息”
+29. **组题编辑页启用沉浸模式**：`07-compose-sheet.html` 隐藏左侧全局导航，并移除壳层 topbar，改为页面专属顶部条（左面包屑 + 右操作按钮），聚焦组题编辑主任务
+30. **Schema 沉淀可视化（仅 personal-home）**：`02-personal-home.html` 在 chat-stream 增加 `mem-` 轻提示“✨ 我记住了…”，并接入“查看所有规则 / 这条不对”动作
+31. **Wiki 底部入口升级为右侧抽屉**：`wiki-foot` 文案改为“飞象怎么工作 + 已学到你的 23 条 →”，点击打开同一 `learned-panel`（支持 ESC/遮罩关闭，双 tab：工作原理 + 已学规则）
 
 ---
 
@@ -108,6 +114,7 @@ demo/v28-wiki-first/
 ├── 04-file-preview.html          # 文件预览 · 默认双栏 1:1
 ├── 05-ai-qbank.html              # AI 题库展示页（v26 题库结构的轻量复用版）
 ├── 06-chat-history.html          # 历史对话列表页（居中容器，单列表倒序）
+├── 07-compose-sheet.html         # 组题编辑页（左题号 / 中正文 / 右题目信息）
 ├── v28.css                       # 全局样式
 ├── v28-shell.js                  # 公共壳渲染（Sidebar / Topbar / Search / AccountMenu）
 ├── v28-folder.js                 # 公共 FolderView 渲染（唯一文件夹视图实现）
@@ -139,6 +146,9 @@ demo/v28-wiki-first/
 - **AI 题库中栏样式策略**：采用“中栏定向迁移”，允许在 `05-ai-qbank.html` 内内联局部样式做高保真复刻，但不引入整份 `kb-workbench.css`
 - **AI 题库 topbar 例外规则**：`v28-shell.js` 对 `data-page="ai-qbank"` 走定制渲染，不显示 KB 名与视图切换
 - **历史对话 topbar 例外规则**：`v28-shell.js` 对 `data-page="chat-history"` 走定制渲染，仅显示搜索与通知
+- **组题编辑页顶部规则**：`07-compose-sheet.html` 不使用壳层 topbar，而是页面内 `sheet-topbar`（左面包屑 + 右动作按钮），交互语义对齐 `ch-head-btn / fv-tool` 风格
+- **组题编辑页面包屑文案固定**：`首页 > AI题库 > 编辑题单`；其中“首页”跳 `02-wiki-home.html`，“AI题库”和左侧 `<` 返回按钮都跳 `05-ai-qbank.html`
+- **组题编辑页沉浸规则**：在 `07-compose-sheet.html` 页面级样式里覆盖 `.app` 栅格并隐藏全局侧栏，仅保留组题工作区；只影响该页，不影响其它页面壳
 - **历史对话内容区布局**：`06-chat-history.html` 的列表内容采用居中容器（`width:min(920px,100%)` + `margin:0 auto`），并在内容区内显示「历史对话」标题 + 「批量选择/新对话」按钮
 - **历史对话列表规则**：`06-chat-history.html` 仅保留标题和日期时间，不使用“今天/昨天/上周”分组，也不展示对话标签
 - **历史对话侧栏高亮**：`data-page="chat-history"` 时 `sb-chat-entry` 自动添加 `active` class，通过模板字符串在 `renderSidebar` 中内联判断
@@ -147,6 +157,11 @@ demo/v28-wiki-first/
 - **历史对话跨页对话链路**：`openChat()` 在 `chat-history` 场景下不做页内聊天态切换，而是写 query 参数后跳工作台页，工作台页 `DOMContentLoaded` 读取 `chat` 参数执行 `openChat('new'|'resume')`
 - **文件夹视图对话兜底**：`v28.css` 强制隐藏 `.chat-stream/.bottom-bar`（`wiki-entry + view=folder`）；`v28.js openChat()` 在该场景不做页内切换，而是跨页跳转（`history -> 06-chat-history.html`，`new/resume/replay -> 02-wiki-home.html?chat=...`）
 - **上传流程回跳约定**：`01-upload-onboarding.html` 通过 `from` 参数决定回跳页（`personal` / `team` / `folder`），完成时补 `imported=1`；`v28.js` 统一消费该参数并给提示
+- **底部输入区简化**：`bottom-bar` 仅保留工具 chips + 输入区，不再显示对话回溯胶囊（`bb-resume-row` 已删除）
+- **题库到组题链路**：`05-ai-qbank.html` 底部两个按钮分别跳 `07-compose-sheet.html?mode=basket`（查看题目篮）和 `07-compose-sheet.html`（去组题）；`compose` 页支持按题号切换右侧题目信息
+- **动作按钮统一类**：页面内头部动作统一复用 `v28.css` 的 `.v28-action-btn` / `.v28-action-btn.primary`，禁止在单页重复造按钮样式
+- **Schema 提示命名约定**：沉淀提示组件统一 `mem-` 前缀（如 `mem-toast`、`mem-btn`），仅用于“我记住了”与规则面板入口相关交互
+- **Schema 提示触发规则**：`mem-toast` 默认隐藏，仅当对话命中“规则意图 + 确认信号 + 落地对象”三要素时显示；普通问答不展示，避免噪音
 - **Wiki / 文件二级栏统一**：4 个 Wiki 相关页面都有通栏顶部条 + 下载 + 分享；Wiki 详情右栏按钮叫「整理依据」且默认收起；文件右栏按钮叫「AI 解读」且默认展开
 - 02 / 03 / 04 在 topbar 下面有独立 `entry-bcbar`（面包屑 + 下载/分享；03/04 额外有右栏入口）
 - **cache buster 当前版本**：`?v=20260512be`（改 CSS/JS 后递增字母）
@@ -173,6 +188,18 @@ demo/v28-wiki-first/
 2. **批判性立场**：用户说法不对就直接指出，**不附和**；亮出更好的路径并给理由
 3. **文案克制**：不要营销腔、不要"解决老板提的"自夸、不要口语化（如"空库不空手"）
 4. **回复用简体中文**
+
+---
+
+## §8 UI 一致性检查清单（每次改页面都要过）
+
+1. **壳层对齐**：页面必须明确选择“复用 AppShell”或“沉浸态自管顶部”，禁止半复用半自定义导致双顶部条
+2. **按钮语义对齐**：主动作 `primary`、次动作 `ghost`，hover / focus / disabled 状态需和站内同语义
+3. **信息层级一致**：页面标题（20-30）> 分组标题（12-14）> 元信息（11-12）；不要出现单页自创字号体系
+4. **交互反馈闭环**：点击必须有结果（跳转/状态变化/toast），禁止无反馈按钮
+5. **双向联动规则**：左侧定位区与中间内容区是同一状态源，任一侧操作都要更新另一侧及右侧信息
+6. **文案口径统一**：动作词尽量用“查看 / 添加 / 保存 / 下载 / 返回”，避免同义词混用
+7. **例外要落文档**：新增页面例外（如 compose 沉浸模式）必须同步更新 `DESIGN-SYSTEM` 与 `COMPONENT-CONTRACT`
 
 ---
 

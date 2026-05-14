@@ -451,7 +451,7 @@
             <button class="fv-tool" onclick="showToast('（演示）按上传时间 / 名称 / 大小排序')">
               <i data-lucide="arrow-up-down"></i> 排序
             </button>
-            <button class="fv-tool" onclick="showToast('（演示）上传新文件')">
+            <button class="fv-tool" onclick="window.location.href='01-upload-onboarding.html?from=team'">
               <i data-lucide="upload"></i> 上传
             </button>
             <button class="fv-tool primary" onclick="openWiki('二次函数图像与性质')">
@@ -678,18 +678,6 @@
 
     <!-- ════════════ 底部 Command Bar ════════════ -->
     <div class="bottom-bar" id="bottom-bar">
-
-      <!-- 上次对话回溯标签 -->
-      <div class="bb-resume-row" id="bb-resume-row">
-        <button class="bb-resume" onclick="resumeLastChat()">
-          <i data-lucide="message-square-text"></i>
-          <span class="resume-label">上次跟飞象聊到</span>
-          <span class="resume-name">围绕《二次函数》出 5 道分层练习</span>
-          <span class="resume-close" onclick="event.stopPropagation();hideResume()" title="不再提示">
-            <i data-lucide="x"></i>
-          </span>
-        </button>
-      </div>
 
       <div class="bb-wrap">
         <!-- 工具 chips（默认收起，聚焦展开） -->

@@ -194,6 +194,7 @@ function enterChatEmpty(){
   clearTimeout(_streamingTimer);
   app.dataset.chat = 'empty';
   setActiveModule('chat');
+  toggleMemoryToast(false);
 
   const h = new Date().getHours();
   const greet = h < 11 ? '早上好' : h < 14 ? '中午好' : h < 18 ? '下午好' : '晚上好';
@@ -268,6 +269,7 @@ function backToKnowledgeBase(){
   clearTimeout(_streamingTimer);
   delete app.dataset.chat;
   switchCanvas('wiki');
+  toggleMemoryToast(false);
 
   const activeKb = document.querySelector('.sb-kb.active');
   setActiveModule(activeKb ? 'kb' : null);
@@ -284,11 +286,29 @@ function setActiveModule(mode){
   if(chatBtn) chatBtn.classList.toggle('active', mode === 'chat');
 }
 
+function toggleMemoryToast(show){
+  const toast = document.getElementById('mem-toast-row');
+  if(!toast) return;
+  toast.classList.toggle('show', !!show);
+}
+
+function shouldShowMemoryToast(userText = ''){
+  const text = String(userText || '').trim();
+  if(!text) return false;
+
+  const hasRuleIntent = /(以后|统一|固定|默认|优先|习惯|偏好|都按|命名|规则|比例|分配|归到|模板)/.test(text);
+  const hasConfirmSignal = /(^|[\s，。！？])(对|是的|可以|确认|同意|就这样|按这个|以后都)([\s，。！？]|$)/.test(text);
+  const hasTargetObject = /(出题|题目|难度|A\/B\/C|命名|函数|学情|课件|分类|模板|班级|八\(3\)班)/.test(text);
+
+  return hasRuleIntent && hasConfirmSignal && hasTargetObject;
+}
+
 /* ──────────────────────────────────────────────
    对话 demo · 用户消息 + AI 流式打字 + 自动切到 Canvas 题目集
    ────────────────────────────────────────────── */
 function runChatDemo(userText){
   clearTimeout(_streamingTimer);
+  const showMemoryToast = shouldShowMemoryToast(userText);
 
   const userEl = document.getElementById('chat-user-text');
   const aiText = document.getElementById('chat-ai-text');
@@ -340,6 +360,7 @@ function runChatDemo(userText){
       wrap.innerHTML = citesHtml + actionsHtml;
       while(wrap.firstChild) aiMsg.querySelector('.msg-content').appendChild(wrap.firstChild);
       if(window.lucide) lucide.createIcons();
+      toggleMemoryToast(showMemoryToast);
     });
   }
 
@@ -461,16 +482,6 @@ function refreshBarSend(){
   const btn = document.getElementById('bb-send');
   if(!ta || !btn) return;
   btn.classList.toggle('idle', !ta.value.trim());
-}
-
-function resumeLastChat(){
-  openChat('resume');
-  hideResume();
-}
-
-function hideResume(){
-  const r = document.getElementById('bb-resume-row');
-  if(r) r.style.display = 'none';
 }
 
 /* ──────────────────────────────────────────────

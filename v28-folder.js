@@ -130,7 +130,7 @@
             <button class="fv-tool" onclick="showToast('（演示）按上传时间 / 名称 / 大小排序')">
               <i data-lucide="arrow-up-down"></i> 排序
             </button>
-            <button class="fv-tool" onclick="showToast('（演示）上传新文件')">
+            <button class="fv-tool" onclick="window.location.href='01-upload-onboarding.html?from=folder'">
               <i data-lucide="upload"></i> 上传
             </button>
           </div>

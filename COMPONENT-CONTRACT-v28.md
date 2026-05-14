@@ -16,7 +16,7 @@ AppShell
     GlobalSearch
     NotificationEntry
   PageContent
-    KnowledgeHome | WikiEntry | FolderView | FilePreview | ChatWorkspace
+    KnowledgeHome | WikiEntry | FolderView | FilePreview | ChatWorkspace | ComposeSheet
 ```
 
 ## 2. AppShell
@@ -27,7 +27,7 @@ Props / State：
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| `page` | string | `personal-home` / `wiki-home` / `wiki-entry` / `file-preview` |
+| `page` | string | `personal-home` / `wiki-home` / `wiki-entry` / `file-preview` / `compose-sheet` |
 | `activeKbId` | string | 当前知识库或团队空间 |
 | `activeView` | string | `wiki` / `graph` / `folder` |
 | `leftCollapsed` | boolean | 左侧栏是否折叠 |
@@ -173,7 +173,39 @@ Data：
 - 默认左原件 / 右 AI 解读 1:1。
 - 右侧内容是 AI 解读，不是聊天窗口。
 
-## 10. 数据模型
+## 10. ComposeSheet
+
+职责：承接 AI 题库“查看题目篮 / 去组题”，完成题单编辑与导出前确认。
+
+Props / State：
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `mode` | string | `compose` / `basket` |
+| `sheetTitle` | string | 题单标题 |
+| `questionIds` | string[] | 题目顺序 |
+| `activeQuestionId` | string | 当前选中题 |
+| `questions` | QuestionBankItem[] | 题目主体内容 |
+| `questionMeta` | object | 来源、标签、答案、解析 |
+
+Events：
+
+- `onSelectQuestion(questionId)`
+- `onReorderQuestions(questionIds)`
+- `onAddQuestion()`
+- `onViewDeletedQuestions()`
+- `onSaveSheet()`
+- `onExportSheet(format)`
+
+交互契约：
+
+- 左题号点击与中栏题目点击都触发 `onSelectQuestion`，行为一致。
+- `activeQuestionId` 变化时，中栏与右栏必须同步更新（不可只更新单侧）。
+- 保存、下载、活动轨迹在 demo 阶段允许 toast 占位，但按钮语义和位置不可漂移。
+- 顶部动作按钮必须复用通用样式类 `.v28-action-btn`（主动作加 `.primary`），避免每页自建按钮体系。
+- ComposeSheet 由页面自管顶部动作条，不复用 AppShell Topbar 的视图切换语义。
+
+## 11. 数据模型
 
 ### KnowledgeBase
 
@@ -233,7 +265,7 @@ type QuestionBankItem = {
 };
 ```
 
-## 11. Demo Mock 与生产接口差异
+## 12. Demo Mock 与生产接口差异
 
 | Demo | 生产 |
 |---|---|
@@ -242,3 +274,4 @@ type QuestionBankItem = {
 | 图谱打开研发外链 | 接产品内图谱路由 |
 | `switchKb()` 用前端 mock | 接用户权限下的知识库列表 |
 | AI 题库仅导航展示 | 接题库审核和检索数据 |
+| 组题编辑页题目内容写死 | 按题单 ID 拉取题目列表与元数据 |

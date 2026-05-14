@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>飞象 AI · 上传导入</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="v28.css?v=20260512be" />
+  <style>
+    .onb-page{
+      width:min(980px, 100%);
+      margin:0 auto;
+      padding:28px 22px 72px;
+    }
+    .onb-head{
+      margin-bottom:16px;
+    }
+    .onb-title{
+      font-size:28px;
+      font-weight:700;
+      color:#1A1A1A;
+      letter-spacing:-0.01em;
+    }
+    .onb-sub{
+      margin-top:6px;
+      font-size:13px;
+      color:#7A766F;
+      line-height:1.6;
+    }
+    .onb-card{
+      background:#FFFFFF;
+      border:1px solid #ECE9E2;
+      border-radius:12px;
+      padding:22px;
+    }
+    .onb-state{ display:none; }
+    .onb-state.active{ display:block; }
+    .scan-stats{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+      color:#3A3A3A;
+      font-size:13px;
+    }
+    .scan-stats b{ font-size:20px;color:#1A1A1A; }
+    .scan-tree{
+      border:1px solid #ECE9E2;
+      border-radius:10px;
+      background:#FAFAF8;
+      padding:14px 14px 8px;
+      margin-bottom:14px;
+    }
+    .scan-tree .row{
+      display:flex;align-items:center;gap:8px;
+      font-size:12.5px;color:#4A4642;line-height:1.8;
+    }
+    .scan-tree .meta{
+      margin-left:auto;color:#9A968F;font-size:11.5px;
+      font-variant-numeric:tabular-nums;
+    }
+    .scan-notice{
+      display:flex;align-items:center;gap:6px;
+      font-size:12px;color:#8A847C;margin-bottom:16px;
+    }
+    .scan-notice [data-lucide]{ width:13px;height:13px;color:#A8A39B; }
+    .onb-actions{
+      display:flex;justify-content:flex-end;gap:8px;
+    }
+    .onb-btn{
+      height:34px;padding:0 14px;border-radius:8px;
+      border:1px solid transparent;cursor:pointer;
+      font-size:12.5px;font-weight:500;
+      display:inline-flex;align-items:center;gap:5px;
+    }
+    .onb-btn.ghost{ background:#fff;border-color:#D8D3C9;color:#5A5550; }
+    .onb-btn.ghost:hover{ background:#F5F1EB; }
+    .onb-btn.primary{ background:#1A1A1A;color:#FAFAF8; }
+    .onb-btn.primary:hover{ background:#333; }
+    .prog-head{
+      display:flex;align-items:baseline;gap:6px;margin-bottom:8px;
+    }
+    .prog-pct{ font-size:36px;font-weight:700;color:#1A1A1A; }
+    .prog-label{ font-size:17px;color:#5A5550; }
+    .prog-eta{ margin-left:auto;font-size:12.5px;color:#8A847C; }
+    .prog-bar{
+      height:8px;border-radius:999px;background:#EFEAE0;overflow:hidden;margin-bottom:14px;
+    }
+    .prog-bar-fill{
+      height:100%;width:0;background:linear-gradient(90deg,#C9A76E,#A87E2C);
+      transition:width .35s ease;
+    }
+    .step{
+      display:flex;align-items:flex-start;gap:10px;
+      border:1px solid #ECE9E2;border-radius:9px;padding:10px 12px;
+      background:#fff;margin-bottom:8px;
+    }
+    .step.no{ width:20px;height:20px;border-radius:50%;background:#F0EDE7;color:#7A766F;
+      display:grid;place-items:center;font-size:11px;flex-shrink:0; }
+    .step.doing .no{ background:#FBF4E4;color:#A87E2C; }
+    .step.done .no{ background:#E7F6EA;color:#2E7D32; }
+    .step .tx{ flex:1; }
+    .step .tx b{ display:block;font-size:12.8px;color:#1A1A1A; }
+    .step .tx span{ display:block;font-size:11.5px;color:#8A847C;margin-top:2px; }
+    .step .st{ font-size:11.5px;color:#8A847C; }
+    .done-wrap{
+      text-align:center;padding:26px 16px 8px;
+    }
+    .done-icon{
+      width:56px;height:56px;border-radius:50%;
+      margin:0 auto 14px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#2E7D32,#43A047);color:#fff;
+      box-shadow:0 4px 16px rgba(46,125,50,.25);
+    }
+    .done-icon [data-lucide]{ width:24px;height:24px; }
+    .done-wrap h2{ font-size:21px;color:#1A1A1A;letter-spacing:-0.01em; }
+    .done-wrap p{ margin-top:10px;color:#6E6A63;font-size:13px;line-height:1.65; }
+    .done-wrap .onb-actions{ justify-content:center;margin-top:18px; }
+  </style>
+</head>
+<body data-page="upload-onboarding">
+
+<div class="app" id="app" data-view="wiki" data-chat="closed">
+  <aside class="sidebar-left" id="v28-sidebar"></aside>
+
+  <main class="workspace">
+    <header class="topbar" id="v28-topbar"></header>
+    <div class="workspace-scroll">
+      <section class="onb-page">
+        <div class="onb-head">
+          <h1 class="onb-title">上传文件</h1>
+          <p class="onb-sub">保留原结构导入知识库。完成后可直接回到工作台继续使用飞象 AI。</p>
+        </div>
+
+        <div class="onb-card">
+          <div class="onb-state active" id="state-scan">
+            <div class="scan-stats">
+              <span><b>247</b> 个文件</span>
+              <span>·</span>
+              <span><b>12</b> 个文件夹</span>
+              <span>·</span>
+              <span><b>528</b> MB</span>
+            </div>
+            <div class="scan-tree">
+              <div class="row"><i data-lucide="folder-tree"></i><span>张老师的教学资料</span><span class="meta">247 个</span></div>
+              <div class="row" style="padding-left:22px;"><i data-lucide="folder"></i><span>数学</span><span class="meta">186 个</span></div>
+              <div class="row" style="padding-left:44px;"><i data-lucide="folder"></i><span>八下·二次函数</span><span class="meta">28 个</span></div>
+              <div class="row" style="padding-left:44px;"><i data-lucide="folder"></i><span>月考与中考</span><span class="meta">35 个</span></div>
+              <div class="row" style="padding-left:22px;"><i data-lucide="folder"></i><span>语文</span><span class="meta">38 个</span></div>
+              <div class="row" style="padding-left:22px;"><i data-lucide="folder"></i><span>英语</span><span class="meta">23 个</span></div>
+            </div>
+            <div class="scan-notice"><i data-lucide="info"></i><span>3 个 .mp4 自动跳过 · 5 个重名文件全部保留 · 学生姓名仅你可见</span></div>
+            <div class="onb-actions">
+              <button class="onb-btn ghost" onclick="goBack()">取消</button>
+              <button class="onb-btn primary" onclick="startImport()">开始导入<i data-lucide="arrow-right"></i></button>
+            </div>
+          </div>
+
+          <div class="onb-state" id="state-progress">
+            <div class="prog-head">
+              <span class="prog-pct" id="prog-pct">0</span>
+              <span class="prog-label">%</span>
+              <span class="prog-eta">预计还需 <b id="prog-eta">2 分 14 秒</b></span>
+            </div>
+            <div class="prog-bar"><div class="prog-bar-fill" id="prog-fill"></div></div>
+            <div class="step doing"><span class="no">1</span><div class="tx"><b>读取文件并保留原结构</b><span id="step-1-detail">已读取 0 / 247 个文件…</span></div><span class="st">进行中</span></div>
+            <div class="step" id="step-2"><span class="no">2</span><div class="tx"><b>AI 自动打标签</b><span>基于文件名、内容关键词识别学科/章节</span></div><span class="st">等待中</span></div>
+            <div class="step" id="step-3"><span class="no">3</span><div class="tx"><b>抽取知识点 + 生成摘要</b><span>PDF / PPT 抽目录，图片做 OCR</span></div><span class="st">等待中</span></div>
+            <div class="step" id="step-4"><span class="no">4</span><div class="tx"><b>建立关联与图谱</b><span>同主题文件互相关联，准备好关联推荐</span></div><span class="st">等待中</span></div>
+          </div>
+
+          <div class="onb-state" id="state-done">
+            <div class="done-wrap">
+              <div class="done-icon"><i data-lucide="check-circle-2"></i></div>
+              <h2>导入完成，文件已入库</h2>
+              <p><b>247</b> 份素材已按原结构归位。AI 正在后台整理标签和题库，完成后右上角会通知你。</p>
+              <div class="onb-actions">
+                <button class="onb-btn primary" onclick="finishImport()">返回工作台<i data-lucide="arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="sidebar-right"></aside>
+</div>
+
+<div id="toast"></div>
+
+<script src="v28-shell.js?v=20260512be"></script>
+<script src="v28.js?v=20260512be"></script>
+<script>
+  const _from = new URLSearchParams(location.search).get('from') || 'team';
+  let _timer = null;
+
+  function showState(id){
+    document.querySelectorAll('.onb-state').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(target) target.classList.add('active');
+  }
+
+  function getReturnUrl(withImported){
+    const suffix = withImported ? '?imported=1' : '';
+    if(_from === 'personal') return '02-personal-home.html' + suffix;
+    if(_from === 'folder') return '03-wiki-entry.html?view=folder' + (withImported ? '&imported=1' : '');
+    return '02-wiki-home.html' + suffix;
+  }
+
+  function goBack(){
+    window.location.href = getReturnUrl(false);
+  }
+
+  function startImport(){
+    showState('state-progress');
+    let pct = 0;
+    const pctEl = document.getElementById('prog-pct');
+    const fillEl = document.getElementById('prog-fill');
+    const etaEl = document.getElementById('prog-eta');
+    const step1 = document.getElementById('step-1-detail');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
+    const step4 = document.getElementById('step-4');
+
+    _timer = setInterval(() => {
+      pct += 4 + Math.floor(Math.random() * 5);
+      if(pct > 100) pct = 100;
+      pctEl.textContent = String(pct);
+      fillEl.style.width = pct + '%';
+      const done = Math.floor(247 * pct / 100);
+      step1.textContent = `已读取 ${done} / 247 个文件…`;
+      const sec = Math.max(8, Math.floor((100 - pct) * 1.2));
+      etaEl.textContent = sec > 60 ? `${Math.floor(sec/60)} 分 ${sec % 60} 秒` : `${sec} 秒`;
+
+      if(pct >= 35) step2.classList.add('doing');
+      if(pct >= 58) { step2.classList.remove('doing'); step2.classList.add('done'); step3.classList.add('doing'); }
+      if(pct >= 80) { step3.classList.remove('doing'); step3.classList.add('done'); step4.classList.add('doing'); }
+      if(pct >= 100){
+        clearInterval(_timer);
+        step4.classList.remove('doing');
+        step4.classList.add('done');
+        setTimeout(() => showState('state-done'), 420);
+      }
+    }, 360);
+  }
+
+  function finishImport(){
+    window.location.href = getReturnUrl(true);
+  }
+</script>
+
+<!-- pin-comments: 多人评论 -->
+<script>
+  window.PIN_COMMENTS = {
+    url: 'https://dfiuujabnxacqqfclntz.supabase.co',
+    anonKey: 'sb_publishable_GoSMz1ffqZxAOOPtA6KQHA_Vj7gmUMJ',
+    projectKey: 'fxaikb',
+    pageKey: '01-upload-onboarding.html'
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared/pin-comments.js"></script>
+</body>
+</html>
